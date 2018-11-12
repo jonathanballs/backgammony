@@ -1,0 +1,13 @@
+.dub
+docs.json
+__dummy.html
+*.o
+*.obj
+*.sw?
+*\~
+*#
+*.db
+
+backgammon
+dub.selections.json
+

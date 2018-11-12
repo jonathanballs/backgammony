@@ -1,0 +1,12 @@
+{
+	"description": "A GTK backgammon game",
+	"license": "GPL3",
+	"authors": [
+		"Jonathan Balls"
+	],
+        "dependencies": {
+            "gtk-d": "~>3.8.3"
+        },
+	"copyright": "Copyright © 2018, Jonathan Balls",
+	"name": "backgammon"
+}
