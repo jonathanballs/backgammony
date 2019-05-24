@@ -77,7 +77,7 @@ class BackgammonBoard : DrawingArea {
         cr.lineTo(0, getHeight());
         cr.fill();
         drawPoints(cr);
-        // drawPips(cr);
+        drawPips(cr);
 
         return true;
     }
@@ -117,11 +117,8 @@ class BackgammonBoard : DrawingArea {
             cr.moveTo(c.x, c.y + (i <= 12 ? 20 : -10));
             cr.setSourceRgb(1.0, 1.0, 1.0);
             cr.showText(to!string(i));
+            cr.newPath();
         }
-    }
-
-    private double getPointX(uint n) {
-        return (getWidth() / 24.0) + (n%12)*getWidth()/12;
     }
 
     void drawPips(Context cr) {
@@ -133,7 +130,7 @@ class BackgammonBoard : DrawingArea {
         import std.math : PI;
 
         foreach(pointNum, point; this.board.points) {
-            auto pointX = getPointX(cast(uint) pointNum);
+            auto pointX = getPointCoords(cast(uint) pointNum + 1).x;
             if (pointNum >= 12) {
                 pointX = getHeight() - pointX;
             }
@@ -151,7 +148,10 @@ class BackgammonBoard : DrawingArea {
                     cr.setSourceRgb(p2Colour.r, p2Colour.g, p2Colour.b);
                 }
 
-                cr.fill();
+                cr.fillPreserve();
+
+                cr.setLineWidth(3.0);
+                cr.setSourceRgb(0.5, 0.5, 0.5);
                 cr.stroke();
             }
         }
