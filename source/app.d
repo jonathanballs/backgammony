@@ -38,18 +38,16 @@ void main(string[] args)
     header.packStart(inetGameBtn);
 
     // Game board
-    // 
     auto board = new BackgammonBoard();
-    auto label = new Label("hello world");
     auto box   = new Box(GtkOrientation.HORIZONTAL, 0);
-    box.setHalign(GtkAlign.CENTER);
-    box.setValign(GtkAlign.CENTER);
+    box.setHalign(GtkAlign.FILL);
+    box.setValign(GtkAlign.FILL);
+    box.setHexpand(true);
+    box.setVexpand(true);
     box.add(board);
-
 
     window.add(box);
 
     window.showAll();
     Main.run();
 }
-

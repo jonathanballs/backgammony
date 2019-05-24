@@ -1,6 +1,10 @@
 // The backgammon game board
+import std.typecons;
+import std.algorithm : min;
+import std.conv : to;
 import gtk.Widget;
 import gtk.DrawingArea;
+import gdk.Event;
 import cairo.Context;
 
 import board;
@@ -9,14 +13,71 @@ class BackgammonBoard : DrawingArea {
     Board board;
 
     this() {
-        super(500, 500);
+        super(300, 300);
+        setHalign(GtkAlign.FILL);
+        setValign(GtkAlign.FILL);
+        setHexpand(true);
+        setVexpand(true);
+
         addOnDraw(&this.onDraw);
+        addOnConfigure(&this.onConfigureEvent);
         this.board = new Board();
     }
 
+    private struct ScreenCoords {
+        uint x;
+        uint y;
+    }
+
+    bool onConfigureEvent(Event e, Widget w) {
+        auto short_edge = min(getAllocatedHeight(), getAllocatedWidth());
+        auto border_width = cast(uint) pointWidth() / 2;
+        short_edge -= 2 * border_width;
+        setSizeRequest(short_edge, short_edge);
+        return true;
+    }
+
+    float pointWidth() { return getWidth() / 12.0; }
+    float pointHeight() { return getHeight() / 3.0; }
+    float pipRadius() { return pointWidth() / 2.0; }
+
+    // Returns the centre bottom of the point
+    ScreenCoords getPointCoords(uint pointNum) {
+        // Point 1 is bottom right. Point 24 is top right
+        if (pointNum <= 12) {
+            return ScreenCoords(cast(uint) (getWidth() - (pointNum-0.5) * pointWidth()), 0);
+        } else {
+            return ScreenCoords(cast(uint) ((pointNum-12.5) * pointWidth()), getHeight());
+        }
+    }
+
+    ScreenCoords getPipCoords(uint pointNum, uint pipNum) {
+        auto coords = getPointCoords(pointNum);
+        if (pointNum <= 12) {
+            coords.y -= cast(uint) ((2*pipNum + 1) * pipRadius());
+        } else {
+            coords.y += cast(uint) ((2*pipNum + 1) * pipRadius());
+        }
+        return coords;
+    }
+
     bool onDraw(Context cr, Widget widget) {
+
+        // Center the board in the container
+        int boardWidth, boardHeight;
+        getSizeRequest(boardWidth, boardHeight);
+        cr.translate(
+            (getAllocatedWidth() - boardWidth) / 2,
+            (getAllocatedHeight() - boardHeight) / 2);
+
+        cr.setSourceRgb(0.18, 0.204, 0.212);
+        cr.lineTo(0, 0);
+        cr.lineTo(getWidth(), 0);
+        cr.lineTo(getWidth(), getHeight());
+        cr.lineTo(0, getHeight());
+        cr.fill();
         drawPoints(cr);
-        drawPips(cr);
+        // drawPips(cr);
 
         return true;
     }
@@ -28,21 +89,19 @@ class BackgammonBoard : DrawingArea {
         auto lightPoint = rgb(140 / 256.0, 100 / 256.0, 43 / 256.0);
         auto darkPoint = rgb(44 / 256.0, 62 / 256.0, 80 / 256.0);
 
-        foreach (i; 0..this.board.points.length) {
+        foreach (uint i; 1..this.board.points.length + 1) {
+            import std.stdio;
+            auto c = getPointCoords(i);
 
             // Draw the point
-            if (i < 12) { // Top side
-                auto startX = i * getWidth() / 12;
-                auto endX = startX + getWidth()/12;
-                cr.moveTo(startX, 0);
-                cr.lineTo((startX+endX) / 2, this.getHeight() / 3);
-                cr.lineTo(endX, 0);
+            if (i <= 12) { // Top side
+                cr.moveTo(c.x - pointWidth()/2, c.y);
+                cr.lineTo(c.x, pointHeight());
+                cr.lineTo(c.x + pointWidth()/2, c.y);
             } else { // Bottom side
-                auto startX = getWidth() - ((i-12) * getWidth() / 12);
-                auto endX = startX - getWidth()/12;
-                cr.moveTo(startX, getHeight());
-                cr.lineTo((startX+endX) / 2, 2 * this.getHeight() / 3);
-                cr.lineTo(endX, getHeight());
+                cr.moveTo(c.x - pointWidth()/2, c.y);
+                cr.lineTo(c.x, getHeight()-pointHeight());
+                cr.lineTo(c.x + pointWidth()/2, c.y);
             }
 
 
@@ -53,6 +112,11 @@ class BackgammonBoard : DrawingArea {
             }
             cr.fill();
             cr.stroke();
+
+            // Draw numbers
+            cr.moveTo(c.x, c.y + (i <= 12 ? 20 : -10));
+            cr.setSourceRgb(1.0, 1.0, 1.0);
+            cr.showText(to!string(i));
         }
     }
 
