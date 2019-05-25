@@ -1,13 +1,18 @@
 // The backgammon game board
-import std.typecons;
 import std.algorithm : min;
 import std.conv : to;
-import gtk.Widget;
-import gtk.DrawingArea;
+import std.datetime.systime : SysTime, Clock;
+import std.stdio;
+import std.typecons;
+
 import gdk.Event;
+import gdk.FrameClock;
+import gtk.DrawingArea;
+import gtk.Widget;
 import cairo.Context;
 
 import board;
+import dicewidget;
 
 class BackgammonBoard : DrawingArea {
     Board board;
@@ -21,6 +26,10 @@ class BackgammonBoard : DrawingArea {
 
         addOnDraw(&this.onDraw);
         addOnConfigure(&this.onConfigureEvent);
+        addTickCallback(delegate bool (Widget w, FrameClock f) {
+            this.queueDraw();
+            return true;
+        });
         this.board = new Board();
     }
 
@@ -40,6 +49,25 @@ class BackgammonBoard : DrawingArea {
     float pointWidth() { return getWidth() / 12.0; }
     float pointHeight() { return getHeight() / 3.0; }
     float pipRadius() { return pointWidth() / 2.0; }
+
+    Die die;
+    SysTime lastAnimation;
+    void drawDiceRoll(Context cr) {
+        if (!die) {
+            writeln("creating new dice");
+            die = new Die();
+            lastAnimation = Clock.currTime();
+        }
+
+        auto currTime = Clock.currTime();
+        auto dt = currTime - lastAnimation;
+        die.update(dt.total!"msecs" / 1000.0);
+        writeln(die);
+        
+        die.draw(cr);
+
+        lastAnimation = currTime;
+    }
 
     // Returns the centre bottom of the point
     ScreenCoords getPointCoords(uint pointNum) {
@@ -78,6 +106,7 @@ class BackgammonBoard : DrawingArea {
         cr.fill();
         drawPoints(cr);
         drawPips(cr);
+        drawDiceRoll(cr);
 
         return true;
     }
@@ -125,9 +154,8 @@ class BackgammonBoard : DrawingArea {
         struct rgb { double r, g, b; }
         auto p1Colour = rgb(0.0, 0.0, 0.0);
         auto p2Colour = rgb(1.0, 1.0, 1.0);
-        auto pipRadius = this.getWidth() / 24;
+        auto pipRadius = this.getWidth() / 24.0;
 
-        import std.math : PI;
 
         foreach(pointNum, point; this.board.points) {
             auto pointX = getPointCoords(cast(uint) pointNum + 1).x;
@@ -140,6 +168,7 @@ class BackgammonBoard : DrawingArea {
                     pointY = getHeight() - pointY;
                 }
 
+                import std.math : PI;
                 cr.arc(pointX, pointY, pipRadius, 0, 2*PI);
 
                 if (point.owner == Player.PLAYER_1) {
