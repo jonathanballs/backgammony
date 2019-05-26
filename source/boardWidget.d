@@ -17,7 +17,7 @@ import dicewidget;
 class BackgammonBoard : DrawingArea {
     Board board;
 
-    this() {
+    this(uint desiredValue = 1) {
         super(300, 300);
         setHalign(GtkAlign.FILL);
         setValign(GtkAlign.FILL);
@@ -58,13 +58,17 @@ class BackgammonBoard : DrawingArea {
             die = new Die();
             lastAnimation = Clock.currTime();
         }
+        writeln(die);
 
         auto currTime = Clock.currTime();
         auto dt = currTime - lastAnimation;
-        die.update(dt.total!"msecs" / 1000.0);
-        writeln(die);
+        die.update(dt.total!"usecs" / 1_000_000.0);
         
+        cr.save();
+        cr.translate(getWidth() * 0.65, getHeight() / 2);
+        cr.scale(getWidth() / 24, getHeight() / 24);
         die.draw(cr);
+        cr.restore();
 
         lastAnimation = currTime;
     }

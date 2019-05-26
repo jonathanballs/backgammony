@@ -11,7 +11,8 @@ struct Point {
 
 /*
  * Single die roll. This just handles the animation. Rigid body physics of a
- * spinning cube against a flat surface (the ground).
+ * spinning cube against a flat surface (the ground). The dice is size 1.0 and
+ * will roll in from the right (positive x axis).
  */
 class Die {
     vec3 pos;
@@ -20,13 +21,24 @@ class Die {
     float mass = 1.0;
 
     mat3 rot;
-    vec3 angVel; // Angular Velocity
+    vec3 rotAxis;
+    float angVel; // Angular velocity
 
     this() {
-        pos = vec3(0.0, 0.0, 3.0);
-        vel = vec3(3.1, 3.1, 0.0);
+        // Calculate the end position and go back from there.
+        pos = vec3(0.0, 0.0, 0.0);
         rot = mat3.identity;
-        angVel = vec3(0.02, 0.01, -0.015);
+
+        vel = vec3(-10.0, 0.3, 0.0);
+        rotAxis = vec3(0.11, -1.0, 0.0);
+        angVel = 22.0;
+
+        // Assume 1 second animation.
+        pos -= vel;
+
+        Quaternion!float rotationQuat;
+        auto rota = rotationQuat.axis_rotation(angVel, rotAxis).to_matrix!(3, 3);
+        rot = rota.inverse() * rot;
     }
 
     // TODO: Rotation
@@ -48,14 +60,23 @@ class Die {
         foreach (ref v; vertices) {
             v = rot * v;
             v += pos;
+
         }
 
         return vertices;
     }
 
     void update(float dt) {
+        if (pos.x < 0) return;
         pos += vel * dt;
-        rot = rot.rotatex(angVel.x).rotatey(angVel.y).rotatez(angVel.z);
+
+        if (pos.x < 0) {
+            rot = mat3.identity;
+            return;
+        }
+        Quaternion!float rotationQuat;
+        auto rota = rotationQuat.axis_rotation(dt * angVel, rotAxis).to_matrix!(3, 3);
+        rot = rota * rot;
     }
 
     // Draw the dice in its current position
@@ -88,17 +109,15 @@ class Die {
 
         foreach(edge; edges) {
             if (edge[0] == culledVertex || edge[1] == culledVertex) continue;
-            cr.scale(40.0, 40.0);
             cr.setSourceRgb(1.0, 1.0, 1.0);
             cr.moveTo(vertices[edge[0]].x, vertices[edge[0]].y);
             cr.lineTo(vertices[edge[1]].x, vertices[edge[1]].y);
             cr.setLineWidth(0.03);
             cr.stroke();
-            cr.scale(0.025, 0.025);
         }
     }
 
     override string toString() {
-        return format!"Pos: %s, Vel: %s"(pos, vel);
+        return format!"Pos: %s, Vel: %s, Rot: %s"(pos, vel, rot);
     }
 }
