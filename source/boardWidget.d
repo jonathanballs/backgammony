@@ -66,7 +66,7 @@ class BackgammonBoard : DrawingArea {
         
         cr.save();
         cr.translate(getWidth() * 0.65, getHeight() / 2);
-        cr.scale(getWidth() / 24, getHeight() / 24);
+        cr.scale(getWidth() / 18, getHeight() / 18);
         die.draw(cr);
         cr.restore();
 

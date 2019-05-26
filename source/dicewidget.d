@@ -100,6 +100,15 @@ class Die {
             [3, 7],
         ];
 
+        int[4][6] faces = [
+            [4, 5, 6, 7], // Top: 1
+            [0, 1, 5, 4], // Left: 2
+            [2, 3, 7, 6], // Right: 5
+            [1, 2, 6, 5], // Front: 3
+            [0, 3, 7, 4], // Back: 4
+            [0, 1, 2, 3], // Bottom: 6
+        ];
+
         // Cull the edges on the back side of the cube. Find vertex with smallest
         // z value.
         ulong culledVertex;
@@ -107,13 +116,27 @@ class Die {
             if (v.z < vertices[culledVertex].z) culledVertex = i;
         }
 
+        // Paint first then add lines
+        import std.range : slide;
+        cr.setSourceRgb(150/256.0, 40/256.0, 27/256.0);
+        cr.moveTo(vertices[0].x, vertices[0].y);
+        foreach(face; faces) {
+            cr.moveTo(vertices[face[0]].x, vertices[face[0]].y);
+            cr.lineTo(vertices[face[1]].x, vertices[face[1]].y);
+            cr.lineTo(vertices[face[2]].x, vertices[face[2]].y);
+            cr.lineTo(vertices[face[3]].x, vertices[face[3]].y);
+            cr.lineTo(vertices[face[0]].x, vertices[face[0]].y);
+            cr.fill();
+        }
+
+        cr.setSourceRgb(170/256.0, 50/256.0, 25/256.0);
+        cr.setLineWidth(0.03);
         foreach(edge; edges) {
             if (edge[0] == culledVertex || edge[1] == culledVertex) continue;
-            cr.setSourceRgb(1.0, 1.0, 1.0);
             cr.moveTo(vertices[edge[0]].x, vertices[edge[0]].y);
             cr.lineTo(vertices[edge[1]].x, vertices[edge[1]].y);
-            cr.setLineWidth(0.03);
             cr.stroke();
+
         }
     }
 
