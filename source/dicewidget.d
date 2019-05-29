@@ -1,6 +1,7 @@
 module dicewidget;
 import std.stdio;
 import std.typecons;
+import std.math : atan2;
 import cairo.Context;
 import std.math : PI, PI_2;
 
@@ -41,18 +42,17 @@ class Die {
     this() {
         // Calculate the end position and go back from there.
         pos = vec3(0.0, 0.0, 0.0);
-        rot = mat3.identity;
 
-        vel = vec3(-10.0, 0.3, 0.0);
+        vel = vec3(-4.0, 0.3, 0.0);
         rotAxis = vec3(0.11, -1.0, 0.0);
-        angVel = 22.0;
+        angVel = PI * 3;
 
         // Assume 1 second animation.
-        pos -= vel;
+        pos -= 2 * vel;
 
         Quaternion!float rotationQuat;
-        auto rota = rotationQuat.axis_rotation(angVel, rotAxis).to_matrix!(3, 3);
-        rot = rota.inverse() * rot;
+        auto rota = rotationQuat.axis_rotation(2 * angVel, rotAxis).to_matrix!(3, 3);
+        rot = rota.inverse() * mat3.identity;
     }
 
     void update(float dt) {
@@ -85,7 +85,7 @@ class Die {
             ];
 
             foreach (ref v; vertices) {
-                v = (faceRot * v) + pos;
+                v = faceRot*v + pos;
             }
 
             // Draw background
@@ -105,21 +105,29 @@ class Die {
             // Draw dots
             auto dotHeight = vec2(vertices[0]).distance(vec2(vertices[1]));
             auto dotWidth = vec2(vertices[1]).distance(vec2(vertices[2]));
+
+            auto rotVector = vec2(vertices[1]) - vec2(vertices[0]);
+            auto dotRotation = atan2(rotVector.y, rotVector.x);
+
             cr.setSourceRgb(1, 1, 1);
             foreach(dotPosition; face.dots) {
                 auto dotPos = rot*face.rot*vec3(dotPosition, 0.5) + pos;
                 cr.save();
+
                 cr.translate(dotPos.x, dotPos.y);
+                cr.rotate(dotRotation - PI_2);
                 cr.scale(dotWidth, dotHeight);
                 cr.arc(0.0, 0.0, 0.1, 0.0, 2*PI);
+                cr.fill();
+
                 cr.restore();
 
-                cr.fill();
             }
 
+
             // Suggestion for correct size
-            // 1. Make thin/short based on distance between sides.
-            // 2. Rotate the dots to be in line with sides
+            // 1. Make thin/short based on distance between sides. done
+            // 2. Rotate the dots to be in line with sides done
             // 3. Clip the face so that dots definitely cant be drawn outside.
         }
 

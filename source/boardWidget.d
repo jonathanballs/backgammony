@@ -61,7 +61,7 @@ class BackgammonBoard : DrawingArea {
 
         auto currTime = Clock.currTime();
         auto dt = currTime - lastAnimation;
-        die.update(dt.total!"usecs" / 40_000_000.0);
+        die.update(dt.total!"usecs" / 1_000_000.0);
         
         cr.save();
         cr.translate(getWidth() * 0.65, getHeight() / 2);
