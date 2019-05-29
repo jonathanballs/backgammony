@@ -103,10 +103,17 @@ class Die {
             cr.stroke();
 
             // Draw dots
+            auto dotHeight = vec2(vertices[0]).distance(vec2(vertices[1]));
+            auto dotWidth = vec2(vertices[1]).distance(vec2(vertices[2]));
             cr.setSourceRgb(1, 1, 1);
             foreach(dotPosition; face.dots) {
                 auto dotPos = rot*face.rot*vec3(dotPosition, 0.5) + pos;
-                cr.arc(dotPos.x, dotPos.y, 0.1, 0.0, 2*PI);
+                cr.save();
+                cr.translate(dotPos.x, dotPos.y);
+                cr.scale(dotWidth, dotHeight);
+                cr.arc(0.0, 0.0, 0.1, 0.0, 2*PI);
+                cr.restore();
+
                 cr.fill();
             }
 
