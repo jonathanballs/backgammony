@@ -116,7 +116,7 @@ class Die {
             if (v.z < vertices[culledVertex].z) culledVertex = i;
         }
 
-        // Paint first then add lines
+        // Paint background
         import std.range : slide;
         cr.setSourceRgb(150/256.0, 40/256.0, 27/256.0);
         cr.moveTo(vertices[0].x, vertices[0].y);
@@ -129,6 +129,7 @@ class Die {
             cr.fill();
         }
 
+        // Paint lines
         cr.setSourceRgb(170/256.0, 50/256.0, 25/256.0);
         cr.setLineWidth(0.03);
         foreach(edge; edges) {
@@ -138,6 +139,14 @@ class Die {
             cr.stroke();
 
         }
+
+        // Paint dots
+        auto dotPos = vec3(0.0, 0.0, 0.5); // For a 1
+        dotPos = rot*dotPos + pos;
+        import std.math : PI;
+        cr.arc(dotPos.x, dotPos.y, 0.1, 0.0, 2*PI);
+        cr.setSourceRgb(1, 1, 1);
+        cr.fill();
     }
 
     override string toString() {
