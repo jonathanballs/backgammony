@@ -38,11 +38,12 @@ class BoardStyle {
 }
 
 class BackgammonBoard : DrawingArea {
-    Board board;
-    GameState state;
+    GameState gameState;
     Player currentPlayer;
 
     BoardStyle style;
+
+    bool diceAreRolling;
 
     this(uint desiredValue = 1) {
         super(300, 300);
@@ -59,7 +60,7 @@ class BackgammonBoard : DrawingArea {
             this.queueDraw();
             return true;
         });
-        this.board = new Board();
+        gameState.newGame();
 
         this.addOnButtonPress(delegate bool (Event e, Widget w) {
             writeln(e.button.x, " ", e.button.y);
@@ -92,8 +93,8 @@ class BackgammonBoard : DrawingArea {
 
     void rollDice() {
         dice = [
-            new Die(5),
-            new Die(3)
+            new Die(gameState.diceRoll[0]),
+            new Die(gameState.diceRoll[1])
         ];
         lastAnimation = Clock.currTime;
     }
@@ -106,8 +107,8 @@ class BackgammonBoard : DrawingArea {
             cr.save();
 
             die.update(dt.total!"usecs" / 1_000_000.0);
-            cr.translate(65*i + getWidth() * 0.65, getHeight() / 2 + 25*i);
-            cr.scale(getWidth() / 18, getHeight() / 18);
+            cr.translate(65*i + style.boardWidth * 0.65, style.boardHeight / 2 + 25*i);
+            cr.scale(style.boardWidth / 24, style.boardWidth / 24);
             die.draw(cr);
 
             cr.restore();
@@ -140,14 +141,14 @@ class BackgammonBoard : DrawingArea {
     bool onDraw(Context cr, Widget widget) {
         drawBoard(cr);
 
-        if (state == GameState.DiceRolling) {
+        if (this.diceAreRolling) {
             if (dice[0].finished) {
-                state = GameState.ChoosingMove;
+                this.diceAreRolling = false;
             }
         }
 
-        // drawPips(cr);
-        // drawDice(cr);
+        drawPips(cr);
+        drawDice(cr);
 
         return true;
     }
@@ -182,7 +183,7 @@ class BackgammonBoard : DrawingArea {
         auto lightPoint = RGB(140 / 256.0, 100 / 256.0, 43 / 256.0);
         auto darkPoint = RGB(44 / 256.0, 62 / 256.0, 80 / 256.0);
 
-        foreach (uint i; 1..this.board.points.length + 1) {
+        foreach (uint i; 1..this.gameState.board.points.length + 1) {
             import std.stdio;
             auto c = getPointCoords(i);
 
@@ -218,18 +219,16 @@ class BackgammonBoard : DrawingArea {
         struct rgb { double r, g, b; }
         auto p1Colour = rgb(0.0, 0.0, 0.0);
         auto p2Colour = rgb(1.0, 1.0, 1.0);
-        auto pipRadius = this.getWidth() / 24.0;
+        auto pipRadius = this.style.boardWidth / 36.0;
 
 
-        foreach(pointNum, point; this.board.points) {
+        foreach(pointNum, point; this.gameState.board.points) {
             auto pointX = getPointCoords(cast(uint) pointNum + 1).x;
-            if (pointNum >= 12) {
-                pointX = getHeight() - pointX;
-            }
+
             foreach(n; 0..point.numPieces) {
                 double pointY = pipRadius + (2*n*pipRadius);
                 if (pointNum >= 12) {
-                    pointY = getHeight() - pointY;
+                    pointY = style.boardHeight - pointY;
                 }
 
                 import std.math : PI;

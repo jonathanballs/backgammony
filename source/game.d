@@ -1,11 +1,11 @@
 module game;
 
-class Board {
+struct Board {
     Point[24] points;
+    Point[Player] takenPieces; // In the centre
+    Point[Player] bearedOffPieces; // Taken off the side
 
-    this(bool empty = false) {
-        if (empty) return;
-
+    void newGame() {
         points[23] = Point(Player.PLAYER_1, 2);
         points[12] = Point(Player.PLAYER_1, 5);
         points[7] = Point(Player.PLAYER_1, 3);
@@ -18,13 +18,40 @@ class Board {
     }
 }
 
-enum GameState {
-    DiceRolling,
-    ChoosingMove
+struct GameState {
+    Board board;
+    Player currentTurn;
+    uint[2] diceRoll;
+
+    uint rollDie() {
+        import std.random;
+        return uniform(1, 6);
+    }
+
+    void newGame() {
+        this.board = Board();
+        board.newGame();
+
+        diceRoll[0] = rollDie();
+        diceRoll[1] = rollDie();
+        import std.stdio;
+        writeln(diceRoll);
+    }
+}
+
+enum PipMoveType {
+    Movement,
+    BearingOff,
+    Entering,
+}
+
+struct PipMovement {
+    PipMoveType moveType;
+    uint startPoint;
+    uint endPoint;
 }
 
 enum Player {
-    NONE,
     PLAYER_1,
     PLAYER_2
 }
