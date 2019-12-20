@@ -36,12 +36,16 @@ class Die {
     float length; // Length of each side
 
     mat3 rot;
+    mat3 finalRot;
     vec3 rotAxis;
     float angVel; // Angular velocity
 
-    this() {
+    bool finished = false;
+
+    this(int diceValue) {
         // Calculate the end position and go back from there.
         pos = vec3(0.0, 0.0, 0.0);
+        finalRot = rot = dieFaces[diceValue-1].rot.inverse();
 
         vel = vec3(-4.0, 0.3, 0.0);
         rotAxis = vec3(0.11, -1.0, 0.0);
@@ -52,7 +56,7 @@ class Die {
 
         Quaternion!float rotationQuat;
         auto rota = rotationQuat.axis_rotation(2 * angVel, rotAxis).to_matrix!(3, 3);
-        rot = rota.inverse() * mat3.identity;
+        rot = rota.inverse() * rot;
     }
 
     void update(float dt) {
@@ -60,7 +64,8 @@ class Die {
         pos += vel * dt;
 
         if (pos.x < 0) {
-            rot = mat3.identity;
+            rot = finalRot;
+            finished = true;
             return;
         }
         Quaternion!float rotationQuat;
@@ -106,6 +111,8 @@ class Die {
             auto dotHeight = vec2(vertices[0]).distance(vec2(vertices[1]));
             auto dotWidth = vec2(vertices[1]).distance(vec2(vertices[2]));
 
+            if (dotWidth == 0 || dotHeight == 0) continue;
+
             auto rotVector = vec2(vertices[1]) - vec2(vertices[0]);
             auto dotRotation = atan2(rotVector.y, rotVector.x);
 
@@ -121,14 +128,7 @@ class Die {
                 cr.fill();
 
                 cr.restore();
-
             }
-
-
-            // Suggestion for correct size
-            // 1. Make thin/short based on distance between sides. done
-            // 2. Rotate the dots to be in line with sides done
-            // 3. Clip the face so that dots definitely cant be drawn outside.
         }
 
         if (cr) return;

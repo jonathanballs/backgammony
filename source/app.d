@@ -44,9 +44,9 @@ void main(string[] args)
     box.setValign(GtkAlign.FILL);
     box.setHexpand(true);
     box.setVexpand(true);
-    box.add(board);
+    // box.add(board);
 
-    window.add(box);
+    window.add(board);
 
     window.showAll();
     Main.run();

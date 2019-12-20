@@ -1,13 +1,4 @@
-enum Player {
-    NONE,
-    PLAYER_1,
-    PLAYER_2
-}
-
-struct Point {
-    Player owner;
-    uint numPieces;
-}
+module game;
 
 class Board {
     Point[24] points;
@@ -25,4 +16,20 @@ class Board {
         points[16] = Point(Player.PLAYER_2, 3);
         points[18] = Point(Player.PLAYER_2, 5);
     }
+}
+
+enum GameState {
+    DiceRolling,
+    ChoosingMove
+}
+
+enum Player {
+    NONE,
+    PLAYER_1,
+    PLAYER_2
+}
+
+struct Point {
+    Player owner;
+    uint numPieces;
 }

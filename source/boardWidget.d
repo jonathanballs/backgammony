@@ -1,5 +1,5 @@
 // The backgammon game board
-import std.algorithm : min;
+import std.algorithm : min, max;
 import std.conv : to;
 import std.datetime.systime : SysTime, Clock;
 import std.stdio;
@@ -9,13 +9,40 @@ import gdk.Event;
 import gdk.FrameClock;
 import gtk.DrawingArea;
 import gtk.Widget;
+import gobject.Signals;
 import cairo.Context;
 
-import board;
+import game;
 import dicewidget;
+
+struct RGB {
+    double r, g, b;
+}
+
+static void setSourceRgbStruct(Context cr, RGB color) {
+    cr.setSourceRgb(color.r, color.g, color.b);
+}
+
+// Widths and heights are relative. The board will be scaled to fit on the window.
+class BoardStyle {
+    float boardWidth = 1200.0;
+    float boardHeight = 800.0;
+
+    float borderWidth = 30.0;
+    float barWidth = 40.0;
+
+    float pipRadius = 60.0;
+
+    float pointWidth = 70.0;
+    float pointHeight = 300.0;
+}
 
 class BackgammonBoard : DrawingArea {
     Board board;
+    GameState state;
+    Player currentPlayer;
+
+    BoardStyle style;
 
     this(uint desiredValue = 1) {
         super(300, 300);
@@ -24,6 +51,8 @@ class BackgammonBoard : DrawingArea {
         setHexpand(true);
         setVexpand(true);
 
+        style = new BoardStyle;
+
         addOnDraw(&this.onDraw);
         addOnConfigure(&this.onConfigureEvent);
         addTickCallback(delegate bool (Widget w, FrameClock f) {
@@ -31,6 +60,14 @@ class BackgammonBoard : DrawingArea {
             return true;
         });
         this.board = new Board();
+
+        this.addOnButtonPress(delegate bool (Event e, Widget w) {
+            writeln(e.button.x, " ", e.button.y);
+            writeln("click");
+            return false;
+        });
+
+        rollDice();
     }
 
     private struct ScreenCoords {
@@ -46,28 +83,36 @@ class BackgammonBoard : DrawingArea {
         return true;
     }
 
-    float pointWidth() { return getWidth() / 12.0; }
-    float pointHeight() { return getHeight() / 3.0; }
+    float pointWidth() { return style.boardWidth / 12.0; }
+    float pointHeight() { return style.boardHeight / 2.5; }
     float pipRadius() { return pointWidth() / 2.0; }
 
-    Die die;
+    Die[] dice;
     SysTime lastAnimation;
-    void drawDiceRoll(Context cr) {
-        if (!die) {
-            writeln("creating new dice");
-            die = new Die();
-            lastAnimation = Clock.currTime();
-        }
 
+    void rollDice() {
+        dice = [
+            new Die(5),
+            new Die(3)
+        ];
+        lastAnimation = Clock.currTime;
+    }
+
+    void drawDice(Context cr) {
         auto currTime = Clock.currTime();
         auto dt = currTime - lastAnimation;
-        die.update(dt.total!"usecs" / 1_000_000.0);
-        
-        cr.save();
-        cr.translate(getWidth() * 0.65, getHeight() / 2);
-        cr.scale(getWidth() / 18, getHeight() / 18);
-        die.draw(cr);
-        cr.restore();
+
+        foreach (i, die; dice) {
+            cr.save();
+
+            die.update(dt.total!"usecs" / 1_000_000.0);
+            cr.translate(65*i + getWidth() * 0.65, getHeight() / 2 + 25*i);
+            cr.scale(getWidth() / 18, getHeight() / 18);
+            die.draw(cr);
+
+            cr.restore();
+        }
+
 
         lastAnimation = currTime;
     }
@@ -76,9 +121,9 @@ class BackgammonBoard : DrawingArea {
     ScreenCoords getPointCoords(uint pointNum) {
         // Point 1 is bottom right. Point 24 is top right
         if (pointNum <= 12) {
-            return ScreenCoords(cast(uint) (getWidth() - (pointNum-0.5) * pointWidth()), 0);
+            return ScreenCoords(cast(uint) (cast(uint) style.boardWidth - (pointNum-0.5) * pointWidth()), 0);
         } else {
-            return ScreenCoords(cast(uint) ((pointNum-12.5) * pointWidth()), getHeight());
+            return ScreenCoords(cast(uint) ((pointNum-12.5) * pointWidth()), cast(uint) style.boardHeight);
         }
     }
 
@@ -93,33 +138,49 @@ class BackgammonBoard : DrawingArea {
     }
 
     bool onDraw(Context cr, Widget widget) {
+        drawBoard(cr);
 
-        // Center the board in the container
-        int boardWidth, boardHeight;
-        getSizeRequest(boardWidth, boardHeight);
-        cr.translate(
-            (getAllocatedWidth() - boardWidth) / 2,
-            (getAllocatedHeight() - boardHeight) / 2);
+        if (state == GameState.DiceRolling) {
+            if (dice[0].finished) {
+                state = GameState.ChoosingMove;
+            }
+        }
 
-        cr.setSourceRgb(0.18, 0.204, 0.212);
-        cr.lineTo(0, 0);
-        cr.lineTo(getWidth(), 0);
-        cr.lineTo(getWidth(), getHeight());
-        cr.lineTo(0, getHeight());
-        cr.fill();
-        drawPoints(cr);
-        drawPips(cr);
-        drawDiceRoll(cr);
+        // drawPips(cr);
+        // drawDice(cr);
 
         return true;
     }
 
+    void drawBoard(Context cr) {
+
+        // Board should have ratio of 1.4;
+        auto currentDimensionRatio = cast(float) getAllocatedWidth() / getAllocatedHeight();
+
+        // Centering and scaling the board
+        auto scaleFactor = min(
+            getAllocatedWidth() / style.boardWidth,
+            getAllocatedHeight() / style.boardHeight,
+        );
+        cr.translate(
+            (getAllocatedWidth() - scaleFactor*style.boardWidth) / 2,
+            (getAllocatedHeight() - scaleFactor*style.boardHeight) / 2
+        );
+        cr.scale(scaleFactor, scaleFactor);
+
+        cr.setSourceRgb(0.18, 0.204, 0.212);
+        cr.lineTo(0, 0);
+        cr.lineTo(style.boardWidth, 0);
+        cr.lineTo(style.boardWidth, style.boardHeight);
+        cr.lineTo(0, style.boardHeight);
+        cr.fill();
+
+        drawPoints(cr);
+    }
+
     void drawPoints(Context cr) {
-        struct rgb {
-            double r, g, b;
-        }
-        auto lightPoint = rgb(140 / 256.0, 100 / 256.0, 43 / 256.0);
-        auto darkPoint = rgb(44 / 256.0, 62 / 256.0, 80 / 256.0);
+        auto lightPoint = RGB(140 / 256.0, 100 / 256.0, 43 / 256.0);
+        auto darkPoint = RGB(44 / 256.0, 62 / 256.0, 80 / 256.0);
 
         foreach (uint i; 1..this.board.points.length + 1) {
             import std.stdio;
@@ -132,15 +193,15 @@ class BackgammonBoard : DrawingArea {
                 cr.lineTo(c.x + pointWidth()/2, c.y);
             } else { // Bottom side
                 cr.moveTo(c.x - pointWidth()/2, c.y);
-                cr.lineTo(c.x, getHeight()-pointHeight());
+                cr.lineTo(c.x, cast(uint) style.boardHeight-pointHeight());
                 cr.lineTo(c.x + pointWidth()/2, c.y);
             }
 
 
             if (i % 2) {
-                cr.setSourceRgb(darkPoint.r, darkPoint.g, darkPoint.b);
+                cr.setSourceRgbStruct(darkPoint);
             } else {
-                cr.setSourceRgb(lightPoint.r, lightPoint.g, lightPoint.b);
+                cr.setSourceRgbStruct(lightPoint);
             }
             cr.fill();
             cr.stroke();
