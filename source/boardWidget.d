@@ -97,6 +97,7 @@ class BackgammonBoard : DrawingArea {
             new Die(gameState.diceRoll[1])
         ];
         lastAnimation = Clock.currTime;
+        diceAreRolling = true;
     }
 
     void drawDice(Context cr) {
@@ -144,6 +145,9 @@ class BackgammonBoard : DrawingArea {
         if (this.diceAreRolling) {
             if (dice[0].finished) {
                 this.diceAreRolling = false;
+                // Calculate possible moves
+                writeln("finsihed rolling dice");
+                writeln(this.gameState.generatePossibleMovements());
             }
         }
 

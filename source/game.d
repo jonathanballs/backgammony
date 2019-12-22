@@ -9,7 +9,7 @@ struct PipMovement {
 enum PipMoveType {
     Movement,
     BearingOff,
-    Entering,
+    Entering
 }
 
 enum Player {
@@ -19,14 +19,14 @@ enum Player {
 }
 
 Player opposite(Player player) {
-    if (player == Player.PLAYER_1) {
-        return Player.PLAYER_2;
-    } else if (player == Player.PLAYER_2) {
-        return Player.PLAYER_1;
-    } else {
-        import std.stdio;
-        writeln(new Exception("Warning: tried to opposite Player.NONE"));
-        return Player.NONE;
+    switch (player) {
+        case Player.PLAYER_1: return Player.PLAYER_2;
+        case Player.PLAYER_2: return Player.PLAYER_1;
+        case Player.NONE:
+            import std.stdio;
+            writeln(new Exception("Warning: tried to opposite Player.NONE"));
+            return Player.NONE;
+        default: assert(0);
     }
 }
 
@@ -37,6 +37,14 @@ bool isHomePoint(Player player, uint pointNumber) {
         return true;
     }
     return false;
+}
+
+uint homePointToBoardPoint(Player player, uint homePoint) {
+    assert(1 <= homePoint && homePoint <= 6);
+    assert(player != Player.NONE);
+
+    if (player == Player.PLAYER_1) return homePoint-1;
+    else return 24 - homePoint;
 }
 
 struct Point {
@@ -61,6 +69,11 @@ struct Board {
         points[11] = Point(Player.PLAYER_2, 5);
         points[16] = Point(Player.PLAYER_2, 3);
         points[18] = Point(Player.PLAYER_2, 5);
+
+        takenPieces[Player.PLAYER_1] = 0;
+        takenPieces[Player.PLAYER_2] = 0;
+        bearedOffPieces[Player.PLAYER_1] = 0;
+        bearedOffPieces[Player.PLAYER_2] = 0;
     }
 }
 
@@ -79,6 +92,7 @@ struct GameState {
         this.board = Board();
         board.newGame();
 
+        currentTurn = Player.PLAYER_1;
         diceRoll[0] = rollDie();
         diceRoll[1] = rollDie();
     }
@@ -110,9 +124,45 @@ struct GameState {
         }
     }
 
+    /// Generate a list of possible game moves based off current dice
+    PipMovement[] generatePossibleMovements() {
+        uint[] moveValues = diceRoll;
+        if (moveValues[0] == moveValues[1]) moveValues ~= moveValues;
+
+        return generatePossibleMovements(moveValues);
+    }
+
+    PipMovement[] generatePossibleMovements(uint[] moveValues) {
+        import std.algorithm.iteration : uniq;
+        import std.range : enumerate;
+        import std.algorithm : remove;
+        // First find all possible movements of any length and then prune to
+        // only the longest ones.
+        PipMovement[] ret;
+
+        if (moveValues.length == 0) return [];
+
+        // Check if player needs to enter the board
+        if (playerCanBearOff(currentTurn)) {
+            if (board.takenPieces[currentTurn]) {
+                foreach (i, moveValue; moveValues.uniq().enumerate()) {
+                    auto point = board.points[homePointToBoardPoint(currentTurn.opposite, moveValue)];
+                    if (point.owner != currentTurn.opposite || point.numPieces == 1) {
+                        // Player can enter on this area
+                        ret ~= generatePossibleMovements(moveValues.dup.remove(i));
+                    }
+                }
+            }
+
+            return ret;
+        }
+
+        return ret;
+    }
+
     /// Need to validate with a dice roll as well
     void validateMovement(PipMovement pipMovement) {
-        if (currentPlayer == Player.NONE)
+        if (currentTurn == Player.NONE)
             throw new Exception("Warning: tried to validate while currentPlayer is NONE");
 
         // Firstly, if the player has taken peaces he must place them back in

@@ -60,14 +60,14 @@ class Die {
     }
 
     void update(float dt) {
-        if (pos.x < 0) return;
-        pos += vel * dt;
-
         if (pos.x < 0) {
             rot = finalRot;
             finished = true;
             return;
         }
+
+        pos += vel * dt;
+
         Quaternion!float rotationQuat;
         auto rota = rotationQuat.axis_rotation(dt * angVel, rotAxis).to_matrix!(3, 3);
         rot = rota * rot;
