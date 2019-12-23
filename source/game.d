@@ -294,7 +294,6 @@ struct GameState {
             validateMovement(pipMovement);
             return true;
         } catch (Exception e) {
-            writeln(e);
             return false;
         }
     }
