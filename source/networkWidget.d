@@ -3,6 +3,7 @@ module networkWidget;
 import std.parallelism;
 import std.typecons;
 import std.stdio;
+import std.digest.sha;
 import requests;
 
 import gtk.Dialog;
@@ -14,7 +15,7 @@ import gdk.FrameClock;
 class NetworkWidget : Dialog {
     Spinner spinner;
 
-    Task!(getContent, string, string[string])* announce;
+    Task!(getContent, string, string[string])* announceTask;
 
     this (Window parent) {
         super();
@@ -37,7 +38,32 @@ class NetworkWidget : Dialog {
         spinner.setMarginBottom(15);
         this.getContentArea().add(spinner);
 
-        this.announce = task!getContent("http://localhost:8100/announce", ["port": "8080"]);
+        import std.string;
+        import std.random;
+        import std.conv;
+        string info_hash = sha1Of("backgammon").toHexString()[0..20];
+        // Generate a random peer_id
+        auto rnd = Random(unpredictableSeed);
+        string peer_id = "";
+        string hex = "abcdefghijklmnopqrstuvyxyz1234567890";
+        foreach (i; 0..20) {
+            peer_id ~= hex[uniform(0, hex.length)];
+        }
+
+        writeln(peer_id);
+
+        this.announceTask = task!getContent("http://localhost:8100/announce", [
+            "info_hash": info_hash,
+            "peer_id": peer_id,
+            "port": to!string(uniform(1000, 6000)),
+            "uploaded": "0",
+            "downloaded": "0",
+            "left": "0",
+            "numwanted": "0",
+            "event": "started",
+            "compact": "1",
+        ]);
+        this.announceTask.executeInNewThread();
 
         writeln("adding tick callback");
         this.addTickCallback(&checkPid);
@@ -45,7 +71,10 @@ class NetworkWidget : Dialog {
     }
 
     bool checkPid(Widget w, FrameClock f) {
-        writeln("ayyyyy");
+        if (announceTask.done) {
+            writeln(announceTask.yieldForce());
+            return false;
+        }
         return true;
     }
 
