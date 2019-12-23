@@ -5,6 +5,7 @@ import std.typecons;
 import std.stdio;
 import std.digest.sha;
 import requests;
+import bencode;
 
 import gtk.Dialog;
 import gtk.Window;
@@ -42,6 +43,7 @@ class NetworkWidget : Dialog {
         import std.random;
         import std.conv;
         string info_hash = sha1Of("backgammon").toHexString()[0..20];
+        writeln(info_hash);
         // Generate a random peer_id
         auto rnd = Random(unpredictableSeed);
         string peer_id = "";
@@ -49,8 +51,6 @@ class NetworkWidget : Dialog {
         foreach (i; 0..20) {
             peer_id ~= hex[uniform(0, hex.length)];
         }
-
-        writeln(peer_id);
 
         this.announceTask = task!getContent("http://localhost:8100/announce", [
             "info_hash": info_hash,
@@ -61,7 +61,6 @@ class NetworkWidget : Dialog {
             "left": "0",
             "numwanted": "0",
             "event": "started",
-            "compact": "1",
         ]);
         this.announceTask.executeInNewThread();
 
@@ -72,7 +71,12 @@ class NetworkWidget : Dialog {
 
     bool checkPid(Widget w, FrameClock f) {
         if (announceTask.done) {
-            writeln(announceTask.yieldForce());
+            ubyte[] response = announceTask.yieldForce().data();
+            writeln(cast(string) response);
+            auto debencoded = bencodeParse(response);
+            auto peers = debencoded["peers"];
+            writeln(peers);
+            writeln(peers.list());
             return false;
         }
         return true;
