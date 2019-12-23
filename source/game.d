@@ -1,9 +1,11 @@
 module game;
+import std.stdio;
 
 struct PipMovement {
     PipMoveType moveType;
     uint startPoint;
     uint endPoint;
+    uint diceValue;
 }
 
 enum PipMoveType {
@@ -125,20 +127,21 @@ struct GameState {
     }
 
     /// Generate a list of possible game moves based off current dice
-    PipMovement[] generatePossibleMovements() {
+    PipMovement[][] generatePossibleMovements() {
         uint[] moveValues = diceRoll;
         if (moveValues[0] == moveValues[1]) moveValues ~= moveValues;
 
         return generatePossibleMovements(moveValues);
     }
 
-    PipMovement[] generatePossibleMovements(uint[] moveValues) {
-        import std.algorithm.iteration : uniq;
-        import std.range : enumerate;
-        import std.algorithm : remove;
+    PipMovement[][] generatePossibleMovements(uint[] moveValues) {
+        import std.algorithm : remove, reverse, uniq;
+        import std.range : enumerate, inputRangeObject;
+        import std.array;
         // First find all possible movements of any length and then prune to
         // only the longest ones.
-        PipMovement[] ret;
+        assert (currentTurn != Player.NONE);
+        PipMovement[][] ret;
 
         if (moveValues.length == 0) return [];
 
@@ -146,10 +149,13 @@ struct GameState {
         if (playerCanBearOff(currentTurn)) {
             if (board.takenPieces[currentTurn]) {
                 foreach (i, moveValue; moveValues.uniq().enumerate()) {
-                    auto point = board.points[homePointToBoardPoint(currentTurn.opposite, moveValue)];
+                    auto boardPointNumber = homePointToBoardPoint(currentTurn.opposite, moveValue);
+                    auto point = board.points[boardPointNumber];
                     if (point.owner != currentTurn.opposite || point.numPieces == 1) {
                         // Player can enter on this area
-                        ret ~= generatePossibleMovements(moveValues.dup.remove(i));
+                        foreach (move; generatePossibleMovements(moveValues.dup.remove(i))) {
+                            ret ~= [[PipMovement(PipMoveType.Entering, boardPointNumber, 0, moveValue)] ~ move];
+                        }
                     }
                 }
             }
@@ -157,7 +163,55 @@ struct GameState {
             return ret;
         }
 
+        // Check if player can move
+        foreach (i, moveValue; moveValues.uniq().enumerate()) {
+            foreach (uint pointIndex, point; board.points) {
+                if (point.owner == currentTurn) {
+                    PipMovement potentialMovement = PipMovement(
+                        PipMoveType.Movement,
+                        pointIndex,
+                        Player.PLAYER_1 ? pointIndex-moveValue : pointIndex+moveValue,
+                        moveValue);
+                    if (isValidMovement(potentialMovement)) {
+                        auto nextMoves = generatePossibleMovements(moveValues.dup.remove(i));
+                        if (nextMoves) {
+                            foreach (m; nextMoves) ret ~= [[potentialMovement] ~ m];
+                        } else {
+                            ret ~= [potentialMovement];
+                        }
+                    }
+                }
+            }
+        }
+
         return ret;
+    }
+
+    void applyMove(PipMovement pipMovement) {
+        assert(isValidMovement(pipMovement));
+
+        if (pipMovement.moveType == PipMoveType.Movement) {
+            if (--board.points[pipMovement.startPoint].numPieces) {
+                // board.points[pipMovement.startPoint].owner = Player.NONE;
+            }
+
+            if (board.points[pipMovement.endPoint].owner == currentTurn.opposite()) {
+                board.takenPieces[currentTurn.opposite()]++;
+                board.points[pipMovement.endPoint].owner = Player.NONE;
+                board.points[pipMovement.endPoint].numPieces = 0;
+            }
+
+            board.points[pipMovement.endPoint].numPieces++;
+            board.points[pipMovement.endPoint].owner = currentTurn;
+        }
+    }
+
+    void executeTurn(PipMovement[] turn) {
+        foreach (move; turn) {
+            applyMove(move);
+        }
+
+        currentTurn = currentTurn.opposite();
     }
 
     /// Need to validate with a dice roll as well
@@ -240,6 +294,7 @@ struct GameState {
             validateMovement(pipMovement);
             return true;
         } catch (Exception e) {
+            writeln(e);
             return false;
         }
     }
