@@ -145,9 +145,6 @@ class BackgammonBoard : DrawingArea {
         if (this.diceAreRolling) {
             if (dice[0].finished) {
                 this.diceAreRolling = false;
-                // Calculate possible moves
-                writeln("Rolled : ", gameState.diceRoll[0], ", ", gameState.diceRoll[1]);
-
                 // Just apply the first possible move
                 auto moves = this.gameState.generatePossibleMovements();
                 writeln("Applying move: ", moves[0]);
