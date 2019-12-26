@@ -14,6 +14,8 @@ import gtk.MainWindow;
 import gtk.Widget;
 
 import boardWidget;
+import networking;
+import upnp;
 
 class BackgammonWindow : MainWindow {
     HeaderBar header;
@@ -21,6 +23,7 @@ class BackgammonWindow : MainWindow {
     Button inetGameBtn;
 
     BackgammonBoard backgammonBoard;
+    NetworkingThread netThread;
 
     this() {
         super("Backgammon");
@@ -43,6 +46,8 @@ class BackgammonWindow : MainWindow {
         inetGameBtn.addOnClicked((Button b) {
             import networkWidget;
             auto w = new NetworkWidget(this);
+            netThread = new NetworkingThread();
+            netThread.start();
         });
         header.packStart(inetGameBtn);
 

@@ -14,7 +14,6 @@ import window;
 
 void main(string[] args) 
 {
-    serviceDiscovery();
     Main.init(args);
 
     auto window = new BackgammonWindow();

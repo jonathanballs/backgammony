@@ -62,7 +62,7 @@ class NetworkWidget : Dialog {
             "numwanted": "0",
             "event": "started",
         ]);
-        this.announceTask.executeInNewThread();
+        // this.announceTask.executeInNewThread();
 
         writeln("adding tick callback");
         this.addTickCallback(&checkPid);

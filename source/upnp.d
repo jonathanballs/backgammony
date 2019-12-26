@@ -74,8 +74,6 @@ ushort openPort(ushort portNumber, string SOAPUrl) {
    ~ "</s:Body>"
    ~ "</s:Envelope>\n";
 
-   writeln(requestBody);
-
    Request rq;
    rq.addHeaders([
        "SOAPAction": "\"urn:schemas-upnp-org:service:WANPPPConnection:1#AddPortMapping\"",
@@ -83,8 +81,6 @@ ushort openPort(ushort portNumber, string SOAPUrl) {
        "Content-Type": "text/xml",
     ]);
    auto resp = rq.post(SOAPUrl, requestBody);
-   writeln(resp.responseBody);
-
    return portNumber;
 }
 
