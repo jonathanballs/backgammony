@@ -8,7 +8,6 @@ import gtk.Image;
 import gtk.Label;
 import gtk.Main;
 import gtk.MainWindow;
-import upnp;
 
 import window;
 

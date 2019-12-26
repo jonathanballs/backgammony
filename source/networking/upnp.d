@@ -1,4 +1,4 @@
-module upnp;
+module networking.upnp;
 
 import std.array;
 import std.conv;

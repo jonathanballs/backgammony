@@ -1,7 +1,7 @@
 module networking;
 
 import core.thread;
-import upnp;
+import networking.upnp;
 
 // Networking is a core part of backgammon. This module provides an implementation
 // of the Secure Backgammon Protocol and provides the backbone of all networking

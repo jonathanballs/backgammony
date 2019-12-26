@@ -15,7 +15,6 @@ import gtk.Widget;
 
 import boardWidget;
 import networking;
-import upnp;
 
 class BackgammonWindow : MainWindow {
     HeaderBar header;
