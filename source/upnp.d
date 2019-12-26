@@ -1,8 +1,11 @@
 module upnp;
-import std.stdio;
-import std.socket;
-import std.string;
+
 import std.array;
+import std.conv;
+import std.format;
+import std.socket;
+import std.stdio;
+import std.string;
 import std.uni;
 import std.xml;
 import core.thread;
@@ -53,6 +56,38 @@ private string getIGDurl(string location) {
     return IGDUrl;
 }
 
+ushort openPort(ushort portNumber, string SOAPUrl) {
+    string requestBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+   ~ "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" "
+   ~ "s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
+   ~ "<s:Body>"
+   ~ "<u:AddPortMapping xmlns:u=\"urn:schemas-upnp-org:service:WANPPPConnection:1\">"
+   ~ "<NewRemoteHost />"
+   ~ format!"<NewExternalPort>%d</NewExternalPort>"(portNumber)
+   ~ "<NewProtocol>TCP</NewProtocol>"
+   ~ format!"<NewInternalPort>%s</NewInternalPort>"(portNumber)
+   ~ "<NewInternalClient>192.168.1.150</NewInternalClient>"
+   ~ "<NewEnabled>1</NewEnabled>"
+   ~ "<NewPortMappingDescription>Secure Backgammon Protocol</NewPortMappingDescription>"
+   ~ "<NewLeaseDuration>0</NewLeaseDuration>"
+   ~ "</u:AddPortMapping>"
+   ~ "</s:Body>"
+   ~ "</s:Envelope>\n";
+
+   writeln(requestBody);
+
+   Request rq;
+   rq.addHeaders([
+       "SOAPAction": "\"urn:schemas-upnp-org:service:WANPPPConnection:1#AddPortMapping\"",
+    //    "Content-Length": to!string(requestBody.length),
+       "Content-Type": "text/xml",
+    ]);
+   auto resp = rq.post(SOAPUrl, requestBody);
+   writeln(resp.responseBody);
+
+   return portNumber;
+}
+
 // Service discovery
 void serviceDiscovery() {
     auto msg = "M-SEARCH * HTTP/1.1\r\n"
@@ -84,7 +119,10 @@ void serviceDiscovery() {
                 if (headerKV.length < 2) continue;
                 if (headerKV[0].toLower() == "location") {
                     auto IGDLocation = getIGDurl(headerKV[1].chomp);
-                    if (IGDLocation.length) writeln("Final IGD: ", IGDLocation);
+                    if (IGDLocation.length) {
+                        openPort(42069, IGDLocation);
+                        writeln("Final IGD: ", IGDLocation);
+                    }
                 }
             }
         }
