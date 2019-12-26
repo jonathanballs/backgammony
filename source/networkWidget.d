@@ -7,14 +7,16 @@ import std.digest.sha;
 import requests;
 import bencode;
 
+import gdk.FrameClock;
 import gtk.Dialog;
-import gtk.Window;
+import gtk.Label;
 import gtk.Spinner;
 import gtk.Widget;
-import gdk.FrameClock;
+import gtk.Window;
 
 class NetworkWidget : Dialog {
     Spinner spinner;
+    Label statusMessage;
 
     Task!(getContent, string, string[string])* announceTask;
 
@@ -27,7 +29,7 @@ class NetworkWidget : Dialog {
         this.setPosition(GtkWindowPosition.CENTER_ON_PARENT);
         this.setTypeHint(GdkWindowTypeHint.DIALOG);
         this.setModal(true);
-        this.setSizeRequest(400, 200);
+        this.setSizeRequest(400, 175);
         this.setTitle("Network Game");
 
         /**
@@ -38,12 +40,13 @@ class NetworkWidget : Dialog {
         spinner.setMarginTop(15);
         spinner.setMarginBottom(15);
         this.getContentArea().add(spinner);
+        statusMessage = new Label("Loading network...");
+        this.getContentArea().add(statusMessage);
 
         import std.string;
         import std.random;
         import std.conv;
         string info_hash = sha1Of("backgammon").toHexString()[0..20];
-        writeln(info_hash);
         // Generate a random peer_id
         auto rnd = Random(unpredictableSeed);
         string peer_id = "";
@@ -64,7 +67,6 @@ class NetworkWidget : Dialog {
         ]);
         // this.announceTask.executeInNewThread();
 
-        writeln("adding tick callback");
         this.addTickCallback(&checkPid);
         this.showAll();
     }

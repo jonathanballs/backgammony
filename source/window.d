@@ -1,5 +1,8 @@
 module window;
 
+import std.concurrency;
+import core.thread;
+
 import gdk.FrameClock;
 import gio.ThemedIcon;
 import gtk.Box;
@@ -15,6 +18,7 @@ import gtk.Widget;
 
 import boardWidget;
 import networking;
+import networkWidget;
 
 class BackgammonWindow : MainWindow {
     HeaderBar header;
@@ -22,7 +26,8 @@ class BackgammonWindow : MainWindow {
     Button inetGameBtn;
 
     BackgammonBoard backgammonBoard;
-    NetworkingThread netThread;
+    NetworkWidget networkingWidget;
+    Thread netThread;
 
     this() {
         super("Backgammon");
@@ -44,9 +49,10 @@ class BackgammonWindow : MainWindow {
         inetGameBtn.add(inetImg);
         inetGameBtn.addOnClicked((Button b) {
             import networkWidget;
-            auto w = new NetworkWidget(this);
-            netThread = new NetworkingThread();
-            netThread.start();
+            netThread = new NetworkingThread().start();
+            import std.stdio;
+            writeln(netThread.isRunning);
+            networkingWidget = new NetworkWidget(this);
         });
         header.packStart(inetGameBtn);
 
@@ -61,6 +67,23 @@ class BackgammonWindow : MainWindow {
 
         this.add(backgammonBoard);
         this.setDefaultSize(800, 600);
+
+        this.addTickCallback(&handleThreadMessages);
+    }
+
+    bool handleThreadMessages(Widget w, FrameClock f) {
+        import networking.messages;
+        import std.stdio;
+
+        if (netThread && netThread.isRunning) {
+            receiveTimeout(5.msecs,
+                (NetworkThreadStatus status) {
+                    writeln("Received message: ", status.message);
+                    this.networkingWidget.statusMessage.setText(status.message);
+                }
+            );
+        }
+        return true;
     }
 
     override void addTickCallback(bool delegate(Widget, FrameClock) callback)
