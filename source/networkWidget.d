@@ -43,47 +43,8 @@ class NetworkWidget : Dialog {
         statusMessage = new Label("Loading network...");
         this.getContentArea().add(statusMessage);
 
-        import std.string;
-        import std.random;
-        import std.conv;
-        string info_hash = sha1Of("backgammon").toHexString()[0..20];
-        // Generate a random peer_id
-        auto rnd = Random(unpredictableSeed);
-        string peer_id = "";
-        string hex = "abcdefghijklmnopqrstuvyxyz1234567890";
-        foreach (i; 0..20) {
-            peer_id ~= hex[uniform(0, hex.length)];
-        }
-
-        this.announceTask = task!getContent("http://localhost:8100/announce", [
-            "info_hash": info_hash,
-            "peer_id": peer_id,
-            "port": to!string(uniform(1000, 6000)),
-            "uploaded": "0",
-            "downloaded": "0",
-            "left": "0",
-            "numwanted": "0",
-            "event": "started",
-        ]);
-        // this.announceTask.executeInNewThread();
-
-        this.addTickCallback(&checkPid);
         this.showAll();
     }
-
-    bool checkPid(Widget w, FrameClock f) {
-        if (announceTask.done) {
-            ubyte[] response = announceTask.yieldForce().data();
-            writeln(cast(string) response);
-            auto debencoded = bencodeParse(response);
-            auto peers = debencoded["peers"];
-            writeln(peers);
-            writeln(peers.list());
-            return false;
-        }
-        return true;
-    }
-
 
     override void addTickCallback(bool delegate(Widget, FrameClock) callback)
     {
