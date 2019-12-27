@@ -215,7 +215,8 @@ class BackgammonBoard : DrawingArea {
             // Draw numbers
             cr.moveTo(c.x, c.y + (i <= 12 ? 20 : -10));
             cr.setSourceRgb(1.0, 1.0, 1.0);
-            cr.showText(to!string(i));
+            import std.stdio;
+            cr.showText(i.to!string);
             cr.newPath();
         }
     }

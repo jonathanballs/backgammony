@@ -21,16 +21,28 @@ class NetworkingThread : Thread {
     private:
     TcpSocket socket;
     Tid parentTid;
+    ushort portNumber;
+
+    void bindPort(ushort portNumber) {
+        socket = new TcpSocket();
+        socket.setOption(SocketOptionLevel.SOCKET, SocketOption.REUSEADDR, true);
+        try {
+            socket.bind(new InternetAddress(portNumber));
+            socket.listen(1);
+            this.portNumber = portNumber;
+        } catch (SocketOSException e) {
+            if (e.message == "Unable to bind socket: Address already in use") {
+                bindPort(++portNumber);
+            }
+        }
+    }
 
     void run() {
         try {
             writeln("sending status");
             send(parentTid, NetworkThreadStatus("Exposing SBP ports..."));
             // 1. Open port 42069
-            socket = new TcpSocket();
-            socket.setOption(SocketOptionLevel.SOCKET, SocketOption.REUSEADDR, true);
-            socket.bind(new InternetAddress(42069));
-            socket.listen(1);
+            bindPort(42069);
 
             // 2. Upnp
             serviceDiscovery();

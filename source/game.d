@@ -173,7 +173,10 @@ struct GameState {
                         Player.PLAYER_1 ? pointIndex-moveValue : pointIndex+moveValue,
                         moveValue);
                     if (isValidMovement(potentialMovement)) {
-                        auto nextMoves = generatePossibleMovements(moveValues.dup.remove(i));
+                        GameState potentialGS = this;
+                        potentialGS.applyMove(potentialMovement);
+                        auto nextMoves = potentialGS.generatePossibleMovements(moveValues.dup.remove(i));
+
                         if (nextMoves) {
                             foreach (m; nextMoves) ret ~= [[potentialMovement] ~ m];
                         } else {
@@ -191,8 +194,8 @@ struct GameState {
         assert(isValidMovement(pipMovement));
 
         if (pipMovement.moveType == PipMoveType.Movement) {
-            if (--board.points[pipMovement.startPoint].numPieces) {
-                // board.points[pipMovement.startPoint].owner = Player.NONE;
+            if (!--board.points[pipMovement.startPoint].numPieces) {
+                board.points[pipMovement.startPoint].owner = Player.NONE;
             }
 
             if (board.points[pipMovement.endPoint].owner == currentTurn.opposite()) {

@@ -51,6 +51,7 @@ private string getIGDurl(string location) {
 
     } catch (Exception e) {
         writeln("Error getting IGD URL: ", location);
+        return "";
     }
 
     return IGDUrl;
@@ -118,6 +119,7 @@ void serviceDiscovery() {
                     if (IGDLocation.length) {
                         openPort(42069, IGDLocation);
                         writeln("Final IGD: ", IGDLocation);
+                        break;
                     }
                 }
             }
