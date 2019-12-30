@@ -106,7 +106,7 @@ void serviceDiscovery() {
     ubyte[10_000] buf;
     long numBytesRecieved;
 
-    do {
+    outer: do {
         numBytesRecieved = socket.receiveFrom(buf);
         if (numBytesRecieved > 0) {
             auto response = cast(string) (buf[0..numBytesRecieved]);
@@ -119,7 +119,7 @@ void serviceDiscovery() {
                     if (IGDLocation.length) {
                         openPort(42069, IGDLocation);
                         writeln("Final IGD: ", IGDLocation);
-                        break;
+                        break outer;
                     }
                 }
             }

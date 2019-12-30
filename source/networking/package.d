@@ -1,6 +1,7 @@
 module networking;
 
 import core.thread;
+import core.time;
 import std.socket;
 import std.stdio;
 import std.concurrency;
@@ -15,7 +16,7 @@ import networking.messages;
 
 alias Opponent = Tuple!(
     string, "peer_id",
-    string, "address",
+    string, "ip",
     ushort, "port");
 
 class NetworkingThread : Thread {
@@ -31,10 +32,13 @@ class NetworkingThread : Thread {
     string peer_id;
 
     void bindPort(ushort portNumber) {
-        socket = new TcpSocket();
+        socket = new TcpSocket(AddressFamily.INET6);
         socket.setOption(SocketOptionLevel.SOCKET, SocketOption.REUSEADDR, true);
         try {
-            socket.bind(new InternetAddress(portNumber));
+            // socket.bind(new InternetAddress(portNumber));
+            socket.bind(new Internet6Address("::1", portNumber));
+            import std.conv : to;
+            writeln("listening on [::1]:" ~ portNumber.to!string);
             socket.listen(1);
             this.portNumber = portNumber;
         } catch (SocketOSException e) {
@@ -44,22 +48,54 @@ class NetworkingThread : Thread {
         }
     }
 
+    bool attemptConnection(Opponent opponent) {
+        if (opponent.port == this.portNumber) return false;
+
+        // Try to connect to an opponent.
+        auto address = parseAddress(opponent.ip, opponent.port);
+        writeln("attempting to connect to ", address);
+
+        TcpSocket socket = new TcpSocket(address);
+        socket.send("TBP/1.0\r\n");
+        // socket.setOption(SocketOptionLevel.IP , SocketOption.RCVTIMEO, 2.seconds);
+        // socket.setOption(SocketOptionLevel.IPV6 , SocketOption.RCVTIMEO, 2.seconds);
+
+        auto buffer = new ubyte[2056];
+        ptrdiff_t amountRead;
+        amountRead = socket.receive(buffer);
+        if (amountRead == 0) return false;
+
+        writeln("Received: ", cast(string) buffer[0..amountRead]);
+
+        return true;
+    }
+
     void run() {
         try {
-            writeln("sending status");
             send(parentTid, NetworkThreadStatus("Exposing SBP ports..."));
             // 1. Open port 42069
             bindPort(42069);
 
             // 2. Upnp
-            serviceDiscovery();
+            // serviceDiscovery();
 
-            send(parentTid, NetworkThreadStatus("Finding p2p opponent..."));
-
+            send(parentTid, NetworkThreadStatus("Matchmaking..."));
             // 3. Connect to torrent tracker
             auto opps = findTrackerOpponents();
             writeln(opps);
 
+            // 4. Attempt to connect to other players
+            writeln("Attempting to connect to other players");
+            foreach (o; opps) {
+                try {
+                    attemptConnection(o);
+                    writeln("Connected to ", o);
+                } catch (Exception e) {
+                    writeln("Failed to connect: ", e);
+                }
+            }
+
+            writeln("Listening for other players");
             // 4. Wait for connections and matchmake
             while(true) {
                 Socket client = socket.accept();
@@ -72,6 +108,7 @@ class NetworkingThread : Thread {
                     "HTTP/1.0 200 OK\nContent-Type: text/html; charset=utf-8\n\n";
 
                 string response = header ~ "Hello World!\n";
+                client.blocking = true;
                 client.send(response);
 
                 client.shutdown(SocketShutdown.BOTH);
@@ -113,6 +150,8 @@ class NetworkingThread : Thread {
 
         auto debencoded = bencodeParse(response);
         auto peers = debencoded["peers"];
+
+        if (!peers) return [];
 
         Opponent[] ret;
 
