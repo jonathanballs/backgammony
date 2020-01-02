@@ -252,18 +252,40 @@ class NetworkingThread : Thread {
     uint[] performDiceRoll(bool goFirst) {
         ulong mySeed = uniform!ulong();
         string oppSeedHash;
+        string oppSeed;
 
         writeln("mySeed: ", mySeed);
         if (goFirst) {
             sendNetworkLine("DICEROLL");
+
             sendNetworkLine(networkHash(mySeed.to!string));
             oppSeedHash = getNetworkLine();
+            sendNetworkLine(mySeed.to!string);
+            oppSeed = getNetworkLine();
         } else {
             getNetworkLine();
-            getNetworkLine();
+
+            oppSeedHash = getNetworkLine();
             sendNetworkLine(networkHash(mySeed.to!string));
+            oppSeed = getNetworkLine();
+            sendNetworkLine(mySeed.to!string);
         }
 
-        return [];
+        // Validate the seeds
+        if (networkHash(oppSeed) != oppSeedHash) {
+            writeln("INVALID: HASH DOES NOT MATCH SEED!!!");
+            throw new Exception("Invalid seed hash received in dice roll");
+        }
+
+        // Calculate dice roll
+        ulong oppSeedNum = oppSeed.to!ulong;
+        ulong rSeed = mySeed ^ oppSeedNum;
+        auto rng = Mt19937_64(rSeed);
+
+        auto die1 = uniform(1, 6, rng);
+        auto die2 = uniform(1, 6, rng);
+
+        writeln([die1, die2]);
+        return [die1, die2];
     }
 }
