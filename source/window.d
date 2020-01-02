@@ -50,8 +50,6 @@ class BackgammonWindow : MainWindow {
         inetGameBtn.addOnClicked((Button b) {
             import networkWidget;
             netThread = new NetworkingThread().start();
-            import std.stdio;
-            writeln(netThread.isRunning);
             networkingWidget = new NetworkWidget(this);
         });
         header.packStart(inetGameBtn);
@@ -80,6 +78,10 @@ class BackgammonWindow : MainWindow {
                 (NetworkThreadStatus status) {
                     writeln("Received message: ", status.message);
                     this.networkingWidget.statusMessage.setText(status.message);
+                },
+                (NetworkThreadError error) {
+                    this.networkingWidget.statusMessage.setText(error.message);
+                    this.networkingWidget.spinner.stop();
                 }
             );
         }

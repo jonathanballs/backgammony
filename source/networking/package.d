@@ -38,7 +38,7 @@ class NetworkingThread : Thread {
             // socket.bind(new InternetAddress(portNumber));
             socket.bind(new Internet6Address("::1", portNumber));
             import std.conv : to;
-            writeln("listening on [::1]:" ~ portNumber.to!string);
+            writeln("Listening on [::1]:" ~ portNumber.to!string);
             socket.listen(1);
             this.portNumber = portNumber;
         } catch (SocketOSException e) {
@@ -48,6 +48,7 @@ class NetworkingThread : Thread {
         }
     }
 
+    // Attempt to connect to an opponent
     bool attemptConnection(Opponent opponent) {
         if (opponent.port == this.portNumber) return false;
 
@@ -81,17 +82,25 @@ class NetworkingThread : Thread {
 
             send(parentTid, NetworkThreadStatus("Matchmaking..."));
             // 3. Connect to torrent tracker
-            auto opps = findTrackerOpponents();
-            writeln(opps);
+
+            Opponent[] opps;
+            try {
+                opps = findTrackerOpponents();
+            } catch (Exception e) {
+                send(parentTid, NetworkThreadError(
+                    "Failed to connect to matchmaking tracker: " ~ cast(string) e.message));
+            }
 
             // 4. Attempt to connect to other players
-            writeln("Attempting to connect to other players");
+            import std.format;
+            writeln(format!"Attempting to connect to %d other players"(opps.length));
             foreach (o; opps) {
                 try {
                     attemptConnection(o);
-                    writeln("Connected to ", o);
+                    writeln("Connected to ", o.ip, ":", o.port);
+                    break;
                 } catch (Exception e) {
-                    writeln("Failed to connect: ", e);
+                    writeln("Failed to connect: ", e.message);
                 }
             }
 
@@ -102,7 +111,7 @@ class NetworkingThread : Thread {
                 char[1024] buffer;
                 auto received = client.receive(buffer);
 
-                writefln("The client said:\n%s", buffer[0.. received]);
+                writefln("The client said:\n%s", buffer[0..received]);
 
                 enum header =
                     "HTTP/1.0 200 OK\nContent-Type: text/html; charset=utf-8\n\n";
@@ -116,6 +125,8 @@ class NetworkingThread : Thread {
             }
         } catch (Exception e) {
             writeln(e);
+            send(parentTid, NetworkThreadError(
+                "Network Thread Exception: " ~ cast(string) e.message));
         }
     }
 
