@@ -82,14 +82,16 @@ class BackgammonWindow : MainWindow {
                 (NetworkThreadError error) {
                     this.networkingWidget.statusMessage.setText(error.message);
                     this.networkingWidget.spinner.stop();
+                },
+                (NetworkBeginGame game) {
+                    this.networkingWidget.destroy();
                 }
             );
         }
         return true;
     }
 
-    override void addTickCallback(bool delegate(Widget, FrameClock) callback)
-    {
+    override void addTickCallback(bool delegate(Widget, FrameClock) callback) {
         tickCallbackListeners ~= callback;
         static bool connected;
 
@@ -102,8 +104,7 @@ class BackgammonWindow : MainWindow {
         connected = true;
     }
 
-    extern(C) static int tickCallback(GtkWidget* widgetStruct, GdkFrameClock* frameClock, Widget _widget)
-    {
+    extern(C) static int tickCallback(GtkWidget* widgetStruct, GdkFrameClock* frameClock, Widget _widget) {
         import std.algorithm.iteration : filter;
         import std.array : array;
         _widget.tickCallbackListeners = _widget.tickCallbackListeners.filter!((dlg) {
