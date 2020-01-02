@@ -26,7 +26,7 @@ import networking.messages;
 // - Use against proper tracker
 // - Basically entire game logic
 // - Move connection logic to its own set of methods.
-// - Validate that strings are valid
+// - Validate that strings are valid UTF-8
 // - Ensure correct version of TBP
 
 alias Opponent = Tuple!(
@@ -285,7 +285,12 @@ class NetworkingThread : Thread {
         auto die1 = uniform(1, 6, rng);
         auto die2 = uniform(1, 6, rng);
 
+        send(parentTid, NetworkNewDiceRoll(die1, die2));
+
         writeln([die1, die2]);
+        getNetworkLine();
+        getNetworkLine();
+        getNetworkLine();
         return [die1, die2];
     }
 }

@@ -55,7 +55,7 @@ class BackgammonWindow : MainWindow {
         header.packStart(inetGameBtn);
 
         // Game board
-        auto backgammonBoard = new BackgammonBoard();
+        backgammonBoard = new BackgammonBoard();
         auto box   = new Box(GtkOrientation.HORIZONTAL, 0);
         box.setHalign(GtkAlign.FILL);
         box.setValign(GtkAlign.FILL);
@@ -85,6 +85,10 @@ class BackgammonWindow : MainWindow {
                 },
                 (NetworkBeginGame game) {
                     this.networkingWidget.destroy();
+                },
+                (NetworkNewDiceRoll diceRoll) {
+                    this.backgammonBoard.gameState.diceRoll = [diceRoll.dice1, diceRoll.dice2];
+                    this.backgammonBoard.rollDice();
                 }
             );
         }

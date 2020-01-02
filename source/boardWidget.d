@@ -67,8 +67,6 @@ class BackgammonBoard : DrawingArea {
             writeln("click");
             return false;
         });
-
-        rollDice();
     }
 
     private struct ScreenCoords {
