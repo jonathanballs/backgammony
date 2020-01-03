@@ -29,6 +29,12 @@ import networking.messages;
 // - Validate that strings are valid UTF-8
 // - Ensure correct version of TBP
 
+// NOTES
+// Player 1 and 2 have nothing to do with the game
+
+// - Game process - use gamestate??
+// - Agree who is player 1
+
 alias Opponent = Tuple!(
     string, "peer_id",
     string, "ip",
@@ -138,14 +144,7 @@ class NetworkingThread : Thread {
             send(parentTid, NetworkThreadStatus("Matchmaking..."));
             // 3. Connect to torrent tracker
 
-            Opponent[] opps;
-            try {
-                opps = findTrackerOpponents();
-            } catch (Exception e) {
-                // TODO: Can this be caught higher up?
-                send(parentTid, NetworkThreadError(
-                    "Failed to connect to matchmaking tracker: " ~ cast(string) e.message));
-            }
+            Opponent[] opps = findTrackerOpponents();
 
             // 4. Attempt to connect to other players
             writeln(format!"Attempting to connect to %d other players"(opps.length));
@@ -186,54 +185,50 @@ class NetworkingThread : Thread {
         }
     }
 
+    // Attach to tracker and find a list of opponents. Returns 
     Opponent[] findTrackerOpponents() {
-        import std.string;
-        import std.random;
-        import std.conv;
-        import bencode;
         import requests;
+        import bencode;
 
-        string info_hash = sha1Of("backgammon").toHexString().dup[0..20];
-        // Generate a random peer_id
-        auto rnd = Random(unpredictableSeed);
-        peer_id = "";
-        string hex = "abcdefghijklmnopqrstuvyxyz1234567890";
-        foreach (i; 0..20) {
-            peer_id ~= hex[uniform(0, hex.length)];
-        }
+        try {
+            // Generate a random peer_id
+            string hex = "abcdefghijklmnopqrstuvyxyz1234567890";
+            foreach (i; 0..20)
+                peer_id ~= hex[uniform!"[]"(0, hex.length)];
 
-        auto response = getContent("http://localhost:8000/announce", [
-            "info_hash": info_hash,
-            "peer_id": peer_id,
-            "port": portNumber.to!string,
-            "uploaded": "0",
-            "downloaded": "0",
-            "left": "0",
-            "numwanted": "0",
-            "event": "started",
-            "compact": "0",
-        ]).data();
+            // Announce presence to torrent tracker
+            auto peers = getContent("http://localhost:8000/announce", [
+                "info_hash": cast(string) sha1Of("backgammon").toHexString().dup[0..20],
+                "peer_id": peer_id,
+                "port": portNumber.to!string,
+                "uploaded": "0",
+                "downloaded": "0",
+                "left": "0",
+                "numwanted": "0",
+                "event": "started",
+                "compact": "0",
+            ]).data().bencodeParse()["peers"];
+            if (!peers) return [];
 
-        auto debencoded = bencodeParse(response);
-        auto peers = debencoded["peers"];
+            Opponent[] ret;
+            foreach(uint i; 0.. cast(uint)peers.list.length) {
+                auto opponent = Opponent(
+                    *(peers[i]["peer id"].str()),
+                    *(peers[i]["ip"].str()),
+                    cast(ushort) (peers[i]["port"].integer().toInt()),
+                );
 
-        if (!peers) return [];
-
-        Opponent[] ret;
-
-        foreach(uint i; 0.. cast(uint)peers.list.length) {
-            auto opponent = Opponent(
-                *(peers[i]["peer id"].str()),
-                *(peers[i]["ip"].str()),
-                cast(ushort) (peers[i]["port"].integer().toInt()),
-            );
-
-            if (opponent.peer_id != this.peer_id) {
-                ret ~= opponent;
+                if (opponent.peer_id != this.peer_id) {
+                    ret ~= opponent;
+                }
             }
-        }
 
-        return ret;
+            return ret;
+        } catch (Exception e) {
+            writeln("Error connecting to tracker: ", e.message);
+            send(parentTid, NetworkThreadError(cast(string) e.message));
+            return [];
+        }
     }
 
     string networkHash(string s) {
