@@ -5,15 +5,15 @@ import core.time;
 import std.socket;
 import std.stdio;
 import std.concurrency;
-import std.typecons;
 import std.format;
 import std.random;
 import std.conv;
 import std.string;
 import std.digest.sha;
 
-import networking.upnp;
 import networking.messages;
+import networking.matchmaking;
+import networking.connection;
 
 // Networking is a core part of backgammon. This module provides an implementation
 // of the Secure Backgammon Protocol and provides the backbone of all networking
@@ -27,18 +27,9 @@ import networking.messages;
 // - Basically entire game logic
 // - Move connection logic to its own set of methods.
 // - Validate that strings are valid UTF-8
-// - Ensure correct version of TBP
-
-// NOTES
-// Player 1 and 2 have nothing to do with the game
 
 // - Game process - use gamestate??
-// - Agree who is player 1
-
-alias Opponent = Tuple!(
-    string, "peer_id",
-    string, "ip",
-    ushort, "port");
+// - Agree who plays first (and thus is p1)
 
 class NetworkingThread : Thread {
     this() {
@@ -47,187 +38,20 @@ class NetworkingThread : Thread {
     }
 
     private:
-    TcpSocket socket; // Server
-    Socket conn; // Connection with the other computer
-
     Tid parentTid;
-    ushort portNumber;
-    string peer_id;
 
-    void bindPort(ushort portNumber) {
-        socket = new TcpSocket(AddressFamily.INET6);
-        socket.setOption(SocketOptionLevel.SOCKET, SocketOption.REUSEADDR, true);
-        try {
-            // socket.bind(new InternetAddress(portNumber));
-            socket.bind(new Internet6Address("::1", portNumber));
-            import std.conv : to;
-            writeln("Listening on [::1]:" ~ portNumber.to!string);
-            socket.listen(1);
-            this.portNumber = portNumber;
-        } catch (SocketOSException e) {
-            if (e.message == "Unable to bind socket: Address already in use") {
-                bindPort(++portNumber);
-            }
-        }
-    }
-
-    /// Read a line from the network connection
-    string recBuffer;
-    string getNetworkLine() {
-        while (recBuffer.indexOf('\n') == -1) {
-            auto buffer = new ubyte[2056];
-            ptrdiff_t amountRead;
-            amountRead = conn.receive(buffer);
-            if (amountRead == Socket.ERROR) {
-                writeln("Socket Error: ", conn.getErrorText());
-            }
-            recBuffer ~= cast(string) buffer[0..amountRead];
-
-            if (amountRead == 0) {
-                throw new Exception("Tried to getNetworkLine but connection is closed");
-            }
-        }
-
-        auto nlIndex = recBuffer.indexOf('\n');
-        if (nlIndex) {
-            string ret = recBuffer[0..nlIndex];
-            recBuffer = recBuffer[nlIndex+1..$];
-            writeln("NETGET: ", ret);
-            return ret;
-        } else {
-            throw new Exception("Tried to getNetworkLine but connection is closed");
-        }
-    }
-
-    void sendNetworkLine(string s) {
-        writeln("NETSND: ", s);
-        conn.send(s ~ "\n");
-    }
-
-    // Attempt to connect to an opponent as a client
-    // TODO: Return a connection or null perhaps? P2P will want more details.
-    bool attemptConnection(Opponent opponent) {
-        // TODO: Dont connect to self I guess :D
-        if (opponent.port == this.portNumber) return false;
-
-        // Try to connect to an opponent and send TBP header
-        auto address = parseAddress(opponent.ip, opponent.port);
-        writeln("Attempting to connect to ", address);
-        TcpSocket socket = new TcpSocket(address);
-        writeln("NETSND: TBP/1.0");
-        socket.send("TBP/1.0\n");
-
-        auto buffer = new ubyte[2056];
-        ptrdiff_t amountRead = socket.receive(buffer);
-        if (amountRead <= 0) return false;
-
-        writeln("NETGET: ", cast(string) buffer[0..amountRead]);
-
-        // If we have found someone then stop listening on ours.
-        if (buffer[0..amountRead] == cast(ubyte[]) "TBP/1.0\n") {
-            writeln("Found client :))))))");
-            this.conn = socket;
-        }
-
-        return true;
-    }
+    Connection conn; // Connection with the other computer
+    string peer_id; // My peer id
 
     void run() {
         try {
-            send(parentTid, NetworkThreadStatus("Exposing SBP ports..."));
-            // 1. Open port 42069
-            bindPort(42069);
-
-            // 2. Upnp
-            // serviceDiscovery();
-
             send(parentTid, NetworkThreadStatus("Matchmaking..."));
-            // 3. Connect to torrent tracker
-
-            Opponent[] opps = findTrackerOpponents();
-
-            // 4. Attempt to connect to other players
-            writeln(format!"Attempting to connect to %d other players"(opps.length));
-            foreach (o; opps) {
-                try {
-                    // Attempt connection, return socket if ready to play...
-                    if (attemptConnection(o)) {
-                        writeln("Connected to ", o.ip, ":", o.port);
-                        beginBackgammonGame(false);
-                        break;
-                    }
-                } catch (Exception e) {
-                    writeln("Failed to connect: ", e.message);
-                }
-            }
-
-            // 4. Wait for connections and matchmake
-            writeln("Unable to connect... So waiting for connections");
-            while(true) {
-                Socket client = socket.accept();
-                char[1024] buffer;
-                auto received = client.receive(buffer);
-
-                string response = "TBP/1.0\n";
-                client.blocking = true;
-                client.send(response);
-
-                this.conn = client;
-                beginBackgammonGame(true);
-
-                client.shutdown(SocketShutdown.BOTH);
-                client.close();
-            }
+            this.conn = new MatchMaker().getConnection();
+            beginBackgammonGame(conn.isHost);
         } catch (Exception e) {
-            writeln(e);
+            writeln("Network Thread Exception:", e);
             send(parentTid, NetworkThreadError(
                 "Network Thread Exception: " ~ cast(string) e.message));
-        }
-    }
-
-    // Attach to tracker and find a list of opponents. Returns 
-    Opponent[] findTrackerOpponents() {
-        import requests;
-        import bencode;
-
-        try {
-            // Generate a random peer_id
-            string hex = "abcdefghijklmnopqrstuvyxyz1234567890";
-            foreach (i; 0..20)
-                peer_id ~= hex[uniform!"[]"(0, hex.length)];
-
-            // Announce presence to torrent tracker
-            auto peers = getContent("http://localhost:8000/announce", [
-                "info_hash": cast(string) sha1Of("backgammon").toHexString().dup[0..20],
-                "peer_id": peer_id,
-                "port": portNumber.to!string,
-                "uploaded": "0",
-                "downloaded": "0",
-                "left": "0",
-                "numwanted": "0",
-                "event": "started",
-                "compact": "0",
-            ]).data().bencodeParse()["peers"];
-            if (!peers) return [];
-
-            Opponent[] ret;
-            foreach(uint i; 0.. cast(uint)peers.list.length) {
-                auto opponent = Opponent(
-                    *(peers[i]["peer id"].str()),
-                    *(peers[i]["ip"].str()),
-                    cast(ushort) (peers[i]["port"].integer().toInt()),
-                );
-
-                if (opponent.peer_id != this.peer_id) {
-                    ret ~= opponent;
-                }
-            }
-
-            return ret;
-        } catch (Exception e) {
-            writeln("Error connecting to tracker: ", e.message);
-            send(parentTid, NetworkThreadError(cast(string) e.message));
-            return [];
         }
     }
 
@@ -249,21 +73,20 @@ class NetworkingThread : Thread {
         string oppSeedHash;
         string oppSeed;
 
-        writeln("mySeed: ", mySeed);
         if (goFirst) {
-            sendNetworkLine("DICEROLL");
+            conn.writeline("DICEROLL");
 
-            sendNetworkLine(networkHash(mySeed.to!string));
-            oppSeedHash = getNetworkLine();
-            sendNetworkLine(mySeed.to!string);
-            oppSeed = getNetworkLine();
+            conn.writeline(networkHash(mySeed.to!string));
+            oppSeedHash = conn.readline();
+            conn.writeline(mySeed.to!string);
+            oppSeed = conn.readline();
         } else {
-            getNetworkLine();
+            conn.readline(); // Reads diceroll
 
-            oppSeedHash = getNetworkLine();
-            sendNetworkLine(networkHash(mySeed.to!string));
-            oppSeed = getNetworkLine();
-            sendNetworkLine(mySeed.to!string);
+            oppSeedHash = conn.readline();
+            conn.writeline(networkHash(mySeed.to!string));
+            oppSeed = conn.readline();
+            conn.writeline(mySeed.to!string);
         }
 
         // Validate the seeds
@@ -283,9 +106,7 @@ class NetworkingThread : Thread {
         send(parentTid, NetworkNewDiceRoll(die1, die2));
 
         writeln([die1, die2]);
-        getNetworkLine();
-        getNetworkLine();
-        getNetworkLine();
+        conn.readline();
         return [die1, die2];
     }
 }

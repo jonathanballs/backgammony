@@ -76,7 +76,6 @@ class BackgammonWindow : MainWindow {
         if (netThread && netThread.isRunning) {
             receiveTimeout(5.msecs,
                 (NetworkThreadStatus status) {
-                    writeln("Received message: ", status.message);
                     this.networkingWidget.statusMessage.setText(status.message);
                 },
                 (NetworkThreadError error) {
