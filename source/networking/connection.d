@@ -1,5 +1,7 @@
 module networking.connection;
 
+import core.time;
+import core.thread;
 import std.socket;
 import std.stdio;
 import std.string;
@@ -20,16 +22,23 @@ class Connection {
         this.isHost = false;
         this.conn = new TcpSocket(address);
 
-        this.writeline(protocolHeader);
-        auto response = this.readline();
+        string responseHeader;
+        try {
+            this.writeline(protocolHeader);
+            responseHeader = this.readline(1.seconds);
+        } catch (Exception e) {
+            this.close();
+            throw e;
+        }
 
-        if (response != protocolHeader)
-            throw new Exception("Unexpected Response on connection: " ~ response);
+        if (responseHeader != protocolHeader) {
+            throw new Exception("Unexpected Response on connection: " ~ responseHeader);
+        }
 
         writeln("Connection achieved with ", address);
     }
 
-    this (Socket socket, bool isHost = true) {
+    this(Socket socket, bool isHost = true) {
         this.address = socket.remoteAddress;
         this.conn = socket;
 
@@ -48,22 +57,42 @@ class Connection {
     }
 
     /// Read a line (newline excluded) syncronously from the current connection.
-    string readline() {
+    /// ARGS:
+    ///   timeout: How long before throwing timeout exception. Leave for unlimited.
+    string readline(Duration timeout = Duration.zero) {
         static string recBuffer;
-        while (recBuffer.indexOf('\n') == -1) {
+
+        import std.datetime.stopwatch;
+        auto timer = new StopWatch(AutoStart.yes);
+
+        do {
             auto buffer = new ubyte[2056];
             ptrdiff_t amountRead;
+            conn.blocking = false;
             amountRead = conn.receive(buffer);
+            conn.blocking = true;
 
             if (amountRead == 0) {
-                throw new Exception("Tried to getNetworkLine but connection is closed");
+                throw new Exception("Connection readline: Connection is closed");
             }
 
             if (amountRead == Socket.ERROR) {
-                writeln("Socket Error: ", conn.getErrorText());
+                if (conn.getErrorText() == "Success") {
+                    amountRead = 0;
+                } else {
+                    throw new Exception("Socket Error: ", conn.getErrorText());
+                }
             }
-
             recBuffer ~= cast(string) buffer[0..amountRead];
+
+            if (recBuffer.indexOf('\n') != -1) break;
+
+            import core.thread;
+            Thread.sleep(50.msecs);
+        } while (timeout == Duration.zero || timer.peek < timeout);
+
+        if (timeout != Duration.zero && timer.peek > timeout) {
+            throw new Exception("Connection readline timeout");
         }
 
         auto nlIndex = recBuffer.indexOf('\n');
@@ -73,10 +102,11 @@ class Connection {
             writeln("NETGET: ", ret);
             return ret;
         } else {
-            throw new Exception("Tried to getNetworkLine but connection is closed");
+            throw new Exception("No newline is available");
         }
     }
 
+    /// Write line to the connection.
     void writeline(string s) {
         writeln("NETSND: ", s);
         conn.send(s ~ "\n");

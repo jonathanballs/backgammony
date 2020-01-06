@@ -55,7 +55,12 @@ class MatchMaker {
         // 4. Wait for connections and matchmake
         writeln("Waiting for connections");
         while(true) {
-            return new Connection(socket.accept());
+            try {
+                auto conn = new Connection(socket.accept);
+                return conn;
+            } catch (Exception e) {
+                writeln("Failed to accept incoming connection: ", e.message);
+            }
         }
     }
 

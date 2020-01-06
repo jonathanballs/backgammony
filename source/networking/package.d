@@ -27,6 +27,7 @@ import networking.connection;
 // - Basically entire game logic
 // - Move connection logic to its own set of methods.
 // - Validate that strings are valid UTF-8
+// - Ensure that not connecting to self
 
 // - Game process - use gamestate??
 // - Agree who plays first (and thus is p1)
