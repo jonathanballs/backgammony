@@ -62,6 +62,7 @@ class NetworkingThread : Thread {
 
     // It is assumed that the headers have been swapped
     void beginBackgammonGame(bool isHost) {
+        writeln("Beginning Game " ~ (isHost ? "as host" : "as client"));
         // The client performs the first move
         send(parentTid, NetworkBeginGame());
 

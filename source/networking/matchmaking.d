@@ -42,24 +42,29 @@ class MatchMaker {
 
         // 4. Attempt to connect to other players
         writeln(format!"Attempting to connect to %d other players"(opps.length));
+        writeln("======================================================================");
         foreach (o; opps) {
             try {
                 // Attempt connection, return socket if connection is successful.
                 Address addr = parseAddress(o.ip, o.port);
-                return new Connection(addr);
+                return new Connection(addr, ConnectionHeaders(peer_id, peer_id));
             } catch (Exception e) {
                 writeln("Failed to connect: ", e.message);
+                writeln("======================================================================");
             }
         }
 
         // 4. Wait for connections and matchmake
         writeln("Waiting for connections");
+        writeln("======================================================================");
         while(true) {
             try {
-                auto conn = new Connection(socket.accept);
-                return conn;
+                auto c = socket.accept();
+                writeln("Incoming connection from ", c.remoteAddress);
+                return new Connection(c, ConnectionHeaders(peer_id, peer_id));
             } catch (Exception e) {
                 writeln("Failed to accept incoming connection: ", e.message);
+                writeln("======================================================================");
             }
         }
     }

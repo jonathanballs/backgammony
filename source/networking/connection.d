@@ -5,49 +5,51 @@ import core.thread;
 import std.socket;
 import std.stdio;
 import std.string;
+import std.typecons : tuple;
 
 enum protocolHeader = "TBP/1.0";
 
+struct ConnectionHeaders {
+    string playerId;
+    string userName;
+}
+
 // Wrapper around network connections. Provides helper functions and IP version
-// agnosticism.
+// agnosticism. Handles initial connection.
 class Connection {
     private Socket conn;
     private Address address;
     bool isHost;
 
     /// Create a Connection and connects to address as a client
-    this(Address address) {
+    this(Address address, ConnectionHeaders headers) {
         writeln("Attempting connection to ", address);
         this.address = address;
         this.isHost = false;
         this.conn = new TcpSocket(address);
 
-        string responseHeader;
         try {
             this.writeline(protocolHeader);
-            responseHeader = this.readline(1.seconds);
+            this.writeHeaders(headers);
+
+            this.readline(2.seconds);
+            ConnectionHeaders resp = readHeaders!ConnectionHeaders(2.seconds);
         } catch (Exception e) {
             this.close();
             throw e;
         }
-
-        if (responseHeader != protocolHeader) {
-            throw new Exception("Unexpected Response on connection: " ~ responseHeader);
-        }
-
-        writeln("Connection achieved with ", address);
     }
 
-    this(Socket socket, bool isHost = true) {
+    /// Create a Connection as a host. Assumes socket is already active.
+    this(Socket socket, ConnectionHeaders headers) {
         this.address = socket.remoteAddress;
         this.conn = socket;
+        this.isHost = true;
 
-        auto header = this.readline();
-        if (header != "TBP/1.0")
-            throw new Exception("Unexpected header on received connection: " ~ header);
-
+        this.readline(2.seconds);
+        ConnectionHeaders resp = readHeaders!ConnectionHeaders(1.seconds);
         this.writeline(protocolHeader);
-        this.isHost = isHost;
+        this.writeHeaders(headers);
     }
 
     /// Close the socket
@@ -56,12 +58,44 @@ class Connection {
         conn.close();
     }
 
+    T readHeaders(T)(Duration timeout = Duration.zero) {
+        import std.datetime.stopwatch;
+        auto timer = new StopWatch(AutoStart.yes);
+
+        T ret;
+
+        while (true) {
+            auto remainingTime = timeout == Duration.zero ? Duration.zero : timeout - timer.peek;
+            auto line = readline(remainingTime);
+            if (!line.length) break;
+            if (line.indexOf(":") == -1) throw new Exception("Invalid header line: No colon");
+
+            string key = line[0..line.indexOf(":")].chomp();
+            string val = line[line.indexOf(":")+1..$].chomp();
+
+            static foreach (string member; [ __traits(allMembers, T) ]) {
+                if (key.toLower == member.toLower) {
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    void writeHeaders(T)(T header, Duration timeout = Duration.zero) {
+        static foreach (string member; [ __traits(allMembers, T) ]) {
+            if (__traits(getMember, header, member).length) {
+                this.writeline(member ~ ": " ~ __traits(getMember, header, member));
+            }
+        }
+        this.writeline();
+    }
+
     /// Read a line (newline excluded) syncronously from the current connection.
     /// ARGS:
     ///   timeout: How long before throwing timeout exception. Leave for unlimited.
+    string recBuffer;
     string readline(Duration timeout = Duration.zero) {
-        static string recBuffer;
-
         import std.datetime.stopwatch;
         auto timer = new StopWatch(AutoStart.yes);
 
@@ -96,7 +130,7 @@ class Connection {
         }
 
         auto nlIndex = recBuffer.indexOf('\n');
-        if (nlIndex) {
+        if (nlIndex != -1) {
             string ret = recBuffer[0..nlIndex];
             recBuffer = recBuffer[nlIndex+1..$];
             writeln("NETGET: ", ret);
@@ -107,7 +141,7 @@ class Connection {
     }
 
     /// Write line to the connection.
-    void writeline(string s) {
+    void writeline(string s = "") {
         writeln("NETSND: ", s);
         conn.send(s ~ "\n");
     }
