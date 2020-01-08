@@ -22,12 +22,12 @@ import networking.connection;
 // TODO list
 // - Close listening port once connected
 // - Close UpNp ports
-// - Exit when window closes
-// - Use against proper tracker
+// - Exit when window closes - Notifying opponent.
+// - Use against proper tracker. And update list from API.
 // - Basically entire game logic
-// - Move connection logic to its own set of methods.
 // - Validate that strings are valid UTF-8
 // - Ensure that not connecting to self
+// - Reconnection.
 
 // - Game process - use gamestate??
 // - Agree who plays first (and thus is p1)
