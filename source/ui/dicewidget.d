@@ -1,4 +1,4 @@
-module dicewidget;
+module ui.dicewidget;
 import std.stdio;
 import std.typecons;
 import std.math : atan2;

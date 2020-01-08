@@ -1,3 +1,5 @@
+module ui.boardWidget;
+
 // The backgammon game board
 import std.algorithm : min, max;
 import std.conv : to;
@@ -13,7 +15,7 @@ import gobject.Signals;
 import cairo.Context;
 
 import game;
-import dicewidget;
+import ui.dicewidget;
 
 struct RGB {
     double r, g, b;

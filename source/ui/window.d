@@ -1,4 +1,4 @@
-module window;
+module ui.window;
 
 import std.concurrency;
 import core.thread;
@@ -16,9 +16,9 @@ import gtk.Main;
 import gtk.MainWindow;
 import gtk.Widget;
 
-import boardWidget;
 import networking;
-import networkWidget;
+import ui.boardWidget;
+import ui.networkWidget;
 
 class BackgammonWindow : MainWindow {
     HeaderBar header;
@@ -48,7 +48,6 @@ class BackgammonWindow : MainWindow {
         inetImg.setFromGicon(icon, IconSize.BUTTON);
         inetGameBtn.add(inetImg);
         inetGameBtn.addOnClicked((Button b) {
-            import networkWidget;
             netThread = new NetworkingThread().start();
             networkingWidget = new NetworkWidget(this);
         });

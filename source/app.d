@@ -1,5 +1,5 @@
 import gtk.Main;
-import window;
+import ui.window;
 
 void main(string[] args) 
 {

@@ -1,4 +1,4 @@
-module networkWidget;
+module ui.networkWidget;
 
 import std.parallelism;
 import std.typecons;
