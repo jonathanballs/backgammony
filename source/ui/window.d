@@ -53,6 +53,22 @@ class BackgammonWindow : MainWindow {
         });
         header.packStart(inetGameBtn);
 
+        // Move buttons
+        auto undoMoveBtn = new Button();
+        icon = new ThemedIcon("edit-undo-symbolic");
+        inetImg = new Image();
+        inetImg.setFromGicon(icon, IconSize.BUTTON);
+        undoMoveBtn.add(inetImg);
+        undoMoveBtn.addOnClicked((Button b) {
+            import std.stdio;
+            writeln("Undo :)");
+        });
+        undoMoveBtn.setSensitive(false);
+
+        auto finishMoveBtn = new Button("Finish");
+        header.packEnd(finishMoveBtn);
+        header.packEnd(undoMoveBtn);
+
         // Game board
         backgammonBoard = new BackgammonBoard();
         auto box   = new Box(GtkOrientation.HORIZONTAL, 0);

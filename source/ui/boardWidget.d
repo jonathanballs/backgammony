@@ -99,6 +99,7 @@ class BackgammonBoard : DrawingArea {
                             && e.button.x < c[0].x + pointWidth()/2.5) {
                         writeln("Click on point ", i);
 
+                        // TODO: Potential move might not be first avaiable dice
                         auto potentialMove = PipMovement(PipMoveType.Movement, i,
                             gameState.currentPlayer == Player.PLAYER_1 
                                 ? i - gameState.diceRoll[potentialMoves.length]
