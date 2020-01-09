@@ -7,12 +7,13 @@ import std.datetime.systime : SysTime, Clock;
 import std.stdio;
 import std.typecons;
 
+import cairo.Context;
+import cairo.Matrix;
 import gdk.Event;
 import gdk.FrameClock;
 import gtk.DrawingArea;
 import gtk.Widget;
 import gobject.Signals;
-import cairo.Context;
 
 import game;
 import ui.dicewidget;
@@ -39,15 +40,26 @@ class BoardStyle {
     float pointHeight = 300.0;
 }
 
+// A corner of the board. Useful for describing where a user's home should be.
+// In the future, this will be changeable in the settings.
+enum Corner {
+    BL,
+    BR,
+    TL,
+    TR
+}
+
 class BackgammonBoard : DrawingArea {
     GameState gameState;
-    Player currentPlayer;
 
+    /// The current styling. Will be modifiable in the future.
     BoardStyle style;
 
+    /// Dice animation
     bool diceAreRolling;
 
-    this(uint desiredValue = 1) {
+    /// Create a new board widget.
+    this() {
         super(300, 300);
         setHalign(GtkAlign.FILL);
         setValign(GtkAlign.FILL);
@@ -65,8 +77,14 @@ class BackgammonBoard : DrawingArea {
         gameState.newGame();
 
         this.addOnButtonPress(delegate bool (Event e, Widget w) {
-            writeln(e.button.x, " ", e.button.y);
-            writeln("click");
+            foreach (uint i, c; pointCoords) {
+                if (e.button.y > min(c[0].y, c[1].y)
+                        && e.button.y < max(c[0].y, c[1].y)
+                        && e.button.x > c[0].x - pointWidth()/2
+                        && e.button.x < c[0].x + pointWidth()/2) {
+                    writeln("Click on point ", i);
+                }
+            }
             return false;
         });
     }
@@ -141,7 +159,9 @@ class BackgammonBoard : DrawingArea {
 
     bool onDraw(Context cr, Widget widget) {
         drawBoard(cr);
+        drawPips(cr);
 
+        // Temporary: apply first available moves when dice are rolled.
         if (this.diceAreRolling) {
             if (dice[0].finished) {
                 this.diceAreRolling = false;
@@ -152,9 +172,7 @@ class BackgammonBoard : DrawingArea {
             }
         }
 
-        drawPips(cr);
         drawDice(cr);
-
         return true;
     }
 
@@ -184,31 +202,36 @@ class BackgammonBoard : DrawingArea {
         drawPoints(cr);
     }
 
+    /// The coordinates of each point on the screen in device.
+    ScreenCoords[2][24] pointCoords;
     void drawPoints(Context cr) {
         auto lightPoint = RGB(140 / 256.0, 100 / 256.0, 43 / 256.0);
         auto darkPoint = RGB(44 / 256.0, 62 / 256.0, 80 / 256.0);
 
         foreach (uint i; 1..this.gameState.board.points.length + 1) {
-            import std.stdio;
             auto c = getPointCoords(i);
 
+            double pointPoint = (i <= 12)
+                ? pointHeight()
+                : cast(uint) style.boardHeight-pointHeight();
+            
+
+            ScreenCoords toDevice(ScreenCoords sc) {
+                double x = sc.x;
+                double y = sc.y;
+                cr.userToDevice(x, y);
+                return ScreenCoords(cast(uint) x - 25, cast(uint) y - 70);
+            }
+
+            pointCoords[i-1][0] = toDevice(c);
+            pointCoords[i-1][1] = toDevice(ScreenCoords(c.x, cast(uint) pointPoint));
+
             // Draw the point
-            if (i <= 12) { // Top side
-                cr.moveTo(c.x - pointWidth()/2, c.y);
-                cr.lineTo(c.x, pointHeight());
-                cr.lineTo(c.x + pointWidth()/2, c.y);
-            } else { // Bottom side
-                cr.moveTo(c.x - pointWidth()/2, c.y);
-                cr.lineTo(c.x, cast(uint) style.boardHeight-pointHeight());
-                cr.lineTo(c.x + pointWidth()/2, c.y);
-            }
+            cr.moveTo(c.x - pointWidth()/2, c.y);
+            cr.lineTo(c.x, pointPoint);
+            cr.lineTo(c.x + pointWidth()/2, c.y);
 
-
-            if (i % 2) {
-                cr.setSourceRgbStruct(darkPoint);
-            } else {
-                cr.setSourceRgbStruct(lightPoint);
-            }
+            cr.setSourceRgbStruct(i%2 ? darkPoint : lightPoint);
             cr.fill();
             cr.stroke();
 

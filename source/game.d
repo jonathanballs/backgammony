@@ -220,7 +220,7 @@ struct GameState {
     /// Need to validate with a dice roll as well
     void validateMovement(PipMovement pipMovement) {
         if (currentTurn == Player.NONE)
-            throw new Exception("Warning: tried to validate while currentPlayer is NONE");
+            throw new Exception("Warning: tried to validate while currentTurn is NONE");
 
         // Firstly, if the player has taken peaces he must place them back in
         // the game.
