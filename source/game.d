@@ -93,14 +93,20 @@ struct Board {
 // TODO: Record game histories
 struct GameState {
     Board board;
-    Player currentPlayer;
-    TurnState turnState;
+    private Player _currentPlayer;
+    private TurnState _turnState;
     uint[2] diceRoll;
 
     Signal!(Player) onBeginTurn = new Signal!(Player);
-    Signal!(Player) onEndTurn = new Signal!(Player);
     Signal!(Player) onEndGame = new Signal!(Player);
     Signal!(uint , uint) onDiceRoll = new Signal!(uint, uint);
+
+    Player currentPlayer() { return _currentPlayer; }
+
+    TurnState turnState () { return _turnState; }
+    private void turnState (TurnState t) {
+        _turnState = t;
+    }
 
     /// Generate random values for the dice roll
     void rollDie() {
@@ -135,7 +141,8 @@ struct GameState {
         board.newGame();
         diceRoll = [0, 0];
 
-        currentPlayer = Player.P1;
+        _currentPlayer = Player.P1;
+        onBeginTurn.emit(_currentPlayer);
         turnState = TurnState.DiceRoll;
     }
 
@@ -250,7 +257,9 @@ struct GameState {
             applyMovement(move);
         }
 
-        currentPlayer = currentPlayer.opposite();
+        _currentPlayer = currentPlayer.opposite();
+        _turnState = TurnState.DiceRoll;
+        onBeginTurn.emit(_currentPlayer);
     }
 
     /// Need to validate with a dice roll as well
