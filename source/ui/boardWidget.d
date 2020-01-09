@@ -88,6 +88,14 @@ class BackgammonBoard : DrawingArea {
             return true;
         });
         gameState.newGame();
+        gameState.onDiceRoll.connect((uint a, uint b) {
+            dice = [
+                new Die(a),
+                new Die(b)
+            ];
+            lastAnimation = Clock.currTime;
+            isAnimating = true;
+        });
 
         this.addOnButtonPress(delegate bool (Event e, Widget w) {
             if (!isAnimating && this.gameState.turnState == TurnState.MoveSelection) {
@@ -121,7 +129,7 @@ class BackgammonBoard : DrawingArea {
             return false;
         });
 
-        rollDice();
+        gameState.rollDie();
     }
 
     void finishTurn() {
@@ -144,15 +152,6 @@ class BackgammonBoard : DrawingArea {
     Die[] dice;
     SysTime lastAnimation;
 
-    void rollDice() {
-        gameState.rollDie();
-        dice = [
-            new Die(gameState.diceRoll[0]),
-            new Die(gameState.diceRoll[1])
-        ];
-        lastAnimation = Clock.currTime;
-        isAnimating = true;
-    }
 
     void drawDice(Context cr) {
         auto currTime = Clock.currTime();

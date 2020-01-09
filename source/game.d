@@ -1,6 +1,13 @@
 module game;
 import std.stdio;
 
+import signals;
+
+// TODO list
+// - GameState invariant
+// - Handle users more smoothly - clean up functions etc.
+// - Record board history - and validate it.
+
 struct PipMovement {
     PipMoveType moveType;
     uint startPoint;
@@ -90,6 +97,11 @@ struct GameState {
     TurnState turnState;
     uint[2] diceRoll;
 
+    Signal!(Player) onBeginTurn = new Signal!(Player);
+    Signal!(Player) onEndTurn = new Signal!(Player);
+    Signal!(Player) onEndGame = new Signal!(Player);
+    Signal!(uint , uint) onDiceRoll = new Signal!(uint, uint);
+
     /// Generate random values for the dice roll
     void rollDie() {
         assert(turnState == TurnState.DiceRoll);
@@ -99,17 +111,22 @@ struct GameState {
         diceRoll[1] = uniform(1, 7);
 
         turnState = TurnState.MoveSelection;
+
+        onDiceRoll.emit(diceRoll[0], diceRoll[1]);
     }
 
     /// Roll dice to the value of die1 and die2
     void rollDie(uint die1, uint die2) {
         assert(1 <= die1 && die1 <= 6);
         assert(1 <= die2 && die2 <= 6);
+
         diceRoll[0] = die1;
         diceRoll[1] = die2;
 
         assert(turnState == TurnState.DiceRoll);
         turnState = TurnState.MoveSelection;
+
+        onDiceRoll.emit(diceRoll[0], diceRoll[1]);
     }
 
     /// Reset game state TODO: Just set this as initialisers
