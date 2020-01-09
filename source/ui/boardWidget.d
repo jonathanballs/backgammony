@@ -22,6 +22,10 @@ struct RGB {
     double r, g, b;
 }
 
+private struct ScreenCoords {
+    uint x, y;
+}
+
 static void setSourceRgbStruct(Context cr, RGB color) {
     cr.setSourceRgb(color.r, color.g, color.b);
 }
@@ -101,7 +105,7 @@ class BackgammonBoard : DrawingArea {
 
                         // TODO: Potential move might not be first avaiable dice
                         auto potentialMove = PipMovement(PipMoveType.Movement, i,
-                            gameState.currentPlayer == Player.PLAYER_1 
+                            gameState.currentPlayer == Player.P1 
                                 ? i - gameState.diceRoll[potentialMoves.length]
                                 : i + gameState.diceRoll[potentialMoves.length]);
 
@@ -120,9 +124,9 @@ class BackgammonBoard : DrawingArea {
         rollDice();
     }
 
-    private struct ScreenCoords {
-        uint x;
-        uint y;
+    void finishTurn() {
+        gameState.applyTurn(potentialMoves);
+        potentialMoves = [];
     }
 
     bool onConfigureEvent(Event e, Widget w) {
@@ -296,7 +300,7 @@ class BackgammonBoard : DrawingArea {
                 import std.math : PI;
                 cr.arc(pointX, pointY, pipRadius, 0, 2*PI);
 
-                if (point.owner == Player.PLAYER_1) {
+                if (point.owner == Player.P1) {
                     cr.setSourceRgb(p1Colour.r, p1Colour.g, p1Colour.b);
                 } else {
                     cr.setSourceRgb(p2Colour.r, p2Colour.g, p2Colour.b);

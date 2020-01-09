@@ -16,8 +16,8 @@ enum PipMoveType {
 
 enum Player {
     NONE,
-    PLAYER_1,
-    PLAYER_2,
+    P1,
+    P2,
 }
 
 enum TurnState {
@@ -27,8 +27,8 @@ enum TurnState {
 
 Player opposite(Player player) {
     switch (player) {
-        case Player.PLAYER_1: return Player.PLAYER_2;
-        case Player.PLAYER_2: return Player.PLAYER_1;
+        case Player.P1: return Player.P2;
+        case Player.P2: return Player.P1;
         case Player.NONE:
             import std.stdio;
             writeln(new Exception("Warning: tried to opposite Player.NONE"));
@@ -38,9 +38,9 @@ Player opposite(Player player) {
 }
 
 bool isHomePoint(Player player, uint pointNumber) {
-    if (player == Player.PLAYER_1 && pointNumber >= 0 && pointNumber <= 5) {
+    if (player == Player.P1 && pointNumber >= 0 && pointNumber <= 5) {
         return true;
-    } else if (player == Player.PLAYER_2 && pointNumber >= 18 && pointNumber <= 23) {
+    } else if (player == Player.P2 && pointNumber >= 18 && pointNumber <= 23) {
         return true;
     }
     return false;
@@ -50,8 +50,7 @@ uint homePointToBoardPoint(Player player, uint homePoint) {
     assert(1 <= homePoint && homePoint <= 6);
     assert(player != Player.NONE);
 
-    if (player == Player.PLAYER_1) return homePoint-1;
-    else return 24 - homePoint;
+    return player == Player.P1 ? homePoint - 1 : 24 - homePoint;
 }
 
 struct Point {
@@ -67,20 +66,20 @@ struct Board {
     uint[Player] bearedOffPieces; // Born off
 
     void newGame() {
-        points[23] = Point(Player.PLAYER_1, 2);
-        points[12] = Point(Player.PLAYER_1, 5);
-        points[7] = Point(Player.PLAYER_1, 3);
-        points[5] = Point(Player.PLAYER_1, 5);
+        points[23] = Point(Player.P1, 2);
+        points[12] = Point(Player.P1, 5);
+        points[7] = Point(Player.P1, 3);
+        points[5] = Point(Player.P1, 5);
 
-        points[0] = Point(Player.PLAYER_2, 2);
-        points[11] = Point(Player.PLAYER_2, 5);
-        points[16] = Point(Player.PLAYER_2, 3);
-        points[18] = Point(Player.PLAYER_2, 5);
+        points[0] = Point(Player.P2, 2);
+        points[11] = Point(Player.P2, 5);
+        points[16] = Point(Player.P2, 3);
+        points[18] = Point(Player.P2, 5);
 
-        takenPieces[Player.PLAYER_1] = 0;
-        takenPieces[Player.PLAYER_2] = 0;
-        bearedOffPieces[Player.PLAYER_1] = 0;
-        bearedOffPieces[Player.PLAYER_2] = 0;
+        takenPieces[Player.P1] = 0;
+        takenPieces[Player.P2] = 0;
+        bearedOffPieces[Player.P1] = 0;
+        bearedOffPieces[Player.P2] = 0;
     }
 }
 
@@ -119,7 +118,7 @@ struct GameState {
         board.newGame();
         diceRoll = [0, 0];
 
-        currentPlayer = Player.PLAYER_1;
+        currentPlayer = Player.P1;
         turnState = TurnState.DiceRoll;
     }
 
@@ -129,9 +128,9 @@ struct GameState {
 
     bool playerCanBearOff(Player player) {
         Point[] nonHomePoints;
-        if (player == Player.PLAYER_1) {
+        if (player == Player.P1) {
             nonHomePoints = board.points[6..$];
-        } else if (player == Player.PLAYER_2) {
+        } else if (player == Player.P2) {
             nonHomePoints = board.points[0..$-6];
         }
 
@@ -186,7 +185,7 @@ struct GameState {
                     PipMovement potentialMovement = PipMovement(
                         PipMoveType.Movement,
                         pointIndex,
-                        Player.PLAYER_1 ? pointIndex-moveValue : pointIndex+moveValue,
+                        Player.P1 ? pointIndex-moveValue : pointIndex+moveValue,
                         moveValue);
                     if (isValidPotentialMovement(potentialMovement)) {
                         GameState potentialGS = this;
@@ -272,10 +271,10 @@ struct GameState {
                 throw new Exception("Player movement must start and end inside the board");
             }
 
-            if (currentPlayer == Player.PLAYER_1
+            if (currentPlayer == Player.P1
                     && pipMovement.endPoint > pipMovement.startPoint) {
                 throw new Exception("Player 1 must move towards their home board");
-            } else if (currentPlayer == Player.PLAYER_2
+            } else if (currentPlayer == Player.P2
                     && pipMovement.endPoint < pipMovement.startPoint) {
                 throw new Exception("Player 2 must move towards their home board");
             }

@@ -62,10 +62,16 @@ class BackgammonWindow : MainWindow {
         undoMoveBtn.addOnClicked((Button b) {
             import std.stdio;
             writeln("Undo :)");
+            if (backgammonBoard && backgammonBoard.potentialMoves.length > 0) {
+                backgammonBoard.potentialMoves = backgammonBoard.potentialMoves[0..$-1];
+            }
         });
-        undoMoveBtn.setSensitive(false);
+        // undoMoveBtn.setSensitive(false);
 
         auto finishMoveBtn = new Button("Finish");
+        finishMoveBtn.addOnClicked((Button b) {
+            backgammonBoard.finishTurn();
+        });
         header.packEnd(finishMoveBtn);
         header.packEnd(undoMoveBtn);
 
