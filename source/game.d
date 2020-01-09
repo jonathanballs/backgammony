@@ -87,21 +87,22 @@ struct Board {
 // TODO: Record game histories
 struct GameState {
     Board board;
-
-    Player currentTurn;
+    Player currentPlayer;
     TurnState turnState;
-
     uint[2] diceRoll;
 
+    /// Generate random values for the dice roll
     void rollDie() {
-        import std.random;
         assert(turnState == TurnState.DiceRoll);
-        turnState = TurnState.MoveSelection;
 
+        import std.random;
         diceRoll[0] = uniform(1, 7);
         diceRoll[1] = uniform(1, 7);
+
+        turnState = TurnState.MoveSelection;
     }
 
+    /// Roll dice to the value of die1 and die2
     void rollDie(uint die1, uint die2) {
         assert(1 <= die1 && die1 <= 6);
         assert(1 <= die2 && die2 <= 6);
@@ -112,17 +113,18 @@ struct GameState {
         turnState = TurnState.MoveSelection;
     }
 
+    /// Reset game state TODO: Just set this as initialisers
     void newGame() {
         this.board = Board();
         board.newGame();
         diceRoll = [0, 0];
 
-        currentTurn = Player.PLAYER_1;
+        currentPlayer = Player.PLAYER_1;
         turnState = TurnState.DiceRoll;
     }
 
-    void validateMove(uint[2] diceValues, PipMovement[] pipMovements) {
-        uint maxMovesCount = 2 * !!(diceValues[0] == diceValues[1]);
+    void validateTurn(PipMovement[] pipMovements, bool isPartialMove = false) {
+        // uint maxMovesCount = 2 * !!(diceValues[0] == diceValues[1]);
     }
 
     bool playerCanBearOff(Player player) {
@@ -140,45 +142,34 @@ struct GameState {
         return true;
     }
 
-    /// A list of moves
-    void performMove(PipMovement[] pipMovements) {
-        assert(turnState == TurnState.MoveSelection);
-        turnState = TurnState.DiceRoll;
-
-        foreach (move; pipMovements) {
-            --board.points[move.startPoint].numPieces;
-            ++board.points[move.endPoint].numPieces;
-        }
-    }
-
     /// Generate a list of possible game moves based off current dice
-    PipMovement[][] generatePossibleMovements() {
+    PipMovement[][] generatePossibleTurns() {
         uint[] moveValues = diceRoll;
         if (moveValues[0] == moveValues[1]) moveValues ~= moveValues;
 
-        return generatePossibleMovements(moveValues);
+        return generatePossibleTurns(moveValues);
     }
 
-    PipMovement[][] generatePossibleMovements(uint[] moveValues) {
+    PipMovement[][] generatePossibleTurns(uint[] moveValues) {
         import std.algorithm : remove, reverse, uniq;
         import std.range : enumerate, inputRangeObject;
         import std.array;
         // First find all possible movements of any length and then prune to
         // only the longest ones.
-        assert (currentTurn != Player.NONE);
+        assert (currentPlayer != Player.NONE);
         PipMovement[][] ret;
 
         if (moveValues.length == 0) return [];
 
         // Check if player needs to enter the board
-        if (playerCanBearOff(currentTurn)) {
-            if (board.takenPieces[currentTurn]) {
+        if (playerCanBearOff(currentPlayer)) {
+            if (board.takenPieces[currentPlayer]) {
                 foreach (i, moveValue; moveValues.uniq().enumerate()) {
-                    auto boardPointNumber = homePointToBoardPoint(currentTurn.opposite, moveValue);
+                    auto boardPointNumber = homePointToBoardPoint(currentPlayer.opposite, moveValue);
                     auto point = board.points[boardPointNumber];
-                    if (point.owner != currentTurn.opposite || point.numPieces == 1) {
+                    if (point.owner != currentPlayer.opposite || point.numPieces == 1) {
                         // Player can enter on this area
-                        foreach (move; generatePossibleMovements(moveValues.dup.remove(i))) {
+                        foreach (move; generatePossibleTurns(moveValues.dup.remove(i))) {
                             ret ~= [[PipMovement(PipMoveType.Entering, boardPointNumber, 0, moveValue)] ~ move];
                         }
                     }
@@ -191,16 +182,16 @@ struct GameState {
         // Check if player can move
         foreach (i, moveValue; moveValues.uniq().enumerate()) {
             foreach (uint pointIndex, point; board.points) {
-                if (point.owner == currentTurn) {
+                if (point.owner == currentPlayer) {
                     PipMovement potentialMovement = PipMovement(
                         PipMoveType.Movement,
                         pointIndex,
                         Player.PLAYER_1 ? pointIndex-moveValue : pointIndex+moveValue,
                         moveValue);
-                    if (isValidMovement(potentialMovement)) {
+                    if (isValidPotentialMovement(potentialMovement)) {
                         GameState potentialGS = this;
-                        potentialGS.applyMove(potentialMovement);
-                        auto nextMoves = potentialGS.generatePossibleMovements(moveValues.dup.remove(i));
+                        potentialGS.applyMovement(potentialMovement);
+                        auto nextMoves = potentialGS.generatePossibleTurns(moveValues.dup.remove(i));
 
                         if (nextMoves) {
                             foreach (m; nextMoves) ret ~= [[potentialMovement] ~ m];
@@ -212,53 +203,57 @@ struct GameState {
             }
         }
 
+        // TODO: Only the longest ones.
         return ret;
     }
 
-    void applyMove(PipMovement pipMovement) {
-        assert(isValidMovement(pipMovement));
+    void applyMovement(PipMovement pipMovement) {
+        assert(isValidPotentialMovement(pipMovement));
+
 
         if (pipMovement.moveType == PipMoveType.Movement) {
             if (!--board.points[pipMovement.startPoint].numPieces) {
                 board.points[pipMovement.startPoint].owner = Player.NONE;
             }
 
-            if (board.points[pipMovement.endPoint].owner == currentTurn.opposite()) {
-                board.takenPieces[currentTurn.opposite()]++;
+            if (board.points[pipMovement.endPoint].owner == currentPlayer.opposite()) {
+                board.takenPieces[currentPlayer.opposite()]++;
                 board.points[pipMovement.endPoint].owner = Player.NONE;
                 board.points[pipMovement.endPoint].numPieces = 0;
             }
 
             board.points[pipMovement.endPoint].numPieces++;
-            board.points[pipMovement.endPoint].owner = currentTurn;
+            board.points[pipMovement.endPoint].owner = currentPlayer;
         }
     }
 
-    void executeTurn(PipMovement[] turn) {
+    void applyTurn(PipMovement[] turn) {
+        assert(turnState == TurnState.MoveSelection);
+        turnState = TurnState.DiceRoll;
         foreach (move; turn) {
-            applyMove(move);
+            applyMovement(move);
         }
 
-        currentTurn = currentTurn.opposite();
+        currentPlayer = currentPlayer.opposite();
     }
 
     /// Need to validate with a dice roll as well
     void validateMovement(PipMovement pipMovement) {
-        if (currentTurn == Player.NONE)
-            throw new Exception("Warning: tried to validate while currentTurn is NONE");
+        if (currentPlayer == Player.NONE)
+            throw new Exception("Warning: tried to validate while currentPlayer is NONE");
 
         // Firstly, if the player has taken peaces he must place them back in
         // the game.
-        if (board.takenPieces[currentTurn]) {
+        if (board.takenPieces[currentPlayer]) {
             if (pipMovement.moveType != PipMoveType.Entering) {
                 throw new Exception("Player must enter all their pieces before playing");
             }
 
-            if (!currentTurn.opposite().isHomePoint(pipMovement.endPoint)) {
+            if (!currentPlayer.opposite().isHomePoint(pipMovement.endPoint)) {
                 throw new Exception("Player must enter piece into opposing player's home board");
             }
 
-            if (board.points[pipMovement.endPoint].owner == currentTurn.opposite()
+            if (board.points[pipMovement.endPoint].owner == currentPlayer.opposite()
                     && board.points[pipMovement.endPoint].numPieces >= 2) {
                 throw new Exception("You may not enter onto a blocked point");
             }
@@ -277,21 +272,21 @@ struct GameState {
                 throw new Exception("Player movement must start and end inside the board");
             }
 
-            if (currentTurn == Player.PLAYER_1
+            if (currentPlayer == Player.PLAYER_1
                     && pipMovement.endPoint > pipMovement.startPoint) {
                 throw new Exception("Player 1 must move towards their home board");
-            } else if (currentTurn == Player.PLAYER_2
+            } else if (currentPlayer == Player.PLAYER_2
                     && pipMovement.endPoint < pipMovement.startPoint) {
                 throw new Exception("Player 2 must move towards their home board");
             }
 
             // Ensure that they have pieces to move
-            if (board.points[pipMovement.startPoint].owner != currentTurn) {
+            if (board.points[pipMovement.startPoint].owner != currentPlayer) {
                 throw new Exception("Player cannot move pieces from a point they do not own");
             }
 
             // Ensure that the the endPoint is not blocked
-            if (board.points[pipMovement.endPoint].owner == currentTurn.opposite()
+            if (board.points[pipMovement.endPoint].owner == currentPlayer.opposite()
                     && board.points[pipMovement.endPoint].numPieces >= 2) {
                 throw new Exception("Player cannot move pieces to a blocked point");
             }
@@ -302,12 +297,12 @@ struct GameState {
         // Lastly check if the player can bear off.
         if (pipMovement.moveType == PipMoveType.BearingOff) {
             // Check that the player can bear off
-            if (!playerCanBearOff(currentTurn)) {
+            if (!playerCanBearOff(currentPlayer)) {
                 throw new Exception("Player has points outside of their home board");
             }
 
             // Check that they have points
-            if (board.points[pipMovement.startPoint].owner != currentTurn) {
+            if (board.points[pipMovement.startPoint].owner != currentPlayer) {
                 throw new Exception("Player can not bear off from a point they do not own");
             }
 
@@ -317,7 +312,7 @@ struct GameState {
         assert(false);
     }
 
-    bool isValidMovement(PipMovement pipMovement) {
+    bool isValidPotentialMovement(PipMovement pipMovement) {
         try {
             validateMovement(pipMovement);
             return true;

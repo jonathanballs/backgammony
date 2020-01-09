@@ -54,9 +54,18 @@ class BackgammonBoard : DrawingArea {
 
     /// The current styling. Will be modifiable in the future.
     BoardStyle style;
-
     /// Dice animation
     bool isAnimating;
+
+    // Potential moves of the current player.
+    PipMovement[] potentialMoves;
+    GameState potentialGameState() {
+        GameState r = gameState;
+        foreach (m; potentialMoves) {
+            r.applyMovement(m);
+        }
+        return r;
+    }
 
     /// Create a new board widget.
     this() {
@@ -78,6 +87,10 @@ class BackgammonBoard : DrawingArea {
 
         this.addOnButtonPress(delegate bool (Event e, Widget w) {
             if (!isAnimating && this.gameState.turnState == TurnState.MoveSelection) {
+
+                // TODO: Check length of longest legal move
+                if (potentialMoves.length == 2) return false;
+
                 // And check that player is user
                 foreach (uint i, c; pointCoords) {
                     if (e.button.y > min(c[0].y, c[1].y)
@@ -87,12 +100,12 @@ class BackgammonBoard : DrawingArea {
                         writeln("Click on point ", i);
 
                         auto potentialMove = PipMovement(PipMoveType.Movement, i,
-                            gameState.currentTurn == Player.PLAYER_1 
-                                ? i - gameState.diceRoll[0]
-                                : i + gameState.diceRoll[0]);
+                            gameState.currentPlayer == Player.PLAYER_1 
+                                ? i - gameState.diceRoll[potentialMoves.length]
+                                : i + gameState.diceRoll[potentialMoves.length]);
 
-                        if (gameState.isValidMovement(potentialMove)) {
-                            gameState.applyMove(potentialMove);
+                        if (potentialGameState.isValidPotentialMovement(potentialMove)) {
+                            potentialMoves ~= potentialMove;
                         }
 
                         break;
@@ -184,9 +197,9 @@ class BackgammonBoard : DrawingArea {
             if (dice[0].finished) {
                 this.isAnimating = false;
                 // Just apply the first possible move
-                // auto moves = this.gameState.generatePossibleMovements();
+                // auto moves = this.gameState.generatePossibleTurns();
                 // writeln("Applying move: ", moves[0]);
-                // gameState.executeTurn(moves[0]);
+                // gameState.applyTurn(moves[0]);
             }
         }
 
@@ -270,7 +283,7 @@ class BackgammonBoard : DrawingArea {
         auto pipRadius = this.style.boardWidth / 36.0;
 
 
-        foreach(pointNum, point; this.gameState.board.points) {
+        foreach(pointNum, point; this.potentialGameState.board.points) {
             auto pointX = getPointCoords(cast(uint) pointNum + 1).x;
 
             foreach(n; 0..point.numPieces) {
