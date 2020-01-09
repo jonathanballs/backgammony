@@ -56,7 +56,7 @@ class BackgammonBoard : DrawingArea {
     BoardStyle style;
 
     /// Dice animation
-    bool diceAreRolling;
+    bool isAnimating;
 
     /// Create a new board widget.
     this() {
@@ -87,6 +87,8 @@ class BackgammonBoard : DrawingArea {
             }
             return false;
         });
+
+        rollDice();
     }
 
     private struct ScreenCoords {
@@ -110,12 +112,13 @@ class BackgammonBoard : DrawingArea {
     SysTime lastAnimation;
 
     void rollDice() {
+        gameState.rollDie();
         dice = [
             new Die(gameState.diceRoll[0]),
             new Die(gameState.diceRoll[1])
         ];
         lastAnimation = Clock.currTime;
-        diceAreRolling = true;
+        isAnimating = true;
     }
 
     void drawDice(Context cr) {
@@ -162,13 +165,13 @@ class BackgammonBoard : DrawingArea {
         drawPips(cr);
 
         // Temporary: apply first available moves when dice are rolled.
-        if (this.diceAreRolling) {
+        if (this.isAnimating) {
             if (dice[0].finished) {
-                this.diceAreRolling = false;
+                this.isAnimating = false;
                 // Just apply the first possible move
-                auto moves = this.gameState.generatePossibleMovements();
-                writeln("Applying move: ", moves[0]);
-                gameState.executeTurn(moves[0]);
+                // auto moves = this.gameState.generatePossibleMovements();
+                // writeln("Applying move: ", moves[0]);
+                // gameState.executeTurn(moves[0]);
             }
         }
 
@@ -220,6 +223,7 @@ class BackgammonBoard : DrawingArea {
                 double x = sc.x;
                 double y = sc.y;
                 cr.userToDevice(x, y);
+                // TODO: Remove these magic numbers, where do they come from?
                 return ScreenCoords(cast(uint) x - 25, cast(uint) y - 70);
             }
 

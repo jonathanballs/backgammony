@@ -17,7 +17,12 @@ enum PipMoveType {
 enum Player {
     NONE,
     PLAYER_1,
-    PLAYER_2
+    PLAYER_2,
+}
+
+enum TurnState {
+    DiceRoll,
+    MoveSelection,
 }
 
 Player opposite(Player player) {
@@ -58,8 +63,8 @@ struct Point {
 // Points are from 0 to 23. P1's home is 0..5, P2's home is 18..23
 struct Board {
     Point[24] points;
-    uint[Player] takenPieces; // In the centre
-    uint[Player] bearedOffPieces; // Taken off the side
+    uint[Player] takenPieces; // On the bar
+    uint[Player] bearedOffPieces; // Born off
 
     void newGame() {
         points[23] = Point(Player.PLAYER_1, 2);
@@ -82,21 +87,38 @@ struct Board {
 // TODO: Record game histories
 struct GameState {
     Board board;
+
     Player currentTurn;
+    TurnState turnState;
+
     uint[2] diceRoll;
 
-    uint rollDie() {
+    void rollDie() {
         import std.random;
-        return uniform(1, 6);
+        assert(turnState == TurnState.DiceRoll);
+        turnState = TurnState.MoveSelection;
+
+        diceRoll[0] = uniform(1, 7);
+        diceRoll[1] = uniform(1, 7);
+    }
+
+    void rollDie(uint die1, uint die2) {
+        assert(1 <= die1 && die1 <= 6);
+        assert(1 <= die2 && die2 <= 6);
+        diceRoll[0] = die1;
+        diceRoll[1] = die2;
+
+        assert(turnState == TurnState.DiceRoll);
+        turnState = TurnState.MoveSelection;
     }
 
     void newGame() {
         this.board = Board();
         board.newGame();
+        diceRoll = [0, 0];
 
         currentTurn = Player.PLAYER_1;
-        diceRoll[0] = rollDie();
-        diceRoll[1] = rollDie();
+        turnState = TurnState.DiceRoll;
     }
 
     void validateMove(uint[2] diceValues, PipMovement[] pipMovements) {
@@ -120,6 +142,9 @@ struct GameState {
 
     /// A list of moves
     void performMove(PipMovement[] pipMovements) {
+        assert(turnState == TurnState.MoveSelection);
+        turnState = TurnState.DiceRoll;
+
         foreach (move; pipMovements) {
             --board.points[move.startPoint].numPieces;
             ++board.points[move.endPoint].numPieces;
