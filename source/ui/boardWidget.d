@@ -77,14 +77,29 @@ class BackgammonBoard : DrawingArea {
         gameState.newGame();
 
         this.addOnButtonPress(delegate bool (Event e, Widget w) {
-            foreach (uint i, c; pointCoords) {
-                if (e.button.y > min(c[0].y, c[1].y)
-                        && e.button.y < max(c[0].y, c[1].y)
-                        && e.button.x > c[0].x - pointWidth()/2
-                        && e.button.x < c[0].x + pointWidth()/2) {
-                    writeln("Click on point ", i);
+            if (!isAnimating && this.gameState.turnState == TurnState.MoveSelection) {
+                // And check that player is user
+                foreach (uint i, c; pointCoords) {
+                    if (e.button.y > min(c[0].y, c[1].y)
+                            && e.button.y < max(c[0].y, c[1].y)
+                            && e.button.x > c[0].x - pointWidth()/2.5
+                            && e.button.x < c[0].x + pointWidth()/2.5) {
+                        writeln("Click on point ", i);
+
+                        auto potentialMove = PipMovement(PipMoveType.Movement, i,
+                            gameState.currentTurn == Player.PLAYER_1 
+                                ? i - gameState.diceRoll[0]
+                                : i + gameState.diceRoll[0]);
+
+                        if (gameState.isValidMovement(potentialMove)) {
+                            gameState.applyMove(potentialMove);
+                        }
+
+                        break;
+                    }
                 }
             }
+
             return false;
         });
 
