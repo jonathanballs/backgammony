@@ -1,6 +1,5 @@
 module ui.boardWidget;
 
-// The backgammon game board
 import std.algorithm : min, max;
 import std.conv : to;
 import std.datetime.systime : SysTime, Clock;
@@ -16,6 +15,7 @@ import gtk.Widget;
 import gobject.Signals;
 
 import game;
+import signals;
 import ui.dicewidget;
 
 struct RGB {
@@ -61,8 +61,23 @@ class BackgammonBoard : DrawingArea {
     /// Dice animation
     bool isAnimating;
 
+    Signal!() onChangePotentialMovements = new Signal!();
+
+
     // Potential moves of the current player.
-    PipMovement[] potentialMoves;
+    private PipMovement[] _potentialMoves;
+
+    PipMovement[] potentialMoves() {
+        return _potentialMoves.dup;
+    }
+
+    void undoPotentialMove() {
+        if (_potentialMoves.length > 0) {
+            _potentialMoves = _potentialMoves[0..$-1];
+            onChangePotentialMovements.emit();
+        }
+    }
+
     GameState potentialGameState() {
         GameState r = gameState;
         foreach (m; potentialMoves) {
@@ -118,7 +133,8 @@ class BackgammonBoard : DrawingArea {
                                 : i + gameState.diceRoll[potentialMoves.length]);
 
                         if (potentialGameState.isValidPotentialMovement(potentialMove)) {
-                            potentialMoves ~= potentialMove;
+                            _potentialMoves ~= potentialMove;
+                            onChangePotentialMovements.emit();
                         }
 
                         break;
@@ -134,7 +150,8 @@ class BackgammonBoard : DrawingArea {
 
     void finishTurn() {
         gameState.applyTurn(potentialMoves);
-        potentialMoves = [];
+        _potentialMoves = [];
+        onChangePotentialMovements.emit();
     }
 
     bool onConfigureEvent(Event e, Widget w) {

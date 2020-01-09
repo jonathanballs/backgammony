@@ -60,13 +60,9 @@ class BackgammonWindow : MainWindow {
         inetImg.setFromGicon(icon, IconSize.BUTTON);
         undoMoveBtn.add(inetImg);
         undoMoveBtn.addOnClicked((Button b) {
-            import std.stdio;
-            writeln("Undo :)");
-            if (backgammonBoard && backgammonBoard.potentialMoves.length > 0) {
-                backgammonBoard.potentialMoves = backgammonBoard.potentialMoves[0..$-1];
-            }
+            backgammonBoard.undoPotentialMove();
         });
-        // undoMoveBtn.setSensitive(false);
+        undoMoveBtn.setSensitive(false);
 
         auto finishMoveBtn = new Button("Finish");
         finishMoveBtn.addOnClicked((Button b) {
@@ -77,12 +73,9 @@ class BackgammonWindow : MainWindow {
 
         // Game board
         backgammonBoard = new BackgammonBoard();
-        auto box   = new Box(GtkOrientation.HORIZONTAL, 0);
-        box.setHalign(GtkAlign.FILL);
-        box.setValign(GtkAlign.FILL);
-        box.setHexpand(true);
-        box.setVexpand(true);
-        // box.add(board);
+        backgammonBoard.onChangePotentialMovements.connect(() {
+            undoMoveBtn.setSensitive(!!backgammonBoard.potentialMoves.length);
+        });
 
         this.add(backgammonBoard);
         this.setDefaultSize(800, 600);
