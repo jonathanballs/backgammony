@@ -107,7 +107,7 @@ class BackgammonWindow : MainWindow {
                     this.networkingWidget.destroy();
                 },
                 (NetworkNewDiceRoll diceRoll) {
-                    this.backgammonBoard.gameState.rollDie(diceRoll.dice1, diceRoll.dice2);
+                    this.backgammonBoard.gameState.rollDice(diceRoll.dice1, diceRoll.dice2);
                 }
             );
         }

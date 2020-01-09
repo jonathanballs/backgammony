@@ -129,7 +129,7 @@ class BackgammonBoard : DrawingArea {
             return false;
         });
 
-        gameState.rollDie();
+        gameState.rollDice();
     }
 
     void finishTurn() {

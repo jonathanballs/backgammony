@@ -109,7 +109,7 @@ struct GameState {
     }
 
     /// Generate random values for the dice roll
-    void rollDie() {
+    void rollDice() {
         assert(turnState == TurnState.DiceRoll);
 
         import std.random;
@@ -122,7 +122,7 @@ struct GameState {
     }
 
     /// Roll dice to the value of die1 and die2
-    void rollDie(uint die1, uint die2) {
+    void rollDice(uint die1, uint die2) {
         assert(1 <= die1 && die1 <= 6);
         assert(1 <= die2 && die2 <= 6);
 
