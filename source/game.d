@@ -4,7 +4,7 @@ import std.array;
 import std.format;
 import std.stdio;
 
-import signals;
+import utils.signals;
 import utils.types : EnumIndexStaticArray;
 
 // TODO list

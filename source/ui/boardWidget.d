@@ -15,7 +15,7 @@ import gtk.Widget;
 import gobject.Signals;
 
 import game;
-import signals;
+import utils.signals;
 import ui.dicewidget;
 
 struct RGB {

@@ -1,4 +1,4 @@
-module signals;
+module utils.signals;
 import std.stdio;
 
 template Signal(T...) {
