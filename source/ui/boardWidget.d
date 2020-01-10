@@ -121,9 +121,12 @@ class BackgammonBoard : DrawingArea {
         });
 
         this.addOnButtonPress(delegate bool (Event e, Widget w) {
-            if (dice.length && dice[0].finished && this.gameState.turnState == TurnState.MoveSelection) {
+            // Ignore double click events
+            if (e.button.type != GdkEventType.BUTTON_PRESS) {
+                return false;
+            }
 
-                // TODO: Check length of longest legal move
+            if (dice.length && dice[0].finished && this.gameState.turnState == TurnState.MoveSelection) {
                 auto possibleTurns = gameState.generatePossibleTurns();
                 if (!possibleTurns.length) return false;
 
@@ -135,7 +138,6 @@ class BackgammonBoard : DrawingArea {
                             && e.button.y < max(c[0].y, c[1].y)
                             && e.button.x > c[0].x - pointWidth()/2.5
                             && e.button.x < c[0].x + pointWidth()/2.5) {
-                        writeln("Click on point ", i);
 
                         // TODO: Potential move might not be first avaiable dice
                         uint[] moveValues = gameState.diceValues;
@@ -149,7 +151,6 @@ class BackgammonBoard : DrawingArea {
                             moveValues[potentialMoves.length]);
 
                         try {
-                            writeln(gameState.currentPlayer);
                             potentialGameState.validateMovement(potentialMove);
                             _potentialMoves ~= potentialMove;
                             onChangePotentialMovements.emit();
