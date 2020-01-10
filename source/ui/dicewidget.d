@@ -1,4 +1,6 @@
 module ui.dicewidget;
+
+import std.conv;
 import std.stdio;
 import std.typecons;
 import std.math : atan2;
@@ -43,6 +45,8 @@ class Die {
     bool finished = false;
 
     this(int diceValue) {
+        assert (1 <= diceValue && diceValue <= 6,
+            "Can't create dice widget with value " ~ diceValue.to!string);
         // Calculate the end position and go back from there.
         pos = vec3(0.0, 0.0, 0.0);
         finalRot = rot = dieFaces[diceValue-1].rot.inverse();

@@ -63,7 +63,6 @@ class BackgammonBoard : DrawingArea {
 
     Signal!() onChangePotentialMovements = new Signal!();
 
-
     // Potential moves of the current player.
     private PipMovement[] _potentialMoves;
 
@@ -79,20 +78,26 @@ class BackgammonBoard : DrawingArea {
     }
 
     GameState potentialGameState() {
-        GameState r = gameState;
-        foreach (m; potentialMoves) {
-            r.applyMovement(m);
+        if (gameState.turnState == TurnState.DiceRoll) {
+            assert(potentialMoves.length == 0);
+            return gameState;
         }
+
+        GameState r = gameState.dup;
+
+        r.applyTurn(potentialMoves, true);
         return r;
     }
 
     /// Create a new board widget.
-    this() {
+    this(GameState _gameState) {
         super(300, 300);
         setHalign(GtkAlign.FILL);
         setValign(GtkAlign.FILL);
         setHexpand(true);
         setVexpand(true);
+
+        this.gameState = _gameState;
 
         style = new BoardStyle;
 
@@ -102,7 +107,6 @@ class BackgammonBoard : DrawingArea {
             this.queueDraw();
             return true;
         });
-        gameState.newGame();
         gameState.onDiceRoll.connect((uint a, uint b) {
             dice = [
                 new Die(a),
@@ -113,10 +117,13 @@ class BackgammonBoard : DrawingArea {
         });
 
         this.addOnButtonPress(delegate bool (Event e, Widget w) {
-            if (!isAnimating && this.gameState.turnState == TurnState.MoveSelection) {
+            if (dice.length && dice[0].finished && this.gameState.turnState == TurnState.MoveSelection) {
 
                 // TODO: Check length of longest legal move
-                if (potentialMoves.length == 2) return false;
+                auto possibleTurns = gameState.generatePossibleTurns();
+                if (!possibleTurns.length) return false;
+
+                if (potentialMoves.length == possibleTurns[0].length) return false;
 
                 // And check that player is user
                 foreach (uint i, c; pointCoords) {
@@ -127,14 +134,23 @@ class BackgammonBoard : DrawingArea {
                         writeln("Click on point ", i);
 
                         // TODO: Potential move might not be first avaiable dice
+                        uint[] moveValues = gameState.diceValues;
+                        moveValues = moveValues[0] == moveValues[1]
+                            ? moveValues ~ moveValues
+                            : moveValues;
                         auto potentialMove = PipMovement(PipMoveType.Movement, i,
                             gameState.currentPlayer == Player.P1 
-                                ? i - gameState.diceRoll[potentialMoves.length]
-                                : i + gameState.diceRoll[potentialMoves.length]);
+                                ? i - moveValues[potentialMoves.length]
+                                : i + moveValues[potentialMoves.length],
+                            moveValues[potentialMoves.length]);
 
-                        if (potentialGameState.isValidPotentialMovement(potentialMove)) {
+                        try {
+                            writeln(gameState.currentPlayer);
+                            potentialGameState.validateMovement(potentialMove);
                             _potentialMoves ~= potentialMove;
                             onChangePotentialMovements.emit();
+                        } catch (Exception e) {
+                            writeln("Invalid move: ", e);
                         }
 
                         break;
@@ -144,8 +160,6 @@ class BackgammonBoard : DrawingArea {
 
             return false;
         });
-
-        gameState.rollDice();
     }
 
     void finishTurn() {
@@ -210,29 +224,6 @@ class BackgammonBoard : DrawingArea {
     }
 
     bool onDraw(Context cr, Widget widget) {
-        drawBoard(cr);
-        drawPips(cr);
-
-        // Temporary: apply first available moves when dice are rolled.
-        if (this.isAnimating) {
-            if (dice[0].finished) {
-                this.isAnimating = false;
-                // Just apply the first possible move
-                // auto moves = this.gameState.generatePossibleTurns();
-                // writeln("Applying move: ", moves[0]);
-                // gameState.applyTurn(moves[0]);
-            }
-        }
-
-        drawDice(cr);
-        return true;
-    }
-
-    void drawBoard(Context cr) {
-
-        // Board should have ratio of 1.4;
-        auto currentDimensionRatio = cast(float) getAllocatedWidth() / getAllocatedHeight();
-
         // Centering and scaling the board
         auto scaleFactor = min(
             getAllocatedWidth() / style.boardWidth,
@@ -243,6 +234,23 @@ class BackgammonBoard : DrawingArea {
             (getAllocatedHeight() - scaleFactor*style.boardHeight) / 2
         );
         cr.scale(scaleFactor, scaleFactor);
+
+        drawBoard(cr);
+        drawPips(cr);
+        drawDice(cr);
+
+        // import core.memory;
+        // gameState.generatePossibleTurns();
+        // gameState.generatePossibleTurns();
+        // gameState.generatePossibleTurns();
+        // writeln(gameState.generatePossibleTurns().length);
+        // GC.collect();
+
+        return true;
+    }
+
+    void drawBoard(Context cr) {
+
 
         cr.setSourceRgb(0.18, 0.204, 0.212);
         cr.lineTo(0, 0);
@@ -260,7 +268,7 @@ class BackgammonBoard : DrawingArea {
         auto lightPoint = RGB(140 / 256.0, 100 / 256.0, 43 / 256.0);
         auto darkPoint = RGB(44 / 256.0, 62 / 256.0, 80 / 256.0);
 
-        foreach (uint i; 1..this.gameState.board.points.length + 1) {
+        foreach (uint i; 1..25) {
             auto c = getPointCoords(i);
 
             double pointPoint = (i <= 12)
@@ -304,7 +312,7 @@ class BackgammonBoard : DrawingArea {
         auto pipRadius = this.style.boardWidth / 36.0;
 
 
-        foreach(pointNum, point; this.potentialGameState.board.points) {
+        foreach(pointNum, point; this.potentialGameState.points) {
             auto pointX = getPointCoords(cast(uint) pointNum + 1).x;
 
             foreach(n; 0..point.numPieces) {

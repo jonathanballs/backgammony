@@ -16,6 +16,7 @@ import gtk.Main;
 import gtk.MainWindow;
 import gtk.Widget;
 
+import game;
 import networking;
 import ui.boardWidget;
 import ui.networkWidget;
@@ -28,6 +29,8 @@ class BackgammonWindow : MainWindow {
     BackgammonBoard backgammonBoard;
     NetworkWidget networkingWidget;
     Thread netThread;
+
+    GameState gameState;
 
     this() {
         super("Backgammon");
@@ -42,7 +45,7 @@ class BackgammonWindow : MainWindow {
         header.packStart(newGameBtn);
 
         // Internet game
-        auto inetGameBtn = new Button();
+        inetGameBtn = new Button();
         auto icon = new ThemedIcon("network-server-symbolic");
         auto inetImg = new Image();
         inetImg.setFromGicon(icon, IconSize.BUTTON);
@@ -53,7 +56,7 @@ class BackgammonWindow : MainWindow {
         });
         header.packStart(inetGameBtn);
 
-        // Move buttons
+        // // Move buttons
         auto undoMoveBtn = new Button();
         icon = new ThemedIcon("edit-undo-symbolic");
         inetImg = new Image();
@@ -68,19 +71,31 @@ class BackgammonWindow : MainWindow {
         finishMoveBtn.addOnClicked((Button b) {
             backgammonBoard.finishTurn();
         });
+        finishMoveBtn.setSensitive(false);
         header.packEnd(finishMoveBtn);
         header.packEnd(undoMoveBtn);
 
-        // Game board
-        backgammonBoard = new BackgammonBoard();
+        // // Game board
+        gameState = new GameState();
+        backgammonBoard = new BackgammonBoard(gameState);
         backgammonBoard.onChangePotentialMovements.connect(() {
             undoMoveBtn.setSensitive(!!backgammonBoard.potentialMoves.length);
+
+            try {
+                backgammonBoard.gameState.validateTurn(backgammonBoard.potentialMoves);
+                finishMoveBtn.setSensitive(true);
+            } catch (Exception e) {
+                finishMoveBtn.setSensitive(false);
+            }
         });
 
         this.add(backgammonBoard);
-        this.setDefaultSize(800, 600);
+        // this.setDefaultSize(800, 600);
 
         this.addTickCallback(&handleThreadMessages);
+
+        gameState.newGame();
+        gameState.rollDice(1, 1);
     }
 
     bool handleThreadMessages(Widget w, FrameClock f) {
