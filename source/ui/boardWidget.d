@@ -115,6 +115,10 @@ class BackgammonBoard : DrawingArea {
             lastAnimation = Clock.currTime;
             isAnimating = true;
         });
+        gameState.onBeginTurn.connect((Player p) {
+            _potentialMoves = [];
+            onChangePotentialMovements.emit();
+        });
 
         this.addOnButtonPress(delegate bool (Event e, Widget w) {
             if (dice.length && dice[0].finished && this.gameState.turnState == TurnState.MoveSelection) {
@@ -163,9 +167,9 @@ class BackgammonBoard : DrawingArea {
     }
 
     void finishTurn() {
-        gameState.applyTurn(potentialMoves);
+        auto pMoves = _potentialMoves;
         _potentialMoves = [];
-        onChangePotentialMovements.emit();
+        gameState.applyTurn(pMoves);
     }
 
     bool onConfigureEvent(Event e, Widget w) {

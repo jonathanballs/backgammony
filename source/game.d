@@ -291,7 +291,8 @@ class GameState {
      *     partialTurn = Whether this is a partial (incomplete) turn.
      */
     void applyTurn(Turn turn, bool partialTurn = false) {
-        assert(turnState == TurnState.MoveSelection);
+        assert(turnState == TurnState.MoveSelection,
+            "Tried to applyTurn() before dice are rolled");
 
         if (!partialTurn) {
             validateTurn(turn);
@@ -304,6 +305,7 @@ class GameState {
         if (!partialTurn) {
             _currentPlayer = currentPlayer.opposite();
             _turnState = TurnState.DiceRoll;
+            _diceValues = [0, 0];
             onBeginTurn.emit(_currentPlayer);
         }
     }

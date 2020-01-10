@@ -35,11 +35,15 @@ class BackgammonWindow : MainWindow {
     this() {
         super("Backgammon");
 
+        gameState = new GameState();
+
         header = new HeaderBar();
         header.setTitle("Backgammon");
-        header.setSubtitle("White to play");
         header.setShowCloseButton(true);
         this.setTitlebar(header);
+        gameState.onBeginTurn.connect((Player p) {
+            header.setSubtitle(p == Player.P1 ? "Black to play" : "White to play");
+        });
 
         newGameBtn = new Button("New Game");
         header.packStart(newGameBtn);
@@ -76,7 +80,6 @@ class BackgammonWindow : MainWindow {
         header.packEnd(undoMoveBtn);
 
         // // Game board
-        gameState = new GameState();
         backgammonBoard = new BackgammonBoard(gameState);
         backgammonBoard.onChangePotentialMovements.connect(() {
             undoMoveBtn.setSensitive(!!backgammonBoard.potentialMoves.length);
