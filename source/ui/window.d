@@ -93,7 +93,7 @@ class BackgammonWindow : MainWindow {
         });
 
         this.add(backgammonBoard);
-        // this.setDefaultSize(800, 600);
+        this.setDefaultSize(800, 600);
 
         this.addTickCallback(&handleThreadMessages);
 
