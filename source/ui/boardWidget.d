@@ -23,7 +23,8 @@ struct RGB {
 }
 
 private struct ScreenCoords {
-    uint x, y;
+    float x;
+    float y;
 }
 
 static void setSourceRgbStruct(Context cr, RGB color) {
@@ -39,11 +40,11 @@ class BoardStyle {
     float boardHeight = 800.0;      /// Height of the board
     RGB boardColor = RGB(0.18, 0.204, 0.212); /// Board background colour 
 
-    float borderWidth = 30.0;       /// Width of the border enclosing the board
-    float barWidth = 150.0;         /// Width of bar in the centre of the board
-    RGB borderColor = RGB(0.17969, 0.19141, 0.19141); /// Colour of the border
+    float borderWidth = 15.0;       /// Width of the border enclosing the board
+    float barWidth = 70.0;         /// Width of bar in the centre of the board
+    RGB borderColor = RGB(0.14969, 0.15141, 0.15141); /// Colour of the border
 
-    float pointWidth = 100.0;        /// Width of each point
+    float pointWidth = 75.0;        /// Width of each point
     float pointHeight = 300.0;       /// Height of each point
     RGB lightPointColor = RGB(0.546875, 0.390625, 0.167969); /// Colour of light points
     RGB darkPointColor = RGB(0.171875, 0.2421875, 0.3125);   /// Colour of dark points
@@ -219,18 +220,8 @@ class BackgammonBoard : DrawingArea {
         lastAnimation = currTime;
     }
 
-    // Returns the centre bottom of the point
-    ScreenCoords getPointCoords(uint pointNum) {
-        // Point 1 is bottom right. Point 24 is top right
-        if (pointNum <= 12) {
-            return ScreenCoords(cast(uint) (cast(uint) style.boardWidth - (pointNum-0.5) * style.pointWidth), 0);
-        } else {
-            return ScreenCoords(cast(uint) ((pointNum-12.5) * style.pointWidth), cast(uint) style.boardHeight);
-        }
-    }
-
     ScreenCoords getPipCoords(uint pointNum, uint pipNum) {
-        auto coords = getPointCoords(pointNum);
+        auto coords = getPointPosition(pointNum)[0];
         if (pointNum <= 12) {
             coords.y -= cast(uint) ((2*pipNum + 1) * style.pipRadius);
         } else {
@@ -259,52 +250,103 @@ class BackgammonBoard : DrawingArea {
     }
 
     void drawBoard(Context cr) {
-        cr.setSourceRgbStruct(style.boardColor);
+        // Draw border
+        cr.setSourceRgbStruct(style.borderColor);
         cr.lineTo(0, 0);
         cr.lineTo(style.boardWidth, 0);
         cr.lineTo(style.boardWidth, style.boardHeight);
         cr.lineTo(0, style.boardHeight);
         cr.fill();
 
+        // Draw board background over it
+        cr.setSourceRgbStruct(style.boardColor);
+        cr.lineTo(style.borderWidth, style.borderWidth);
+        cr.lineTo(style.boardWidth - style.borderWidth, style.borderWidth);
+        cr.lineTo(style.boardWidth - style.borderWidth, style.boardHeight - style.borderWidth);
+        cr.lineTo(style.borderWidth, style.boardHeight - style.borderWidth);
+        cr.fill();
+
+        // Draw the bar
+        cr.setSourceRgbStruct(style.borderColor);
+        cr.lineTo((style.boardWidth - style.barWidth) / 2, 0);
+        cr.lineTo((style.boardWidth + style.barWidth) / 2, 0);
+        cr.lineTo((style.boardWidth + style.barWidth) / 2, style.boardHeight);
+        cr.lineTo((style.boardWidth - style.barWidth) / 2, style.boardHeight);
+        cr.fill;
+
         drawPoints(cr);
+    }
+
+    /// Returns a tuple containing the bottom (centre) and top of the points position.
+    /// By default we will be starting at top right.
+    /// Params:
+    ///     pointIndex = point number between 0 and 23
+    Tuple!(ScreenCoords, ScreenCoords) getPointPosition(uint pointIndex) {
+        assert (pointIndex < 24);
+
+        ScreenCoords start;
+        ScreenCoords finish;
+
+        // y-coordinate
+        if (pointIndex < 12) {
+            start.y = style.borderWidth;
+            finish.y = style.borderWidth + style.pointHeight;
+        } else {
+            start.y = style.boardHeight - style.borderWidth;
+            finish.y = style.boardHeight - (style.borderWidth + style.pointHeight);
+        }
+
+        // x-coordinate
+        const float halfBoardWidth = (style.boardWidth - 2*style.borderWidth - style.barWidth) / 2;
+        const float pointSeparation = (halfBoardWidth + 1) / 6;
+        if (pointIndex < 12) { // top
+            start.x = style.boardWidth - (style.borderWidth + (pointIndex+0.5)*pointSeparation);
+            if (pointIndex > 5) {
+                start.x -= style.barWidth;
+            }
+            finish.x = start.x;
+        } else { // left side
+            start.x = style.borderWidth + (pointIndex-12+0.5)*pointSeparation;
+            if (pointIndex > 17) {
+                start.x += style.barWidth;
+            }
+            finish.x = start.x;
+        }
+
+        return tuple(start, finish);
     }
 
     /// The coordinates of each point on the screen in device.
     ScreenCoords[2][24] pointCoords;
     void drawPoints(Context cr) {
 
-        foreach (uint i; 1..25) {
-            auto c = getPointCoords(i);
+        foreach (uint i; 0..24) {
+            auto c = getPointPosition(i);
 
-            double pointPoint = (i <= 12)
-                ? style.pointHeight
-                : cast(uint) style.boardHeight-style.pointHeight;
-            
-
+            // Record the point poisitoin
             ScreenCoords toDevice(ScreenCoords sc) {
                 double x = sc.x;
                 double y = sc.y;
                 cr.userToDevice(x, y);
                 // TODO: Remove these magic numbers, where do they come from?
-                return ScreenCoords(cast(uint) x - 25, cast(uint) y - 70);
+                return ScreenCoords(x - 25, y - 70);
             }
 
-            pointCoords[i-1][0] = toDevice(c);
-            pointCoords[i-1][1] = toDevice(ScreenCoords(c.x, cast(uint) pointPoint));
+            pointCoords[i][0] = toDevice(c[0]);
+            pointCoords[i][1] = toDevice(c[1]);
 
             // Draw the point
-            cr.moveTo(c.x - style.pointWidth/2, c.y);
-            cr.lineTo(c.x, pointPoint);
-            cr.lineTo(c.x + style.pointWidth/2, c.y);
+            cr.moveTo(c[0].x - style.pointWidth/2, c[0].y);
+            cr.lineTo(c[1].x, c[1].y);
+            cr.lineTo(c[0].x + style.pointWidth/2, c[0].y);
 
             cr.setSourceRgbStruct(i%2 ? style.darkPointColor : style.lightPointColor);
             cr.fill();
             cr.stroke();
 
             // Draw numbers
-            cr.moveTo(c.x, c.y + (i <= 12 ? 20 : -10));
+            cr.moveTo(c[0].x, c[0].y + (i < 12 ? 20 : -10));
             cr.setSourceRgb(1.0, 1.0, 1.0);
-            import std.stdio;
             cr.showText(i.to!string);
             cr.newPath();
         }
@@ -312,10 +354,10 @@ class BackgammonBoard : DrawingArea {
 
     void drawPips(Context cr) {
         foreach(pointNum, point; this.potentialGameState.points) {
-            auto pointX = getPointCoords(cast(uint) pointNum + 1).x;
+            auto pointX = getPointPosition(cast(uint) pointNum)[0].x;
 
             foreach(n; 0..point.numPieces) {
-                double pointY = style.pipRadius + (2*n*style.pipRadius);
+                double pointY = style.borderWidth + style.pipRadius + (2*n*style.pipRadius);
                 if (pointNum >= 12) {
                     pointY = style.boardHeight - pointY;
                 }
