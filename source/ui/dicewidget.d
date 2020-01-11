@@ -10,14 +10,8 @@ import std.math : PI, PI_2;
 import gl3n.linalg;
 import std.format;
 
-/*
- * Single die roll. This just handles the animation. Rigid body physics of a
- * spinning cube against a flat surface (the ground). The dice is size 1.0 and
- * will roll in from the right (positive x axis).
- */
-
-alias DieFace = Tuple!(vec2[], "dots", mat3, "rot");
-DieFace[] dieFaces = [
+private alias DieFace = Tuple!(vec2[], "dots", mat3, "rot");
+private DieFace[] dieFaces = [
     // 1
     DieFace([vec2(0.0, 0.0)], mat3.identity),
     // 2
@@ -32,7 +26,12 @@ DieFace[] dieFaces = [
     DieFace([vec2(-0.3, -0.3), vec2(0.3, 0.3), vec2(-0.3, 0.3), vec2(0.3, -0.3), vec2(-0.3, 0.0), vec2(0.3, 0.0)], mat3.identity.rotatex(PI))
 ];
 
-class Die {
+/**
+ * Single die roll. This just handles the animation. Rigid body physics of a
+ * spinning cube against a flat surface (the ground). The dice is size 1.0 and
+ * will roll in from the right (positive x axis).
+ */
+class AnimatedDieWidget {
     vec3 pos;
     vec3 vel;
     float length; // Length of each side

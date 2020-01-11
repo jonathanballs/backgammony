@@ -30,22 +30,31 @@ static void setSourceRgbStruct(Context cr, RGB color) {
     cr.setSourceRgb(color.r, color.g, color.b);
 }
 
-// Widths and heights are relative. The board will be scaled to fit on the window.
+/**
+ * The layout of the board. Measurements are all relative as the board will
+ * resize to fit its layout
+ */
 class BoardStyle {
-    float boardWidth = 1200.0;
-    float boardHeight = 800.0;
+    float boardWidth = 1200.0;      /// Width of the board.
+    float boardHeight = 800.0;      /// Height of the board
+    RGB boardColor = RGB(0.18, 0.204, 0.212); /// Board background colour 
 
-    float borderWidth = 30.0;
-    float barWidth = 40.0;
+    float borderWidth = 30.0;       /// Width of the border enclosing the board
+    float barWidth = 150.0;         /// Width of bar in the centre of the board
+    RGB borderColor = RGB(0.17969, 0.19141, 0.19141); /// Colour of the border
 
-    float pipRadius = 60.0;
+    float pointWidth = 100.0;        /// Width of each point
+    float pointHeight = 300.0;       /// Height of each point
+    RGB lightPointColor = RGB(0.546875, 0.390625, 0.167969); /// Colour of light points
+    RGB darkPointColor = RGB(0.171875, 0.2421875, 0.3125);   /// Colour of dark points
 
-    float pointWidth = 70.0;
-    float pointHeight = 300.0;
+    float pipRadius = 30.0;             /// Radius of pips
+    RGB p1Colour = RGB(0.0, 0.0, 0.0);  /// Colour of player 1's pips
+    RGB p2Colour = RGB(1.0, 1.0, 1.0);  /// Colour of player 2's pips
 }
 
-// A corner of the board. Useful for describing where a user's home should be.
-// In the future, this will be changeable in the settings.
+/// A corner of the board. Useful for describing where a user's home should be.
+/// In the future, this will be changeable in the settings.
 enum Corner {
     BL,
     BR,
@@ -58,18 +67,22 @@ class BackgammonBoard : DrawingArea {
 
     /// The current styling. Will be modifiable in the future.
     BoardStyle style;
-    /// Dice animation
-    bool isAnimating;
 
+    /// Dice animation
+    SysTime lastAnimation;
+    AnimatedDieWidget[] dice;
+
+    /// Fired when the user selects or undoes a potential move
     Signal!() onChangePotentialMovements = new Signal!();
 
-    // Potential moves of the current player.
+    /// Potential moves of the current player.
     private PipMovement[] _potentialMoves;
 
     PipMovement[] potentialMoves() {
         return _potentialMoves.dup;
     }
 
+    /// Remove the most recent potential move
     void undoPotentialMove() {
         if (_potentialMoves.length > 0) {
             _potentialMoves = _potentialMoves[0..$-1];
@@ -77,6 +90,7 @@ class BackgammonBoard : DrawingArea {
         }
     }
 
+    /// The current gamestate with the potential moves applied
     GameState potentialGameState() {
         if (gameState.turnState == TurnState.DiceRoll) {
             assert(potentialMoves.length == 0);
@@ -109,11 +123,10 @@ class BackgammonBoard : DrawingArea {
         });
         gameState.onDiceRoll.connect((uint a, uint b) {
             dice = [
-                new Die(a),
-                new Die(b)
+                new AnimatedDieWidget(a),
+                new AnimatedDieWidget(b)
             ];
             lastAnimation = Clock.currTime;
-            isAnimating = true;
         });
         gameState.onBeginTurn.connect((Player p) {
             _potentialMoves = [];
@@ -136,8 +149,8 @@ class BackgammonBoard : DrawingArea {
                 foreach (uint i, c; pointCoords) {
                     if (e.button.y > min(c[0].y, c[1].y)
                             && e.button.y < max(c[0].y, c[1].y)
-                            && e.button.x > c[0].x - pointWidth()/2.5
-                            && e.button.x < c[0].x + pointWidth()/2.5) {
+                            && e.button.x > c[0].x - style.pointWidth/2.5
+                            && e.button.x < c[0].x + style.pointWidth/2.5) {
 
                         // TODO: Potential move might not be first avaiable dice
                         uint[] moveValues = gameState.diceValues;
@@ -167,27 +180,25 @@ class BackgammonBoard : DrawingArea {
         });
     }
 
+    /**
+     * Finish a turn but submitting the current potential moves to the game state.
+     */
     void finishTurn() {
         auto pMoves = _potentialMoves;
         _potentialMoves = [];
         gameState.applyTurn(pMoves);
     }
 
+    /**
+     * Logic for resizing self
+     */
     bool onConfigureEvent(Event e, Widget w) {
         auto short_edge = min(getAllocatedHeight(), getAllocatedWidth());
-        auto border_width = cast(uint) pointWidth() / 2;
+        auto border_width = cast(uint) style.pointWidth / 2;
         short_edge -= 2 * border_width;
         setSizeRequest(short_edge, short_edge);
         return true;
     }
-
-    float pointWidth() { return style.boardWidth / 12.0; }
-    float pointHeight() { return style.boardHeight / 2.5; }
-    float pipRadius() { return pointWidth() / 2.0; }
-
-    Die[] dice;
-    SysTime lastAnimation;
-
 
     void drawDice(Context cr) {
         auto currTime = Clock.currTime();
@@ -212,18 +223,18 @@ class BackgammonBoard : DrawingArea {
     ScreenCoords getPointCoords(uint pointNum) {
         // Point 1 is bottom right. Point 24 is top right
         if (pointNum <= 12) {
-            return ScreenCoords(cast(uint) (cast(uint) style.boardWidth - (pointNum-0.5) * pointWidth()), 0);
+            return ScreenCoords(cast(uint) (cast(uint) style.boardWidth - (pointNum-0.5) * style.pointWidth), 0);
         } else {
-            return ScreenCoords(cast(uint) ((pointNum-12.5) * pointWidth()), cast(uint) style.boardHeight);
+            return ScreenCoords(cast(uint) ((pointNum-12.5) * style.pointWidth), cast(uint) style.boardHeight);
         }
     }
 
     ScreenCoords getPipCoords(uint pointNum, uint pipNum) {
         auto coords = getPointCoords(pointNum);
         if (pointNum <= 12) {
-            coords.y -= cast(uint) ((2*pipNum + 1) * pipRadius());
+            coords.y -= cast(uint) ((2*pipNum + 1) * style.pipRadius);
         } else {
-            coords.y += cast(uint) ((2*pipNum + 1) * pipRadius());
+            coords.y += cast(uint) ((2*pipNum + 1) * style.pipRadius);
         }
         return coords;
     }
@@ -244,20 +255,11 @@ class BackgammonBoard : DrawingArea {
         drawPips(cr);
         drawDice(cr);
 
-        // import core.memory;
-        // gameState.generatePossibleTurns();
-        // gameState.generatePossibleTurns();
-        // gameState.generatePossibleTurns();
-        // writeln(gameState.generatePossibleTurns().length);
-        // GC.collect();
-
         return true;
     }
 
     void drawBoard(Context cr) {
-
-
-        cr.setSourceRgb(0.18, 0.204, 0.212);
+        cr.setSourceRgbStruct(style.boardColor);
         cr.lineTo(0, 0);
         cr.lineTo(style.boardWidth, 0);
         cr.lineTo(style.boardWidth, style.boardHeight);
@@ -270,15 +272,13 @@ class BackgammonBoard : DrawingArea {
     /// The coordinates of each point on the screen in device.
     ScreenCoords[2][24] pointCoords;
     void drawPoints(Context cr) {
-        auto lightPoint = RGB(140 / 256.0, 100 / 256.0, 43 / 256.0);
-        auto darkPoint = RGB(44 / 256.0, 62 / 256.0, 80 / 256.0);
 
         foreach (uint i; 1..25) {
             auto c = getPointCoords(i);
 
             double pointPoint = (i <= 12)
-                ? pointHeight()
-                : cast(uint) style.boardHeight-pointHeight();
+                ? style.pointHeight
+                : cast(uint) style.boardHeight-style.pointHeight;
             
 
             ScreenCoords toDevice(ScreenCoords sc) {
@@ -293,11 +293,11 @@ class BackgammonBoard : DrawingArea {
             pointCoords[i-1][1] = toDevice(ScreenCoords(c.x, cast(uint) pointPoint));
 
             // Draw the point
-            cr.moveTo(c.x - pointWidth()/2, c.y);
+            cr.moveTo(c.x - style.pointWidth/2, c.y);
             cr.lineTo(c.x, pointPoint);
-            cr.lineTo(c.x + pointWidth()/2, c.y);
+            cr.lineTo(c.x + style.pointWidth/2, c.y);
 
-            cr.setSourceRgbStruct(i%2 ? darkPoint : lightPoint);
+            cr.setSourceRgbStruct(i%2 ? style.darkPointColor : style.lightPointColor);
             cr.fill();
             cr.stroke();
 
@@ -311,28 +311,22 @@ class BackgammonBoard : DrawingArea {
     }
 
     void drawPips(Context cr) {
-        struct rgb { double r, g, b; }
-        auto p1Colour = rgb(0.0, 0.0, 0.0);
-        auto p2Colour = rgb(1.0, 1.0, 1.0);
-        auto pipRadius = this.style.boardWidth / 36.0;
-
-
         foreach(pointNum, point; this.potentialGameState.points) {
             auto pointX = getPointCoords(cast(uint) pointNum + 1).x;
 
             foreach(n; 0..point.numPieces) {
-                double pointY = pipRadius + (2*n*pipRadius);
+                double pointY = style.pipRadius + (2*n*style.pipRadius);
                 if (pointNum >= 12) {
                     pointY = style.boardHeight - pointY;
                 }
 
                 import std.math : PI;
-                cr.arc(pointX, pointY, pipRadius, 0, 2*PI);
+                cr.arc(pointX, pointY, style.pipRadius, 0, 2*PI);
 
                 if (point.owner == Player.P1) {
-                    cr.setSourceRgb(p1Colour.r, p1Colour.g, p1Colour.b);
+                    cr.setSourceRgb(style.p1Colour.r, style.p1Colour.g, style.p1Colour.b);
                 } else {
-                    cr.setSourceRgb(p2Colour.r, p2Colour.g, p2Colour.b);
+                    cr.setSourceRgb(style.p2Colour.r, style.p2Colour.g, style.p2Colour.b);
                 }
 
                 cr.fillPreserve();
