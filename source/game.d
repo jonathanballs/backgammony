@@ -193,6 +193,7 @@ class GameState {
 
     /// Generate a list of possible game moves based off current dice
     PipMovement[][] generatePossibleTurns() {
+        assert(turnState == TurnState.MoveSelection);
         uint[] moveValues = diceValues;
         if (moveValues[0] == moveValues[1]) moveValues ~= moveValues;
 
@@ -233,7 +234,7 @@ class GameState {
                     PipMovement potentialMovement = PipMovement(
                         PipMoveType.Movement,
                         pointIndex,
-                        Player.P1 ? pointIndex-moveValue : pointIndex+moveValue,
+                        _currentPlayer == Player.P1 ? pointIndex-moveValue : pointIndex+moveValue,
                         moveValue);
                     if (isValidPotentialMovement(potentialMovement)) {
                         GameState potentialGS = this.dup;

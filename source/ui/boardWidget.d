@@ -155,7 +155,7 @@ class BackgammonBoard : DrawingArea {
                             _potentialMoves ~= potentialMove;
                             onChangePotentialMovements.emit();
                         } catch (Exception e) {
-                            writeln("Invalid move: ", e);
+                            writeln("Invalid move: ", e.message);
                         }
 
                         break;

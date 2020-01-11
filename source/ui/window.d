@@ -84,11 +84,13 @@ class BackgammonWindow : MainWindow {
         backgammonBoard.onChangePotentialMovements.connect(() {
             undoMoveBtn.setSensitive(!!backgammonBoard.potentialMoves.length);
 
-            try {
-                backgammonBoard.gameState.validateTurn(backgammonBoard.potentialMoves);
-                finishMoveBtn.setSensitive(true);
-            } catch (Exception e) {
-                finishMoveBtn.setSensitive(false);
+            if (gameState.turnState == TurnState.MoveSelection) {
+                try {
+                    backgammonBoard.gameState.validateTurn(backgammonBoard.potentialMoves);
+                    finishMoveBtn.setSensitive(true);
+                } catch (Exception e) {
+                    finishMoveBtn.setSensitive(false);
+                }
             }
         });
 
@@ -97,8 +99,12 @@ class BackgammonWindow : MainWindow {
 
         this.addTickCallback(&handleThreadMessages);
 
+        // For now lets just roll immediately.
+        gameState.onBeginTurn.connect((Player p) {
+            gameState.rollDice();
+        });
+
         gameState.newGame();
-        gameState.rollDice(1, 1);
     }
 
     bool handleThreadMessages(Widget w, FrameClock f) {
