@@ -4,6 +4,8 @@ import std.format;
 import std.conv;
 import std.algorithm;
 import std.array;
+import std.string;
+import std.stdio;
 import game;
 
 /**
@@ -53,18 +55,53 @@ string toFibsString(PipMovement pipMovement) {
     }
 }
 
-// PipMovement parseFibsString(string fibsString){
-// }
+/**
+ * Parse a FIBS movement. Tries to be lenient in what it accepts. Will throw
+ * Exception if it can't parse
+ */
+PipMovement parseFibsString(string fibsString){
+    PipMoveType moveType = PipMoveType.Movement;
+    uint startPoint = 0;
+    uint endPoint = 0;
+
+    string[] fibsStringSplit = fibsString.toLower().split(" "); // Case insensitive
+    if (fibsStringSplit.length != 3 || fibsStringSplit[0] != "move") {
+        throw new Exception("Couldn't parse '" ~ fibsString ~ "'");
+    }
+
+    // From
+    if (fibsStringSplit[1] == "bar") {
+        moveType = PipMoveType.Entering;
+    } else {
+        startPoint = fibsStringSplit[1].to!uint;
+    }
+
+    // To
+    if (fibsStringSplit[2] == "off") {
+        if (moveType == PipMoveType.Entering) // Can't go from bar to home
+            throw new Exception("Couldn't parse '" ~ fibsString ~ "'");
+        moveType = PipMoveType.BearingOff;
+    } else {
+        endPoint = fibsStringSplit[2].to!uint;
+    }
+
+    return PipMovement(moveType, startPoint, endPoint);
+}
 
 unittest {
-    import std.stdio;
+    import std.stdio : writeln;
     writeln("Testing FIBS formatting");
     auto gs = new GameState();
     gs.newGame();
     gs.toFibsString;
 
-    auto movement = PipMovement(
-        PipMoveType.Movement, 5, 7, 2
-    );
-    assert(movement.toFibsString == "move 5 7");
+    const auto testMovements = [
+        "move 5 7": PipMovement(PipMoveType.Movement, 5, 7)
+    ];
+
+    foreach(ms; testMovements.byKey()) {
+        // writeln(ms.parseFibsString);
+        assert(ms.parseFibsString == testMovements[ms]);
+        assert(ms.parseFibsString.toFibsString == ms);
+    }
 }

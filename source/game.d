@@ -2,24 +2,90 @@ module game;
 
 import std.array;
 import std.format;
+import std.math;
 import std.stdio;
 
 import utils.signals;
-import utils.types : EnumIndexStaticArray;
+import utils.types : EnumIndexStaticArray, OneIndexedStaticArray;
 
 // TODO list
 // - Handle users more smoothly - clean up functions etc.
 // - Record board history - and validate it.
+// - More compact data structures? Or leave that to the AI...
 
 /**
  * Represents a single move in a turn e.g. a piece moving from the bar or a
- * point to another point.
+ * point to another point. TODO: Basic validation. Points are 1-indexed.
+ * Const.
  */
 struct PipMovement {
-    PipMoveType moveType;   /// The type of move
-    uint startPoint;        /// Starting point
-    uint endPoint;          /// End point
-    uint diceValue;         /// Value the dice used for this movement
+    private PipMoveType _moveType;   /// The type of move
+    private uint _startPoint;        /// Starting point
+    private uint _endPoint;          /// End point
+
+    /// The type of move
+    PipMoveType moveType() { return _moveType; }
+    /// Starting point (1-indexed)
+    uint startPoint() { return _startPoint; }
+    /// End point (1-indexed)
+    uint endPoint() { return _endPoint; }
+
+    /**
+     * Create a new PipMovement
+     */
+    this(PipMoveType moveType, uint startPoint, uint endPoint) {
+        _moveType = moveType;
+        _startPoint = startPoint;
+        _endPoint = endPoint;
+
+        // Ensure that it is a legal move
+        switch (moveType) {
+        case PipMoveType.Movement:
+            if (!startPoint || startPoint > 24 || !endPoint || endPoint > 24) {
+                writeln(startPoint, " ", endPoint);
+                throw new Exception("Movement points not in board range");
+            }
+            if (abs(cast(int) startPoint - cast(int) endPoint) > 6) {
+                throw new Exception("Movement can not be greater than 6 points");
+            }
+            return;
+        case PipMoveType.Entering:
+            if (startPoint != 0) {
+                throw new Exception("startPoint for Entering must be 0");
+            }
+            if (!Player.P1.isHomePoint(endPoint) && !Player.P2.isHomePoint(endPoint)) {
+                throw new Exception("endPoint must be in a users home");
+            } // 1 - 6 or 19 - 24
+            return;
+        case PipMoveType.BearingOff:
+            if (!Player.P1.isHomePoint(startPoint) && !Player.P2.isHomePoint(startPoint)) {
+                throw new Exception("Must bear off from a home point");
+            }
+            if (endPoint != 0) {
+                throw new Exception("endPoint for Bearing off must be 0");
+            }
+            return;
+        default: assert(0);
+        }
+    }
+
+    /**
+     * The value of the dice roll
+     */
+    uint diceValue() {
+        switch (moveType) {
+        case PipMoveType.Movement:
+            return abs(cast(int) endPoint - cast(int) startPoint);
+        case PipMoveType.Entering:
+            if (endPoint < 7) return endPoint;
+            else return 25 - endPoint;
+        case PipMoveType.BearingOff: // Err :/ could actually be higher.
+            writeln("Warning: Getting dice value of bearing off move");
+            if (endPoint < 7) return endPoint;
+            else return 25 - endPoint;
+        default: assert(0);
+        }
+    }
 }
 alias Turn = PipMovement[];
 
@@ -43,9 +109,9 @@ Player opposite(Player player) {
 
 /// Whether pointNumber is a home point for player
 bool isHomePoint(Player player, uint pointNumber) {
-    if (player == Player.P1 && pointNumber >= 0 && pointNumber <= 5) {
+    if (player == Player.P1 && pointNumber >= 1 && pointNumber <= 6) {
         return true;
-    } else if (player == Player.P2 && pointNumber >= 18 && pointNumber <= 23) {
+    } else if (player == Player.P2 && pointNumber >= 19 && pointNumber <= 24) {
         return true;
     }
     return false;
@@ -80,7 +146,7 @@ class GameState {
     /**
      * The 24 points that make up the backgammon board
      */
-    Point[24] points;
+    OneIndexedStaticArray!(Point, 24) points;
     EnumIndexStaticArray!(Player, uint) takenPieces;
     EnumIndexStaticArray!(Player, uint) borneOffPieces;
     private Player _currentPlayer;
@@ -123,14 +189,14 @@ class GameState {
         borneOffPieces[Player.P1] = 0;
         borneOffPieces[Player.P2] = 0;
 
-        points[23] = Point(Player.P1, 2);
-        points[12] = Point(Player.P1, 5);
-        points[7] = Point(Player.P1, 3);
-        points[5] = Point(Player.P1, 5);
-        points[0] = Point(Player.P2, 2);
-        points[11] = Point(Player.P2, 5);
-        points[16] = Point(Player.P2, 3);
-        points[18] = Point(Player.P2, 5);
+        points[24] = Point(Player.P1, 2);
+        points[13] = Point(Player.P1, 5);
+        points[8] = Point(Player.P1, 3);
+        points[6] = Point(Player.P1, 5);
+        points[1] = Point(Player.P2, 2);
+        points[12] = Point(Player.P2, 5);
+        points[17] = Point(Player.P2, 3);
+        points[19] = Point(Player.P2, 5);
 
         onBeginTurn.emit(_currentPlayer);
     }
@@ -229,29 +295,36 @@ class GameState {
 
         // Check if player can move
         foreach (i, moveValue; moveValues.uniq().enumerate()) {
-            foreach (uint pointIndex, point; points) {
-                if (point.owner == currentPlayer) {
-                    PipMovement potentialMovement = PipMovement(
-                        PipMoveType.Movement,
-                        pointIndex,
-                        _currentPlayer == Player.P1 ? pointIndex-moveValue : pointIndex+moveValue,
-                        moveValue);
-                    if (isValidPotentialMovement(potentialMovement)) {
-                        GameState potentialGS = this.dup;
-                        potentialGS.applyMovement(potentialMovement);
-                        auto nextMoves = potentialGS.generatePossibleTurns(moveValues.dup.remove(i));
+            uint pointIndex;
+            foreach (point; points) {
+                pointIndex = pointIndex+1;
 
-                        if (nextMoves) {
-                            foreach (m; nextMoves) {
-                                auto moveList = [[potentialMovement] ~ m.dup];
-                                ret ~= moveList;
+                if (point.owner == currentPlayer) {
+                    try {
+                        PipMovement potentialMovement = PipMovement(
+                            PipMoveType.Movement,
+                            pointIndex,
+                            _currentPlayer == Player.P1 ? pointIndex-moveValue : pointIndex+moveValue);
+                        if (isValidPotentialMovement(potentialMovement)) {
+                            GameState potentialGS = this.dup;
+                            potentialGS.applyMovement(potentialMovement);
+                            auto nextMoves = potentialGS.generatePossibleTurns(moveValues.dup.remove(i));
+
+                            if (nextMoves) {
+                                foreach (m; nextMoves) {
+                                    auto moveList = [[potentialMovement] ~ m.dup];
+                                    ret ~= moveList;
+                                }
+                            } else {
+                                ret ~= [potentialMovement];
                             }
-                        } else {
-                            ret ~= [potentialMovement];
                         }
+                    } catch (Exception e) {
+                        // Ignore
                     }
                 }
             }
+            pointIndex++;
         }
 
         uint longestTurn = 0;
@@ -340,8 +413,9 @@ class GameState {
         // Secondly check if they can perform the move that they want
         if (pipMovement.moveType == PipMoveType.Movement) {
             // Ensure that movement is within the board boundaries. Uints cant be
-            // below zero.
-            if (pipMovement.startPoint > 23 || pipMovement.endPoint > 23) {
+            // below zero. This should be checked in the PipMovement constructor.
+            if (!pipMovement.startPoint || !pipMovement.endPoint
+                    || pipMovement.startPoint > 24 || pipMovement.endPoint > 24) {
                 throw new Exception("Player movement must start and end inside the board");
             }
 
@@ -421,9 +495,9 @@ class GameState {
     bool canBearOff(Player player) {
         Point[] nonHomePoints;
         if (player == Player.P1) {
-            nonHomePoints = points[6..$];
+            nonHomePoints = points[7..$];
         } else if (player == Player.P2) {
-            nonHomePoints = points[0..$-6];
+            nonHomePoints = points[1..$-6];
         }
 
         foreach (point; nonHomePoints) {

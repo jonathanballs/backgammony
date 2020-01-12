@@ -161,11 +161,11 @@ class BackgammonBoard : DrawingArea {
                         moveValues = moveValues[0] == moveValues[1]
                             ? moveValues ~ moveValues
                             : moveValues;
-                        auto potentialMove = PipMovement(PipMoveType.Movement, i,
+                        auto potentialMove = PipMovement(PipMoveType.Movement, i+1,
                             gameState.currentPlayer == Player.P1 
-                                ? i - moveValues[potentialMoves.length]
-                                : i + moveValues[potentialMoves.length],
-                            moveValues[potentialMoves.length]);
+                                ? i+1 - moveValues[potentialMoves.length]
+                                : i+1 + moveValues[potentialMoves.length]);
+
 
                         try {
                             potentialGameState.validateMovement(potentialMove);
@@ -375,7 +375,8 @@ class BackgammonBoard : DrawingArea {
         }
 
         // Draw pips on each point
-        foreach(pointNum, point; this.potentialGameState.points) {
+        uint pointNum = 0;
+        foreach(point; this.potentialGameState.points) {
             auto pointX = getPointPosition(cast(uint) pointNum)[0].x;
 
             foreach(n; 0..point.numPieces) {
@@ -386,6 +387,7 @@ class BackgammonBoard : DrawingArea {
 
                 drawPip(pointX, pointY, point.owner == Player.P1 ? style.p1Colour : style.p2Colour);
             }
+            pointNum++;
         }
 
         // Draw pips for the taken pieces.
