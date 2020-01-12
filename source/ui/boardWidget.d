@@ -18,6 +18,9 @@ import game;
 import utils.signals;
 import ui.dicewidget;
 
+// TODO:
+// - Pip movement animations
+
 struct RGB {
     double r, g, b;
 }
@@ -352,7 +355,26 @@ class BackgammonBoard : DrawingArea {
         }
     }
 
+    /**
+     * Draw gamestae pips onto the context
+     */
     void drawPips(Context cr) {
+        // General function for drawing a pip at a certain point
+        void drawPip(float pointX, float pointY, RGB color) {
+            import std.math : PI;
+            cr.arc(pointX, pointY, style.pipRadius, 0, 2*PI);
+
+            // Centre
+            cr.setSourceRgbStruct(color);
+            cr.fillPreserve();
+
+            // Outline
+            cr.setLineWidth(3.0);
+            cr.setSourceRgb(0.5, 0.5, 0.5);
+            cr.stroke();
+        }
+
+        // Draw pips on each point
         foreach(pointNum, point; this.potentialGameState.points) {
             auto pointX = getPointPosition(cast(uint) pointNum)[0].x;
 
@@ -362,20 +384,19 @@ class BackgammonBoard : DrawingArea {
                     pointY = style.boardHeight - pointY;
                 }
 
-                import std.math : PI;
-                cr.arc(pointX, pointY, style.pipRadius, 0, 2*PI);
+                drawPip(pointX, pointY, point.owner == Player.P1 ? style.p1Colour : style.p2Colour);
+            }
+        }
 
-                if (point.owner == Player.P1) {
-                    cr.setSourceRgb(style.p1Colour.r, style.p1Colour.g, style.p1Colour.b);
-                } else {
-                    cr.setSourceRgb(style.p2Colour.r, style.p2Colour.g, style.p2Colour.b);
-                }
-
-                cr.fillPreserve();
-
-                cr.setLineWidth(3.0);
-                cr.setSourceRgb(0.5, 0.5, 0.5);
-                cr.stroke();
+        // Draw pips for the taken pieces.
+        // TODO: Respect P1 position on the board
+        float pointX = style.boardWidth / 2;
+        // Player 1 at the top. Pips start in the middle and work their way out
+        foreach (player; [Player.P1, Player.P2]) {
+            foreach (uint i; 0..potentialGameState.takenPieces[player]) {
+                float pointY = style.boardHeight/2 - (i+2)*style.pipRadius;
+                if (player == Player.P2) pointY = style.boardHeight - pointY;
+                drawPip(pointX, pointY, player == Player.P1 ? style.p1Colour : style.p2Colour);
             }
         }
     }

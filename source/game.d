@@ -81,6 +81,12 @@ class GameState {
      * The 24 points that make up the backgammon board
      */
     Point[24] points;
+    EnumIndexStaticArray!(Player, uint) takenPieces;
+    EnumIndexStaticArray!(Player, uint) borneOffPieces;
+    private Player _currentPlayer;
+    private TurnState _turnState;
+    private uint[2] _diceValues;
+
 
     /**
      * Fired at the start of each turn. Calls connected functions with the player
@@ -97,12 +103,6 @@ class GameState {
      * Fired on a dice roll. Calls connected functions with the value of the roll.
      */
     Signal!(uint , uint) onDiceRoll     = new Signal!(uint, uint);
-
-    EnumIndexStaticArray!(Player, uint) takenPieces;
-    EnumIndexStaticArray!(Player, uint) borneOffPieces;
-    private Player _currentPlayer;
-    private TurnState _turnState;
-    private uint[2] _diceValues;
 
     /**
      * Create a new gamestate. The game will be initalized to the start of P1's
@@ -268,14 +268,13 @@ class GameState {
     private void applyMovement(PipMovement pipMovement) {
         assert(isValidPotentialMovement(pipMovement));
 
-
         if (pipMovement.moveType == PipMoveType.Movement) {
             if (!--points[pipMovement.startPoint].numPieces) {
                 points[pipMovement.startPoint].owner = Player.NONE;
             }
 
             if (points[pipMovement.endPoint].owner == currentPlayer.opposite()) {
-                writeln( takenPieces[currentPlayer.opposite()]++ );
+                takenPieces[currentPlayer.opposite()]++;
                 points[pipMovement.endPoint].owner = Player.NONE;
                 points[pipMovement.endPoint].numPieces = 0;
             }
@@ -464,4 +463,12 @@ class GameState {
         // }
         // assert (_currentPlayer == Player.P1 || _currentPlayer == Player.P2);
     }
+}
+
+unittest {
+    writeln("Testing GameState");
+    GameState gs = new GameState();
+    gs.newGame();
+    gs.takenPieces[Player.P1] = 1;
+    assert(gs.dup.takenPieces[Player.P1] == 1);
 }
