@@ -161,13 +161,12 @@ class BackgammonBoard : DrawingArea {
                         moveValues = moveValues[0] == moveValues[1]
                             ? moveValues ~ moveValues
                             : moveValues;
-                        auto potentialMove = PipMovement(PipMoveType.Movement, i+1,
-                            gameState.currentPlayer == Player.P1 
-                                ? i+1 - moveValues[potentialMoves.length]
-                                : i+1 + moveValues[potentialMoves.length]);
-
-
                         try {
+                            auto potentialMove = PipMovement(PipMoveType.Movement, i+1,
+                                gameState.currentPlayer == Player.P1 
+                                    ? i+1 - moveValues[potentialMoves.length]
+                                    : i+1 + moveValues[potentialMoves.length]);
+
                             potentialGameState.validateMovement(potentialMove);
                             _potentialMoves ~= potentialMove;
                             onChangePotentialMovements.emit();
