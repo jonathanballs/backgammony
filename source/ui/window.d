@@ -84,6 +84,7 @@ class BackgammonWindow : MainWindow {
         backgammonBoard.onChangePotentialMovements.connect(() {
             undoMoveBtn.setSensitive(!!backgammonBoard.potentialMoves.length);
 
+            finishMoveBtn.setSensitive(false);
             if (gameState.turnState == TurnState.MoveSelection) {
                 try {
                     backgammonBoard.gameState.validateTurn(backgammonBoard.potentialMoves);
