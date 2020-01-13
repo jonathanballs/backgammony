@@ -53,6 +53,7 @@ class BoardStyle {
     RGB darkPointColor = RGB(0.171875, 0.2421875, 0.3125);   /// Colour of dark points
 
     float pipRadius = 30.0;             /// Radius of pips
+    float pipBorderWidth = 3.0;
     RGB p1Colour = RGB(0.0, 0.0, 0.0);  /// Colour of player 1's pips
     RGB p2Colour = RGB(1.0, 1.0, 1.0);  /// Colour of player 2's pips
 }
@@ -361,14 +362,14 @@ class BackgammonBoard : DrawingArea {
         // General function for drawing a pip at a certain point
         void drawPip(float pointX, float pointY, RGB color) {
             import std.math : PI;
-            cr.arc(pointX, pointY, style.pipRadius, 0, 2*PI);
+            cr.arc(pointX, pointY, style.pipRadius - style.pipBorderWidth/2, 0, 2*PI);
 
             // Centre
             cr.setSourceRgbStruct(color);
             cr.fillPreserve();
 
             // Outline
-            cr.setLineWidth(3.0);
+            cr.setLineWidth(style.pipBorderWidth);
             cr.setSourceRgb(0.5, 0.5, 0.5);
             cr.stroke();
         }
