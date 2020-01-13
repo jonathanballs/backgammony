@@ -38,7 +38,7 @@ private void setMarginsExpand(Widget w,
 
 class NewGameDialog : Dialog {
 
-    Signal!(GameState) onCreateNewGame = new Signal!GameState;
+    Signal!(GameState) onCreateNewGame;
     Notebook tabs;
 
     /**
@@ -72,6 +72,8 @@ class NewGameDialog : Dialog {
      */
     this (Window parent) {
         super();
+        onCreateNewGame = new Signal!GameState;
+
         /**
          * Set position
          */
@@ -98,7 +100,8 @@ class NewGameDialog : Dialog {
         hvaStartGame.addOnClicked((Button b) {
             auto ai = hvaAISelector.getActiveSelection();
             auto human = hvaHumanSelector.getActiveSelection();
-            this.onCreateNewGame.emit(new GameState(ai, human));
+            auto gs = new GameState(ai, human);
+            this.onCreateNewGame.emit(gs);
         });
         hvaBox.packEnd(hvaStartGame, false, false, 0);
 

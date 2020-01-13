@@ -79,7 +79,7 @@ class BackgammonBoard : DrawingArea {
     AnimatedDieWidget[] dice;
 
     /// Fired when the user selects or undoes a potential move
-    Signal!() onChangePotentialMovements = new Signal!();
+    Signal!() onChangePotentialMovements;
 
     /// Potential moves of the current player.
     private PipMovement[] _potentialMoves;
@@ -92,16 +92,21 @@ class BackgammonBoard : DrawingArea {
         return _gameState;
     }
 
-    void gameState(GameState gs) {
-        // Set gamestate
-        gs.onDiceRoll.connect((uint a, uint b) {
+    /// Set gamestate
+    void setGameState(GameState gs) {
+        gs.onDiceRoll.connect((GameState gs, uint a, uint b) {
+            try {
+                throw new Exception("Err");
+            } catch (Exception e) {
+                // writeln(e);
+            }
             dice = [
                 new AnimatedDieWidget(a),
                 new AnimatedDieWidget(b)
             ];
             lastAnimation = Clock.currTime;
         });
-        gs.onBeginTurn.connect((Player p) {
+        gs.onBeginTurn.connect((GameState gs, Player p) {
             _potentialMoves = [];
             onChangePotentialMovements.emit();
         });
@@ -131,13 +136,15 @@ class BackgammonBoard : DrawingArea {
     }
 
     this(GameState gs) {
-        gameState = gs;
         this();
+        this.setGameState = gs;
     }
 
     /// Create a new board widget.
     this() {
         super(300, 300);
+        this.onChangePotentialMovements = new Signal!();
+
         setHalign(GtkAlign.FILL);
         setValign(GtkAlign.FILL);
         setHexpand(true);

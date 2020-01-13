@@ -10,7 +10,7 @@ template Signal(T...) {
     alias slot_t = void delegate(T);
 
     class Signal {
-        private slot_t[] slots;
+        slot_t[] slots;
 
         void emit(T...)(T t) {
             foreach(f; this.slots) {

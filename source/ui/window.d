@@ -54,6 +54,10 @@ class BackgammonWindow : MainWindow {
             newGameDialog = new NewGameDialog(this);
             newGameDialog.onCreateNewGame.connect((GameState gs) {
                 setGameState(gs);
+                gs.newGame();
+                auto t = newGameDialog;
+                t.destroy();
+                newGameDialog = null;
             });
         });
         header.packStart(newGameBtn);
@@ -110,21 +114,21 @@ class BackgammonWindow : MainWindow {
 
         this.addTickCallback(&handleThreadMessages);
 
-        auto gs = new GameState();
-        setGameState(gs);
-        gs.newGame();
+        // auto gs = new GameState();
+        // setGameState(gs);
+        // gs.newGame();
     }
 
-    void setGameState(GameState gs) {
+    final void setGameState(GameState gs) {
+        backgammonBoard.setGameState(gs);
+        this.gameState = gs;
+
         // Link up gamestate to various things
         // How are dice rolls handled?
-        gs.onBeginTurn.connect((Player p) {
+        gs.onBeginTurn.connect((GameState _gs, Player p) {
             header.setSubtitle(p == Player.P1 ? "Black to play" : "White to play");
-            gameState.rollDice();
+            _gs.rollDice();
         });
-
-        backgammonBoard.gameState = gs;
-        this.gameState = gs;
     }
 
     bool handleThreadMessages(Widget w, FrameClock f) {

@@ -158,29 +158,33 @@ class GameState {
      * Fired at the start of each turn. Calls connected functions with the player
      * who is about to begin their go.
      */
-    Signal!(Player) onBeginTurn         = new Signal!(Player);
+    Signal!(GameState, Player) onBeginTurn;
 
     /**
      * Fired at the end of the game. NOT IMPLEMENTED
      */
-    Signal!() onEndGame                 = new Signal!();
+    Signal!(GameState) onEndGame;
 
     /**
      * Fired on a dice roll. Calls connected functions with the value of the roll.
      */
-    Signal!(uint , uint) onDiceRoll     = new Signal!(uint, uint);
+    Signal!(GameState, uint , uint) onDiceRoll;
 
     /**
      * Create a new gamestate. The game will be initalized to the start of P1's
      * turn.
      */
     this() {
+        onBeginTurn = new Signal!(GameState, Player);
+        onDiceRoll = new Signal!(GameState, uint, uint);
     }
 
     /**
      * Create a new gamestate with players
      */
     this(PlayerMeta p1, PlayerMeta p2) {
+        this();
+
         players[Player.P1] = p1;
         players[Player.P2] = p2;
     }
@@ -206,7 +210,7 @@ class GameState {
         points[17] = Point(Player.P2, 3);
         points[19] = Point(Player.P2, 5);
 
-        onBeginTurn.emit(_currentPlayer);
+        onBeginTurn.emit(this, _currentPlayer);
     }
 
     /**
@@ -243,7 +247,7 @@ class GameState {
 
         turnState = TurnState.MoveSelection;
 
-        onDiceRoll.emit(diceValues[0], diceValues[1]);
+        onDiceRoll.emit(this, diceValues[0], diceValues[1]);
     }
 
     /**
@@ -262,7 +266,7 @@ class GameState {
         assert(turnState == TurnState.DiceRoll);
         turnState = TurnState.MoveSelection;
 
-        onDiceRoll.emit(diceValues[0], diceValues[1]);
+        onDiceRoll.emit(this, diceValues[0], diceValues[1]);
     }
 
     /// Generate a list of possible game moves based off current dice
@@ -387,7 +391,7 @@ class GameState {
             _currentPlayer = currentPlayer.opposite();
             _turnState = TurnState.DiceRoll;
             _diceValues = [0, 0];
-            onBeginTurn.emit(_currentPlayer);
+            onBeginTurn.emit(this, _currentPlayer);
         }
     }
 
