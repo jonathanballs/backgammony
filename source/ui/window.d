@@ -20,6 +20,7 @@ import game;
 import networking;
 import ui.boardWidget;
 import ui.networkWidget;
+import ui.newgamedialog;
 
 class BackgammonWindow : MainWindow {
     HeaderBar header;
@@ -28,6 +29,7 @@ class BackgammonWindow : MainWindow {
 
     BackgammonBoard backgammonBoard;
     NetworkWidget networkingWidget;
+    NewGameDialog newGameDialog;
     Thread netThread;
 
     GameState gameState;
@@ -46,6 +48,10 @@ class BackgammonWindow : MainWindow {
         });
 
         newGameBtn = new Button("New Game");
+        newGameBtn.addOnClicked((Button b) {
+            // Create new game
+            newGameDialog = new NewGameDialog(this);
+        });
         header.packStart(newGameBtn);
 
         // Internet game
