@@ -42,7 +42,6 @@ struct PipMovement {
         switch (moveType) {
         case PipMoveType.Movement:
             if (!startPoint || startPoint > 24 || !endPoint || endPoint > 24) {
-                writeln(startPoint, " ", endPoint);
                 throw new Exception("Movement points not in board range");
             }
             if (abs(cast(int) startPoint - cast(int) endPoint) > 6) {
