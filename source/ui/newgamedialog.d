@@ -107,13 +107,16 @@ class NewGameDialog : Dialog {
 
         // Gnu Backgammon
         import std.process : execute;
-        const auto gnubg = execute(["gnubg", "--version"]);
-        if (!gnubg.status) {
-            auto lines = gnubg.output.split('\n');
-            if (lines.length) {
-                writeln("Version: ", lines[0]);
-                ais ~= Player(lines[0], "gnubg", PlayerType.AI);
+        try {
+            const auto gnubg = execute(["gnubg", "--version"]);
+            if (!gnubg.status) {
+                auto lines = gnubg.output.split('\n');
+                if (lines.length) {
+                    ais ~= Player(lines[0], "gnubg", PlayerType.AI);
+                }
             }
+        } catch (Exception e) {
+            // Gnu Backgammon is not installed
         }
 
         return ais;
@@ -153,15 +156,23 @@ private class AISelector : Box {
                 aiSettings = gnubgAISettings();
                 break;
             default:
-                assert(0);
+                break;
             }
 
-            aiSettings.showAll();
-            this.packEnd(aiSettings, false, false, 0);
+            if (aiSettings) {
+                aiSettings.showAll();
+                this.packEnd(aiSettings, false, false, 0);
+            }
         });
 
         this.packStart(aiSelector, false, false, 0);
-        aiSelector.setActive(0);
+        if (availableAIs.length) {
+            aiSelector.setActive(0);
+        } else {
+            aiSelector.append("none", "No AIs installed...");
+            aiSelector.setActive(0);
+            aiSelector.setSensitive(false);
+        }
     }
 
     private Box gnubgAISettings() {
