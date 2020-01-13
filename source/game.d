@@ -178,6 +178,14 @@ class GameState {
     }
 
     /**
+     * Create a new gamestate with players
+     */
+    this(PlayerMeta p1, PlayerMeta p2) {
+        players[Player.P1] = p1;
+        players[Player.P2] = p2;
+    }
+
+    /**
      * Reset board and begin game.
      */
     void newGame() {

@@ -20,6 +20,7 @@ import ui.dicewidget;
 
 // TODO:
 // - Pip movement animations
+// - Organise this - perhaps the worst organised module rn
 
 struct RGB {
     double r, g, b;
@@ -53,7 +54,7 @@ class BoardStyle {
     RGB darkPointColor = RGB(0.171875, 0.2421875, 0.3125);   /// Colour of dark points
 
     float pipRadius = 30.0;             /// Radius of pips
-    float pipBorderWidth = 3.0;
+    float pipBorderWidth = 3.0;         /// Width of pip border
     RGB p1Colour = RGB(0.0, 0.0, 0.0);  /// Colour of player 1's pips
     RGB p2Colour = RGB(1.0, 1.0, 1.0);  /// Colour of player 2's pips
 }
@@ -68,12 +69,12 @@ enum Corner {
 }
 
 class BackgammonBoard : DrawingArea {
-    GameState gameState;
+    GameState _gameState;
 
     /// The current styling. Will be modifiable in the future.
     BoardStyle style;
 
-    /// Dice animation
+    /// Animation
     SysTime lastAnimation;
     AnimatedDieWidget[] dice;
 
@@ -85,6 +86,27 @@ class BackgammonBoard : DrawingArea {
 
     PipMovement[] potentialMoves() {
         return _potentialMoves.dup;
+    }
+
+    GameState gameState() {
+        return _gameState;
+    }
+
+    void gameState(GameState gs) {
+        // Set gamestate
+        gs.onDiceRoll.connect((uint a, uint b) {
+            dice = [
+                new AnimatedDieWidget(a),
+                new AnimatedDieWidget(b)
+            ];
+            lastAnimation = Clock.currTime;
+        });
+        gs.onBeginTurn.connect((Player p) {
+            _potentialMoves = [];
+            onChangePotentialMovements.emit();
+        });
+
+        this._gameState = gs;
     }
 
     /// Remove the most recent potential move
@@ -108,15 +130,18 @@ class BackgammonBoard : DrawingArea {
         return r;
     }
 
+    this(GameState gs) {
+        gameState = gs;
+        this();
+    }
+
     /// Create a new board widget.
-    this(GameState _gameState) {
+    this() {
         super(300, 300);
         setHalign(GtkAlign.FILL);
         setValign(GtkAlign.FILL);
         setHexpand(true);
         setVexpand(true);
-
-        this.gameState = _gameState;
 
         style = new BoardStyle;
 
@@ -126,18 +151,6 @@ class BackgammonBoard : DrawingArea {
             this.queueDraw();
             return true;
         });
-        gameState.onDiceRoll.connect((uint a, uint b) {
-            dice = [
-                new AnimatedDieWidget(a),
-                new AnimatedDieWidget(b)
-            ];
-            lastAnimation = Clock.currTime;
-        });
-        gameState.onBeginTurn.connect((Player p) {
-            _potentialMoves = [];
-            onChangePotentialMovements.emit();
-        });
-
         this.addOnButtonPress(delegate bool (Event e, Widget w) {
             // Ignore double click events
             if (e.button.type != GdkEventType.BUTTON_PRESS) {
@@ -246,8 +259,11 @@ class BackgammonBoard : DrawingArea {
         cr.scale(scaleFactor, scaleFactor);
 
         drawBoard(cr);
-        drawPips(cr);
-        drawDice(cr);
+
+        if (this.gameState) {
+            drawPips(cr);
+            drawDice(cr);
+        }
 
         return true;
     }

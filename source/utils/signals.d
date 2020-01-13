@@ -1,6 +1,9 @@
 module utils.signals;
 import std.stdio;
 
+// TODO:
+// - Disconnect logic...
+
 template Signal(T...) {
 
     // Type of a slot

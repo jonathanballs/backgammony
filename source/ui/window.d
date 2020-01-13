@@ -1,6 +1,7 @@
 module ui.window;
 
 import std.concurrency;
+import std.stdio;
 import core.thread;
 
 import gdk.FrameClock;
@@ -21,6 +22,7 @@ import networking;
 import ui.boardWidget;
 import ui.networkWidget;
 import ui.newgamedialog;
+import utils.addtickcallback;
 
 /**
  * The MainWindow of the backgammon game. Also acts as a high level controller
@@ -41,20 +43,18 @@ class BackgammonWindow : MainWindow {
     this() {
         super("Backgammon");
 
-        gameState = new GameState();
-
         header = new HeaderBar();
         header.setTitle("Backgammon");
         header.setShowCloseButton(true);
         this.setTitlebar(header);
-        gameState.onBeginTurn.connect((Player p) {
-            header.setSubtitle(p == Player.P1 ? "Black to play" : "White to play");
-        });
 
         newGameBtn = new Button("New Game");
         newGameBtn.addOnClicked((Button b) {
             // Create new game
             newGameDialog = new NewGameDialog(this);
+            newGameDialog.onCreateNewGame.connect((GameState gs) {
+                setGameState(gs);
+            });
         });
         header.packStart(newGameBtn);
 
@@ -90,7 +90,7 @@ class BackgammonWindow : MainWindow {
         header.packEnd(undoMoveBtn);
 
         // // Game board
-        backgammonBoard = new BackgammonBoard(gameState);
+        backgammonBoard = new BackgammonBoard();
         backgammonBoard.onChangePotentialMovements.connect(() {
             undoMoveBtn.setSensitive(!!backgammonBoard.potentialMoves.length);
 
@@ -110,12 +110,21 @@ class BackgammonWindow : MainWindow {
 
         this.addTickCallback(&handleThreadMessages);
 
-        // For now lets just roll immediately.
-        gameState.onBeginTurn.connect((Player p) {
+        auto gs = new GameState();
+        setGameState(gs);
+        gs.newGame();
+    }
+
+    void setGameState(GameState gs) {
+        // Link up gamestate to various things
+        // How are dice rolls handled?
+        gs.onBeginTurn.connect((Player p) {
+            header.setSubtitle(p == Player.P1 ? "Black to play" : "White to play");
             gameState.rollDice();
         });
 
-        gameState.newGame();
+        backgammonBoard.gameState = gs;
+        this.gameState = gs;
     }
 
     bool handleThreadMessages(Widget w, FrameClock f) {
@@ -142,25 +151,5 @@ class BackgammonWindow : MainWindow {
         return true;
     }
 
-    override void addTickCallback(bool delegate(Widget, FrameClock) callback) {
-        tickCallbackListeners ~= callback;
-        static bool connected;
-
-        if ( connected )
-        {
-            return;
-        }
-
-        super.addTickCallback(cast(GtkTickCallback)&tickCallback, cast(void*)this, null);
-        connected = true;
-    }
-
-    extern(C) static int tickCallback(GtkWidget* widgetStruct, GdkFrameClock* frameClock, Widget _widget) {
-        import std.algorithm.iteration : filter;
-        import std.array : array;
-        _widget.tickCallbackListeners = _widget.tickCallbackListeners.filter!((dlg) {
-            return dlg(_widget, new FrameClock(frameClock));
-        }).array();
-        return !!_widget.tickCallbackListeners.length;
-    }
+    mixin AddTickCallback;
 }

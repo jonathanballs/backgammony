@@ -17,8 +17,10 @@ import gtk.TreeIter;
 import gtk.Widget;
 import gtk.Window;
 
-import player;
 import ai.gnubg;
+import utils.signals;
+import player;
+import game;
 
 enum formPadding = 10;
 
@@ -35,6 +37,8 @@ private void setMarginsExpand(Widget w,
 }
 
 class NewGameDialog : Dialog {
+
+    Signal!(GameState) onCreateNewGame = new Signal!GameState;
     Notebook tabs;
 
     /**
@@ -63,6 +67,9 @@ class NewGameDialog : Dialog {
     
     PlayerMeta[] availableAIs;
 
+    /**
+     * Create a New Game dialog.
+     */
     this (Window parent) {
         super();
         /**
@@ -91,7 +98,7 @@ class NewGameDialog : Dialog {
         hvaStartGame.addOnClicked((Button b) {
             auto ai = hvaAISelector.getActiveSelection();
             auto human = hvaHumanSelector.getActiveSelection();
-            writeln([ai, human]);
+            this.onCreateNewGame.emit(new GameState(ai, human));
         });
         hvaBox.packEnd(hvaStartGame, false, false, 0);
 
@@ -109,7 +116,7 @@ class NewGameDialog : Dialog {
         avaStartGame.addOnClicked((Button b) {
             auto ai1 = avaAISelector1.getActiveSelection();
             auto ai2 = avaAISelector2.getActiveSelection();
-            writeln([ai1, ai2]);
+            this.onCreateNewGame.emit(new GameState(ai1, ai2));
         });
         avaBox.packEnd(avaStartGame, false, false, 0);
 
@@ -127,7 +134,7 @@ class NewGameDialog : Dialog {
         hvhStartGame.addOnClicked((Button b) {
             auto human1 = hvhHumanSelector1.getActiveSelection();
             auto human2 = hvhHumanSelector2.getActiveSelection();
-            writeln([human1, human2]);
+            this.onCreateNewGame.emit(new GameState(human1, human2));
         });
         hvhBox.packEnd(hvhStartGame, false, false, 0);
 
