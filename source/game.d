@@ -5,6 +5,7 @@ import std.format;
 import std.math;
 import std.stdio;
 
+import player;
 import utils.signals;
 import utils.types : EnumIndexStaticArray, OneIndexedStaticArray;
 
@@ -141,7 +142,7 @@ struct Point {
  * TODO: Ensure gamestate cant be changed from outside except through turns
  */
 class GameState {
-
+    EnumIndexStaticArray!(Player, PlayerMeta) players;
     /**
      * The 24 points that make up the backgammon board
      */
@@ -518,6 +519,7 @@ class GameState {
         d.borneOffPieces = borneOffPieces;
         d.takenPieces = takenPieces;
         d.points = points;
+        d.players = players;
 
         return d;
     }

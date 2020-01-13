@@ -12,7 +12,7 @@ enum PlayerType {
 /**
  * Contains metadata about a player
  */
-struct Player {
+struct PlayerMeta {
     /// Full name of the player
     string name;
 

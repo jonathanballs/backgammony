@@ -61,7 +61,7 @@ class NewGameDialog : Dialog {
     AISelector avaAISelector2;
     Button avaStartGame;
     
-    Player[] availableAIs;
+    PlayerMeta[] availableAIs;
 
     this (Window parent) {
         super();
@@ -141,9 +141,9 @@ class NewGameDialog : Dialog {
         this.showAll();
     }
 
-    private Player[] getAvailableAIs() {
-        Player[] ais = [
-            // Player("Default", "local", PlayerType.AI),
+    private PlayerMeta[] getAvailableAIs() {
+        PlayerMeta[] ais = [
+            // PlayerMeta("Default", "local", PlayerType.AI),
         ];
 
         // Gnu Backgammon
@@ -153,7 +153,7 @@ class NewGameDialog : Dialog {
             if (!gnubg.status) {
                 auto lines = gnubg.output.split('\n');
                 if (lines.length) {
-                    ais ~= Player(lines[0], "gnubg", PlayerType.AI);
+                    ais ~= PlayerMeta(lines[0], "gnubg", PlayerType.AI);
                 }
             }
         } catch (Exception e) {
@@ -181,11 +181,11 @@ private class AISelector : Box {
     Label label;
     ComboBoxText aiSelector;
     Box aiSettings;
-    Player[] availableAIs;
+    PlayerMeta[] availableAIs;
 
     Variant aiConfig;
 
-    this(Player[] _availableAIs, string labelString) {
+    this(PlayerMeta[] _availableAIs, string labelString) {
         super(GtkOrientation.VERTICAL, formPadding);
         this.setMarginLeft(formPadding);
         this.setMarginRight(formPadding);
@@ -198,7 +198,7 @@ private class AISelector : Box {
         availableAIs = _availableAIs;
 
         aiSelector = new ComboBoxText(false);
-        foreach (i, Player ai; availableAIs) {
+        foreach (i, PlayerMeta ai; availableAIs) {
             aiSelector.append(ai.id, ai.name);
         }
 
@@ -233,11 +233,11 @@ private class AISelector : Box {
     /**
      * Return the currently active selection
      */
-    Player getActiveSelection() {
+    PlayerMeta getActiveSelection() {
         auto selection = aiSelector.getActiveId;
         switch (selection) {
         case "gnubg": 
-            return Player(
+            return PlayerMeta(
                 "Gnubg " ~ aiConfig.peek!(GnubgEvalContext).name,
                 "gnubg",
                 PlayerType.AI,
@@ -294,7 +294,7 @@ private class HumanSelector : Box {
         this.packStart(box, false, false, 0);
     }
 
-    Player getActiveSelection() {
-        return Player(nameEntry.getText(), nameEntry.getText(), PlayerType.User);
+    PlayerMeta getActiveSelection() {
+        return PlayerMeta(nameEntry.getText(), nameEntry.getText(), PlayerType.User);
     }
 }
