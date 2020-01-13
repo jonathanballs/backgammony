@@ -22,6 +22,10 @@ import ui.boardWidget;
 import ui.networkWidget;
 import ui.newgamedialog;
 
+/**
+ * The MainWindow of the backgammon game. Also acts as a high level controller
+ * for receiving button presses, network events etc.
+ */
 class BackgammonWindow : MainWindow {
     HeaderBar header;
     Button newGameBtn;
