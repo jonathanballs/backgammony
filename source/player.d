@@ -1,5 +1,7 @@
 module player;
 
+import std.variant;
+
 /// Describes who is controlling the player
 enum PlayerType {
     User,       // The player is the user of this software (a very cool guy)
@@ -19,4 +21,7 @@ struct Player {
 
     /// String id
     PlayerType type;
+
+    /// General configuration / depends on the type
+    Variant config;
 }

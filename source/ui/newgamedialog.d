@@ -4,8 +4,10 @@ import std.string;
 import std.stdio;
 
 import gtk.Box;
+import gtk.ComboBox;
 import gtk.ComboBoxText;
 import gtk.Dialog;
+import gtk.Frame;
 import gtk.Label;
 import gtk.ListStore;
 import gtk.Notebook;
@@ -14,8 +16,9 @@ import gtk.Widget;
 import gtk.Window;
 
 import player;
+import ai.gnubg;
 
-enum formPadding = 15;
+enum formPadding = 10;
 
 class NewGameDialog : Dialog {
     Notebook tabs;
@@ -24,8 +27,7 @@ class NewGameDialog : Dialog {
      * Human vs AI
      */
     Box hvaBox;
-    Label hvaLabel;
-    ComboBoxText hvaAISelector;
+    AISelector hvaAISelector;
 
     /**
      * Human vs Human
@@ -37,7 +39,8 @@ class NewGameDialog : Dialog {
      * AI vs AI
      */
     Box avaBox;
-    Label avaLabel;
+    AISelector avaAISelector1;
+    AISelector avaAISelector2;
     
     Player[] availableAIs;
 
@@ -62,23 +65,20 @@ class NewGameDialog : Dialog {
         hvaBox.setMarginLeft(formPadding);
         hvaBox.setMarginTop(formPadding);
         hvaBox.setMarginRight(formPadding);
-
-        hvaAISelector = new ComboBoxText(false);
-        foreach (uint i, Player ai; availableAIs) {
-            hvaAISelector.append(ai.id, ai.name);
-        }
-        hvaAISelector.setActive(0);
-        hvaBox.packStart(hvaAISelector, false, false, 0);
+        hvaAISelector = new AISelector(availableAIs, "Artificial Intelligence");
+        hvaBox.add(hvaAISelector);
 
         /**
          * AI vs AI
          */
         avaBox = new Box(GtkOrientation.VERTICAL, 30);
-        avaBox.add(new Label("TODO: AI vs AI"));
-        avaBox.setHalign(GtkAlign.FILL);
-        avaBox.setValign(GtkAlign.FILL);
-        avaBox.setHexpand(true);
-        avaBox.setVexpand(true);
+        avaBox.setMarginLeft(formPadding);
+        avaBox.setMarginTop(formPadding);
+        avaBox.setMarginRight(formPadding);
+        avaAISelector1 = new AISelector(availableAIs, "Artificial Intelligence 1");
+        avaBox.add(avaAISelector1);
+        avaAISelector2 = new AISelector(availableAIs, "Artificial Intelligence 2");
+        avaBox.add(avaAISelector2);
 
         /**
          * Human vs Human
@@ -117,5 +117,63 @@ class NewGameDialog : Dialog {
         }
 
         return ais;
+    }
+}
+
+private class AISelector : Box {
+    Label label;
+    ComboBoxText aiSelector;
+    Box aiSettings;
+
+    Player[] availableAIs;
+
+    this(Player[] _availableAIs, string labelString) {
+        super(GtkOrientation.VERTICAL, formPadding);
+        this.setMarginLeft(formPadding);
+        this.setMarginRight(formPadding);
+        this.setMarginTop(formPadding);
+        this.setMarginBottom(formPadding);
+
+        label = new Label(labelString);
+        this.packStart(label, false, false, 0);
+
+        availableAIs = _availableAIs;
+
+        aiSelector = new ComboBoxText(false);
+        foreach (uint i, Player ai; availableAIs) {
+            aiSelector.append(ai.id, ai.name);
+        }
+
+        aiSelector.addOnChanged((ComboBoxText combo) {
+            auto setting = combo.getActiveId();
+            if (aiSettings) aiSettings.destroy();
+
+            switch (setting) {
+            case "gnubg":
+                aiSettings = gnubgAISettings();
+                break;
+            default:
+                assert(0);
+            }
+
+            aiSettings.showAll();
+            this.packEnd(aiSettings, false, false, 0);
+        });
+
+        this.packStart(aiSelector, false, false, 0);
+        aiSelector.setActive(0);
+    }
+
+    private Box gnubgAISettings() {
+        Box box = new Box(Orientation.VERTICAL, 0);
+
+        auto difficultySelection = new ComboBoxText(false);
+        foreach (context; gnubgDefaultEvalContexts) {
+            difficultySelection.append(context.name, context.name);
+        }
+        difficultySelection.setActive(2); // Intermediate
+        box.add(difficultySelection);
+
+        return box;
     }
 }
