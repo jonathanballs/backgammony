@@ -2,11 +2,13 @@ module ui.newgamedialog;
 
 import std.string;
 import std.stdio;
+import std.variant;
 
 import gtk.Box;
 import gtk.Button;
 import gtk.ComboBoxText;
 import gtk.Dialog;
+import gtk.Entry;
 import gtk.Frame;
 import gtk.Label;
 import gtk.ListStore;
@@ -20,6 +22,18 @@ import ai.gnubg;
 
 enum formPadding = 10;
 
+// Helper function for configuring widgets
+private void setMarginsExpand(Widget w,
+        uint top, uint bottom, uint left, uint right,
+        bool vExpand, bool hExpand) {
+    w.setMarginTop(top);
+    w.setMarginBottom(bottom);
+    w.setMarginLeft(left);
+    w.setMarginRight(right);
+    w.setVexpand(vExpand);
+    w.setHexpand(hExpand);
+}
+
 class NewGameDialog : Dialog {
     Notebook tabs;
 
@@ -27,6 +41,7 @@ class NewGameDialog : Dialog {
      * Human vs AI
      */
     Box hvaBox;
+    HumanSelector hvaHumanSelector;
     AISelector hvaAISelector;
     Button hvaStartGame;
 
@@ -34,7 +49,9 @@ class NewGameDialog : Dialog {
      * Human vs Human
      */
     Box hvhBox;
-    Label hvhLabel;
+    HumanSelector hvhHumanSelector1;
+    HumanSelector hvhHumanSelector2;
+    Button hvhStartGame;
 
     /**
      * AI vs AI
@@ -42,6 +59,7 @@ class NewGameDialog : Dialog {
     Box avaBox;
     AISelector avaAISelector1;
     AISelector avaAISelector2;
+    Button avaStartGame;
     
     Player[] availableAIs;
 
@@ -62,40 +80,56 @@ class NewGameDialog : Dialog {
         /**
          * Human vs AI
          */
-        hvaBox = new Box(GtkOrientation.VERTICAL, 30);
-        hvaBox.setMarginLeft(formPadding);
-        hvaBox.setMarginTop(formPadding);
-        hvaBox.setMarginRight(formPadding);
-        hvaBox.setMarginBottom(formPadding);
-        hvaBox.setHexpand(true);
-        hvaBox.setVexpand(true);
+        hvaBox = new Box(GtkOrientation.VERTICAL, formPadding);
+        hvaBox.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
         hvaAISelector = new AISelector(availableAIs, "Artificial Intelligence");
+        hvaHumanSelector = new HumanSelector("Human", getLocalUserName());
         hvaBox.packStart(hvaAISelector, false, false, 0);
+        hvaBox.packStart(hvaHumanSelector, false, false, 0);
         hvaStartGame = new Button("Start Game");
         hvaStartGame.getStyleContext().addClass("suggested-action");
+        hvaStartGame.addOnClicked((Button b) {
+            auto ai = hvaAISelector.getActiveSelection();
+            auto human = hvaHumanSelector.getActiveSelection();
+            writeln([ai, human]);
+        });
         hvaBox.packEnd(hvaStartGame, false, false, 0);
 
         /**
          * AI vs AI
          */
-        avaBox = new Box(GtkOrientation.VERTICAL, 30);
-        avaBox.setMarginLeft(formPadding);
-        avaBox.setMarginTop(formPadding);
-        avaBox.setMarginRight(formPadding);
+        avaBox = new Box(GtkOrientation.VERTICAL, formPadding);
+        avaBox.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
         avaAISelector1 = new AISelector(availableAIs, "Artificial Intelligence 1");
-        avaBox.add(avaAISelector1);
         avaAISelector2 = new AISelector(availableAIs, "Artificial Intelligence 2");
-        avaBox.add(avaAISelector2);
+        avaBox.packStart(avaAISelector1, false, false, 0);
+        avaBox.packStart(avaAISelector2, false, false, 0);
+        avaStartGame = new Button("Start Game");
+        avaStartGame.getStyleContext().addClass("suggested-action");
+        avaStartGame.addOnClicked((Button b) {
+            auto ai1 = avaAISelector1.getActiveSelection();
+            auto ai2 = avaAISelector2.getActiveSelection();
+            writeln([ai1, ai2]);
+        });
+        avaBox.packEnd(avaStartGame, false, false, 0);
 
         /**
          * Human vs Human
          */
-        hvhBox = new Box(GtkOrientation.VERTICAL, 30);
-        hvhBox.add(new Label("TODO: Human vs Human"));
-        hvhBox.setHalign(GtkAlign.FILL);
-        hvhBox.setValign(GtkAlign.FILL);
-        hvhBox.setHexpand(true);
-        hvhBox.setVexpand(true);
+        hvhBox = new Box(GtkOrientation.VERTICAL, formPadding);
+        hvhBox.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
+        hvhHumanSelector1 = new HumanSelector("Human", getLocalUserName());
+        hvhHumanSelector2 = new HumanSelector("Human", getLocalUserName());
+        hvhBox.packStart(hvhHumanSelector1, false, false, 0);
+        hvhBox.packStart(hvhHumanSelector2, false, false, 0);
+        hvhStartGame = new Button("Start Game");
+        hvhStartGame.getStyleContext().addClass("suggested-action");
+        hvhStartGame.addOnClicked((Button b) {
+            auto human1 = hvhHumanSelector1.getActiveSelection();
+            auto human2 = hvhHumanSelector2.getActiveSelection();
+            writeln([human1, human2]);
+        });
+        hvhBox.packEnd(hvhStartGame, false, false, 0);
 
         tabs = new Notebook();
         tabs.appendPage(hvaBox, new Label("Human vs AI"));
@@ -107,7 +141,7 @@ class NewGameDialog : Dialog {
         this.showAll();
     }
 
-    Player[] getAvailableAIs() {
+    private Player[] getAvailableAIs() {
         Player[] ais = [
             // Player("Default", "local", PlayerType.AI),
         ];
@@ -128,14 +162,28 @@ class NewGameDialog : Dialog {
 
         return ais;
     }
+
+    /**
+     * Get the local user name. Useful as  a default for player name
+     */
+    private string getLocalUserName() {
+        import std.process : environment;
+        version(Posix) {
+            return environment.get("USER", "Human");
+        }
+        version(Windows) {
+            return environment.get("%USERNAME%", "Human");
+        }
+    }
 }
 
 private class AISelector : Box {
     Label label;
     ComboBoxText aiSelector;
     Box aiSettings;
-
     Player[] availableAIs;
+
+    Variant aiConfig;
 
     this(Player[] _availableAIs, string labelString) {
         super(GtkOrientation.VERTICAL, formPadding);
@@ -150,7 +198,7 @@ private class AISelector : Box {
         availableAIs = _availableAIs;
 
         aiSelector = new ComboBoxText(false);
-        foreach (uint i, Player ai; availableAIs) {
+        foreach (i, Player ai; availableAIs) {
             aiSelector.append(ai.id, ai.name);
         }
 
@@ -182,6 +230,27 @@ private class AISelector : Box {
         }
     }
 
+    /**
+     * Return the currently active selection
+     */
+    Player getActiveSelection() {
+        auto selection = aiSelector.getActiveId;
+        switch (selection) {
+        case "gnubg": 
+            return Player(
+                "Gnubg " ~ aiConfig.peek!(GnubgEvalContext).name,
+                "gnubg",
+                PlayerType.AI,
+                aiConfig);
+        case "none":
+        default:
+            throw new Exception("Error: No AI selected.");
+        }
+    }
+
+    /**
+     * Create configuration form for gnubg
+     */
     private Box gnubgAISettings() {
         Box box = new Box(Orientation.VERTICAL, 0);
 
@@ -189,9 +258,43 @@ private class AISelector : Box {
         foreach (context; gnubgDefaultEvalContexts) {
             difficultySelection.append(context.name, context.name);
         }
+        difficultySelection.addOnChanged((ComboBoxText combo) {
+            aiConfig = gnubgDefaultEvalContexts[combo.getActive()];
+        });
         difficultySelection.setActive(2); // Intermediate
         box.add(difficultySelection);
 
         return box;
+    }
+}
+
+private class HumanSelector : Box {
+    Label label;
+    Label nameLabel;
+    Entry nameEntry;
+
+    /**
+     * Create a new Human Selector
+     */
+    this(string _label, string defaultName) {
+        super(GtkOrientation.VERTICAL, formPadding);
+        this.setMarginLeft(formPadding);
+        this.setMarginRight(formPadding);
+        this.setMarginTop(formPadding);
+        this.setMarginBottom(formPadding);
+
+        label = new Label(_label);
+        this.packStart(label, false, false, 0);
+
+        nameLabel = new Label("Name:");
+        nameEntry = new Entry(defaultName);
+        Box box = new Box(GtkOrientation.HORIZONTAL, formPadding);
+        box.packStart(nameLabel, false, false, 0);
+        box.packStart(nameEntry, true, true, 0);
+        this.packStart(box, false, false, 0);
+    }
+
+    Player getActiveSelection() {
+        return Player(nameEntry.getText(), nameEntry.getText(), PlayerType.User);
     }
 }
