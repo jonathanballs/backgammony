@@ -128,8 +128,8 @@ class NewGameDialog : Dialog {
          */
         hvhBox = new Box(GtkOrientation.VERTICAL, formPadding);
         hvhBox.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
-        hvhHumanSelector1 = new HumanSelector("Human", getLocalUserName());
-        hvhHumanSelector2 = new HumanSelector("Human", getLocalUserName());
+        hvhHumanSelector1 = new HumanSelector("Human 1", getLocalUserName() ~ " 1");
+        hvhHumanSelector2 = new HumanSelector("Human 2", getLocalUserName() ~ " 2");
         hvhBox.packStart(hvhHumanSelector1, false, false, 0);
         hvhBox.packStart(hvhHumanSelector2, false, false, 0);
         hvhStartGame = new Button("Start Game");
