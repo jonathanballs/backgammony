@@ -4,7 +4,7 @@ import std.string;
 import std.stdio;
 
 import gtk.Box;
-import gtk.ComboBox;
+import gtk.Button;
 import gtk.ComboBoxText;
 import gtk.Dialog;
 import gtk.Frame;
@@ -28,6 +28,7 @@ class NewGameDialog : Dialog {
      */
     Box hvaBox;
     AISelector hvaAISelector;
+    Button hvaStartGame;
 
     /**
      * Human vs Human
@@ -65,8 +66,14 @@ class NewGameDialog : Dialog {
         hvaBox.setMarginLeft(formPadding);
         hvaBox.setMarginTop(formPadding);
         hvaBox.setMarginRight(formPadding);
+        hvaBox.setMarginBottom(formPadding);
+        hvaBox.setHexpand(true);
+        hvaBox.setVexpand(true);
         hvaAISelector = new AISelector(availableAIs, "Artificial Intelligence");
-        hvaBox.add(hvaAISelector);
+        hvaBox.packStart(hvaAISelector, false, false, 0);
+        hvaStartGame = new Button("Start Game");
+        hvaStartGame.getStyleContext().addClass("suggested-action");
+        hvaBox.packEnd(hvaStartGame, false, false, 0);
 
         /**
          * AI vs AI
