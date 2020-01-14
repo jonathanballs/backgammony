@@ -16,19 +16,25 @@ import game;
 
 /**
  * Convert a GameState to FIBS string.
+ * Fibs boards are for sending to a client so must be from a perspective. Leave
+ * perspective blank to default to the currentPlayer variable of the gamestate.
  */
-string toFibsString(GameState gs, Player perspective = Player.P1) {
-    return format!"board:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s"(
+string toFibsString(GameState gs, Player perspective = Player.NONE) {
+    perspective = perspective == Player.NONE ? gs.currentPlayer : perspective;
+
+    return format!"board:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s"(
         "You:Opponent", // Player names
         "1", // Match length
         "0:0", // Current Match Score
+        gs.takenPieces[Player.P1].to!string, // P1 bar
         gs.points.array
             .map!(p => (p.owner == Player.P2 ? "-" : "") ~ p.numPieces.to!string ~ ":")
             .reduce!((a,b) => a ~ b)[0..$-1], // Board
-        gs.currentPlayer == Player.P1 ? "1" : "-1", // Turn
+        gs.takenPieces[Player.P2].to!string, // P2 bar
+        gs.currentPlayer == Player.P1 ? "1" : "-1", // Who's turn turn
         format!"%d:%d:%d:%d"(gs.diceValues[0], gs.diceValues[1], gs.diceValues[0], gs.diceValues[1]), // Dice
         "1", // Doubling cube
-        "0", // May double
+        "0:0", // May double
         "0", // Was doubled
         perspective == Player.P1 ? "1" : "-1", // Color
         perspective == Player.P1 ? "-1" : "1", // Direction (P1 moves downwards)
