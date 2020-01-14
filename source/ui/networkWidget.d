@@ -20,8 +20,6 @@ class NetworkWidget : Dialog {
     Spinner spinner;
     Label statusMessage;
 
-    Task!(getContent, string, string[string])* announceTask;
-
     this (Window parent) {
         super();
         /**

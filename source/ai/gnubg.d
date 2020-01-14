@@ -57,7 +57,7 @@ GnubgEvalContext[] gnubgDefaultEvalContexts = [
     { "4-ply",          true, 4, true,  true, 0.0f },
 ];
 
-PipMovement[] getTurn(GameState gs, GnubgEvalContext context) {
+PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
     import std.socket;
     import networking.connection;
 
@@ -114,5 +114,5 @@ unittest {
     auto gs = new GameState();
     gs.newGame();
     gs.rollDice(3, 1);
-    getTurn(gs, gnubgDefaultEvalContexts[2]);
+    gnubgGetTurn(gs, gnubgDefaultEvalContexts[2]);
 }

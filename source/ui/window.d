@@ -1,6 +1,7 @@
 module ui.window;
 
 import std.concurrency;
+import std.parallelism;
 import std.stdio;
 import core.thread;
 
@@ -19,10 +20,12 @@ import gtk.Widget;
 
 import game;
 import networking;
+import player;
 import ui.boardWidget;
 import ui.networkWidget;
 import ui.newgamedialog;
 import utils.addtickcallback;
+import ai.gnubg;
 
 /**
  * The MainWindow of the backgammon game. Also acts as a high level controller
@@ -128,12 +131,26 @@ class BackgammonWindow : MainWindow {
         gs.onBeginTurn.connect((GameState _gs, Player p) {
             header.setSubtitle(p == Player.P1 ? "Black to play" : "White to play");
             _gs.rollDice();
+
+            // Who is handling this turn?
+            if (_gs.players[p].type == PlayerType.AI) {
+                aiGetTurn = task!gnubgGetTurn(_gs,
+                    *_gs.players[p].config.peek!GnubgEvalContext);
+                aiGetTurn.executeInNewThread();
+            }
         });
     }
 
+    Task!(gnubgGetTurn, GameState, GnubgEvalContext) *aiGetTurn;
+
     bool handleThreadMessages(Widget w, FrameClock f) {
         import networking.messages;
-        import std.stdio;
+
+        if (aiGetTurn && aiGetTurn.done) {
+            auto result = aiGetTurn.yieldForce;
+            aiGetTurn = null;
+            gameState.applyTurn(result);
+        }
 
         if (netThread && netThread.isRunning) {
             receiveTimeout(5.msecs,

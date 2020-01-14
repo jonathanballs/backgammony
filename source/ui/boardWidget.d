@@ -15,6 +15,7 @@ import gtk.Widget;
 import gobject.Signals;
 
 import game;
+import player;
 import utils.signals;
 import ui.dicewidget;
 
@@ -165,7 +166,9 @@ class BackgammonBoard : DrawingArea {
                 return false;
             }
 
-            if (dice.length && dice[0].finished && this.gameState.turnState == TurnState.MoveSelection) {
+            if (dice.length && dice[0].finished
+                    && this.gameState.turnState == TurnState.MoveSelection
+                    && this.gameState.players[gameState.currentPlayer].type == PlayerType.User) {
                 auto possibleTurns = gameState.generatePossibleTurns();
                 if (!possibleTurns.length) return false;
 
