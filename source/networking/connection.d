@@ -22,73 +22,25 @@ class Connection {
     bool isHost;
 
     /// Create a Connection and connects to address as a client
-    this(Address address, ConnectionHeaders headers) {
+    this(Address address) {
         writeln("Attempting connection to ", address);
         this.address = address;
         this.isHost = false;
         this.conn = new TcpSocket(address);
-
-        try {
-            this.writeline(protocolHeader);
-            this.writeHeaders(headers);
-
-            this.readline(2.seconds);
-            ConnectionHeaders resp = readHeaders!ConnectionHeaders(2.seconds);
-        } catch (Exception e) {
-            this.close();
-            throw e;
-        }
     }
 
     /// Create a Connection as a host. Assumes socket is already active.
-    this(Socket socket, ConnectionHeaders headers) {
+    this(Socket socket) {
         this.address = socket.remoteAddress;
         this.conn = socket;
         this.isHost = true;
-
-        this.readline(2.seconds);
-        ConnectionHeaders resp = readHeaders!ConnectionHeaders(1.seconds);
-        this.writeline(protocolHeader);
-        this.writeHeaders(headers);
     }
 
     /// Close the socket
     void close() {
+        conn.blocking = true;
         conn.shutdown(SocketShutdown.BOTH);
         conn.close();
-    }
-
-    T readHeaders(T)(Duration timeout = Duration.zero) {
-        import std.datetime.stopwatch;
-        auto timer = new StopWatch(AutoStart.yes);
-
-        T ret;
-
-        while (true) {
-            auto remainingTime = timeout == Duration.zero ? Duration.zero : timeout - timer.peek;
-            auto line = readline(remainingTime);
-            if (!line.length) break;
-            if (line.indexOf(":") == -1) throw new Exception("Invalid header line: No colon");
-
-            string key = line[0..line.indexOf(":")].chomp();
-            string val = line[line.indexOf(":")+1..$].chomp();
-
-            static foreach (string member; [ __traits(allMembers, T) ]) {
-                if (key.toLower == member.toLower) {
-                }
-            }
-        }
-
-        return ret;
-    }
-
-    void writeHeaders(T)(T header, Duration timeout = Duration.zero) {
-        static foreach (string member; [ __traits(allMembers, T) ]) {
-            if (__traits(getMember, header, member).length) {
-                this.writeline(member ~ ": " ~ __traits(getMember, header, member));
-            }
-        }
-        this.writeline();
     }
 
     /// Read a line (newline excluded) syncronously from the current connection.
@@ -133,7 +85,7 @@ class Connection {
         if (nlIndex != -1) {
             string ret = recBuffer[0..nlIndex];
             recBuffer = recBuffer[nlIndex+1..$];
-            writeln("NETGET: ", ret);
+            // writeln("NETGET: ", ret);
             return ret;
         } else {
             throw new Exception("No newline is available");
@@ -142,7 +94,72 @@ class Connection {
 
     /// Write line to the connection.
     void writeline(string s = "") {
-        writeln("NETSND: ", s);
+        // writeln("NETSND: ", s);
         conn.send(s ~ "\n");
     }
+}
+
+/**
+ * Special type of connection that performs the TBP handshake
+ */
+class TBPConnection : Connection {
+    /// Create a Connection and connects to address as a client
+    this(Address address, ConnectionHeaders headers) {
+        super(address);
+
+        try {
+            this.writeline(protocolHeader);
+            this.writeHeaders(headers);
+
+            this.readline(2.seconds);
+            ConnectionHeaders resp = readHeaders!ConnectionHeaders(2.seconds);
+        } catch (Exception e) {
+            this.close();
+            throw e;
+        }
+    }
+
+    /// Create a Connection as a host. Assumes socket is already active.
+    this(Socket socket, ConnectionHeaders headers) {
+        super(socket);
+
+        this.readline(2.seconds);
+        ConnectionHeaders resp = readHeaders!ConnectionHeaders(1.seconds);
+        this.writeline(protocolHeader);
+        this.writeHeaders(headers);
+    }
+
+    T readHeaders(T)(Duration timeout = Duration.zero) {
+        import std.datetime.stopwatch;
+        auto timer = new StopWatch(AutoStart.yes);
+
+        T ret;
+
+        while (true) {
+            auto remainingTime = timeout == Duration.zero ? Duration.zero : timeout - timer.peek;
+            auto line = readline(remainingTime);
+            if (!line.length) break;
+            if (line.indexOf(":") == -1) throw new Exception("Invalid header line: No colon");
+
+            string key = line[0..line.indexOf(":")].chomp();
+            string val = line[line.indexOf(":")+1..$].chomp();
+
+            static foreach (string member; [ __traits(allMembers, T) ]) {
+                if (key.toLower == member.toLower) {
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    void writeHeaders(T)(T header, Duration timeout = Duration.zero) {
+        static foreach (string member; [ __traits(allMembers, T) ]) {
+            if (__traits(getMember, header, member).length) {
+                this.writeline(member ~ ": " ~ __traits(getMember, header, member));
+            }
+        }
+        this.writeline();
+    }
+
 }

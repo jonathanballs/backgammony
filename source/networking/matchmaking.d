@@ -47,7 +47,7 @@ class MatchMaker {
             try {
                 // Attempt connection, return socket if connection is successful.
                 Address addr = parseAddress(o.ip, o.port);
-                return new Connection(addr, ConnectionHeaders(peer_id, peer_id));
+                return new TBPConnection(addr, ConnectionHeaders(peer_id, peer_id));
             } catch (Exception e) {
                 writeln("Failed to connect: ", e.message);
                 writeln("======================================================================");
@@ -61,7 +61,7 @@ class MatchMaker {
             try {
                 auto c = socket.accept();
                 writeln("Incoming connection from ", c.remoteAddress);
-                return new Connection(c, ConnectionHeaders(peer_id, peer_id));
+                return new TBPConnection(c, ConnectionHeaders(peer_id, peer_id));
             } catch (Exception e) {
                 writeln("Failed to accept incoming connection: ", e.message);
                 writeln("======================================================================");

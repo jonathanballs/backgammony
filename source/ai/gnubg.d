@@ -55,36 +55,46 @@ GnubgEvalContext[] gnubgDefaultEvalContexts = [
     { "4-ply",          true, 4, true,  true, 0.0f },
 ];
 
-/**
- * Request an evaluation from gnubg
- */
-GnubgEvalResult evaluatePosition(GameState gs, GnubgEvalContext context) {
-    assert(gs.turnState == TurnState.MoveSelection);
-    string gnubgCommand = format!"eval FIBSBOARD %s PLIES 0 CUBEFUL\n"(gs.toFibsString());
+PipMovement[] getTurn(GameState gs, GnubgEvalContext context) {
+    PipMovement[][] pMovements = gs.generatePossibleTurns();
+    writeln(pMovements.length);
+    GameState[] pGameStates = pMovements.map!((PipMovement[] turn) {
+        auto d = gs.dup();
+        // Not sure about this...
+        d.applyTurn(turn);
+        return d;
+    }).array;
 
-    // Create commands
-    string tmpFileName = "/tmp/gnubg-" ~ Clock.currTime().toISOString() ~ "";
-    auto f = File(tmpFileName, "w");
-    f.write(gnubgCommand);
-    f.close();
+    import std.socket;
+    import networking.connection;
+    auto c = new Connection(parseAddress("0.0.0.0", 1111));
 
-    // Run 
-    auto p = execute(["gnubg", "--tty", "-c", tmpFileName]);
+    GnubgEvalResult[] pResults = [];
+    foreach (pos; pGameStates) {
+        string gnubgCommand = format!"EVALUATION FIBSBOARD %s PLIES 1 CUBEFUL"(pos.toFibsString());
+        c.writeline(gnubgCommand);
+        float[] r = c.readline().split().map!(n => n.to!float).array;
+        if (r.length < 5) throw new Exception("couldnt parse output");
+        pResults ~= GnubgEvalResult(r[0], r[1], r[2], r[3], r[4]);
+    }
 
-    // Filter output to 0-ply static line
-    string[] r = p.output.split('\n').filter!(s => s.indexOf("static: ") > -1).array;
-    if (!r.length) throw new Exception("Failed to get results from gnubg");
-    float[] results = r[0].split().array[1..$].map!(n => n.chomp.to!float).array;
-    if (results.length < 6) throw new Exception("Failed to get results from gnubg");
+    // Find best
+    float bestProb = 0.0;
+    PipMovement[] bestTurn;
+    foreach (index, GnubgEvalResult result; pResults) {
+        if (result.chanceWin > bestProb) {
+            bestProb = result.chanceWin;
+            bestTurn = pMovements[index];
+        }
+    }
 
-    return GnubgEvalResult(results[0], results[1], results[2], results[3], results[4]);
+    return bestTurn;
 }
 
 unittest {
     writeln("Testing gnubg...");
     auto gs = new GameState();
     gs.newGame();
-    gs.rollDice(3, 3);
-    auto eval = evaluatePosition(gs, gnubgDefaultEvalContexts[2]);
-    writeln(eval);
+    gs.rollDice(3, 1);
+    writeln(getTurn(gs, gnubgDefaultEvalContexts[2]));
 }
