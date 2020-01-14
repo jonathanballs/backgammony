@@ -20,6 +20,7 @@ import ui.dicewidget;
 
 // TODO:
 // - Pip movement animations
+// - Animation for starting new game. Flashes are bad!
 // - Organise this - perhaps the worst organised module rn
 
 struct RGB {
