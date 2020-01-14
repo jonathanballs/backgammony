@@ -1,9 +1,11 @@
 module ai.gnubg;
 
+import core.thread;
 import std.algorithm;
 import std.array;
 import std.conv;
 import std.datetime;
+import std.file;
 import std.format;
 import std.process;
 import std.stdio;
@@ -56,8 +58,14 @@ GnubgEvalContext[] gnubgDefaultEvalContexts = [
 ];
 
 PipMovement[] getTurn(GameState gs, GnubgEvalContext context) {
+    import std.socket;
+    import networking.connection;
+
     PipMovement[][] pMovements = gs.generatePossibleTurns();
-    writeln(pMovements.length);
+    if(!pMovements.length) {
+        return [];
+    }
+
     GameState[] pGameStates = pMovements.map!((PipMovement[] turn) {
         auto d = gs.dup();
         // Not sure about this...
@@ -65,9 +73,16 @@ PipMovement[] getTurn(GameState gs, GnubgEvalContext context) {
         return d;
     }).array;
 
-    import std.socket;
-    import networking.connection;
-    auto c = new Connection(parseAddress("0.0.0.0", 1111));
+    string tmpFileName = "/tmp/gnubg-" ~ Clock.currTime().toISOString();
+    string tmpSock = tmpFileName ~ ".sock";
+    auto f = File(tmpFileName, "w");
+    f.write(format!"external %s\n"(tmpSock));
+    f.close();
+
+    auto process = pipeProcess(["gnubg", "--tty", "-c", tmpFileName]);
+    Thread.sleep(1.seconds);
+
+    auto c = new Connection(tmpSock);
 
     GnubgEvalResult[] pResults = [];
     foreach (pos; pGameStates) {
@@ -77,6 +92,9 @@ PipMovement[] getTurn(GameState gs, GnubgEvalContext context) {
         if (r.length < 5) throw new Exception("couldnt parse output");
         pResults ~= GnubgEvalResult(r[0], r[1], r[2], r[3], r[4]);
     }
+
+    kill(process.pid);
+    remove(tmpFileName);
 
     // Find best
     float bestProb = 0.0;
@@ -96,5 +114,5 @@ unittest {
     auto gs = new GameState();
     gs.newGame();
     gs.rollDice(3, 1);
-    writeln(getTurn(gs, gnubgDefaultEvalContexts[2]));
+    getTurn(gs, gnubgDefaultEvalContexts[2]);
 }

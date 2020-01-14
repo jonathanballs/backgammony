@@ -23,9 +23,9 @@ class Connection {
 
     /// Create a Connection and connects to address as a client
     this(Address address) {
-        writeln("Attempting connection to ", address);
-        this.address = address;
         this.isHost = false;
+        this.address = address;
+        writeln("Attempting connection to ", address);
         this.conn = new TcpSocket(address);
     }
 
@@ -34,6 +34,15 @@ class Connection {
         this.address = socket.remoteAddress;
         this.conn = socket;
         this.isHost = true;
+    }
+
+    /// Create a Connection as a client to a UnixSocket
+    this(string unixAddress) {
+        this.isHost = false;
+        address = new UnixAddress(unixAddress);
+        writeln("Attempting connection to ", address);
+        conn = new Socket(AddressFamily.UNIX, SocketType.STREAM);
+        conn.connect(address);
     }
 
     /// Close the socket
