@@ -32,6 +32,8 @@ private DieFace[] dieFaces = [
  * will roll in from the right (positive x axis).
  */
 class AnimatedDieWidget {
+    bool _enableAnimation;
+
     vec3 pos;
     vec3 vel;
     float length; // Length of each side
@@ -43,7 +45,7 @@ class AnimatedDieWidget {
 
     bool finished = false;
 
-    this(int diceValue) {
+    this(int diceValue, bool enableAnimation = true) {
         assert (1 <= diceValue && diceValue <= 6,
             "Can't create dice widget with value " ~ diceValue.to!string);
         // Calculate the end position and go back from there.
@@ -54,6 +56,13 @@ class AnimatedDieWidget {
         rotAxis = vec3(0.11, -1.0, 0.0);
         angVel = PI * 3;
 
+        _enableAnimation = enableAnimation;
+        if (!enableAnimation) {
+            finished = true;
+            return;
+        }
+
+
         // Assume 1 second animation.
         pos -= 2 * vel;
 
@@ -63,7 +72,9 @@ class AnimatedDieWidget {
     }
 
     void update(float dt) {
-        if (pos.x < 0) {
+        if (finished) return;
+
+        if (pos.x <= 0) {
             rot = finalRot;
             finished = true;
             return;

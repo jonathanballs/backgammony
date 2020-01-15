@@ -97,14 +97,9 @@ class BackgammonBoard : DrawingArea {
     /// Set gamestate
     void setGameState(GameState gs) {
         gs.onDiceRoll.connect((GameState gs, uint a, uint b) {
-            try {
-                throw new Exception("Err");
-            } catch (Exception e) {
-                // writeln(e);
-            }
             dice = [
-                new AnimatedDieWidget(a),
-                new AnimatedDieWidget(b)
+                new AnimatedDieWidget(a, false),
+                new AnimatedDieWidget(b, false)
             ];
             lastAnimation = Clock.currTime;
         });
