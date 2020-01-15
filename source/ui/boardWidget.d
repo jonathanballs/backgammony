@@ -26,7 +26,6 @@ import ui.dicewidget;
 // - Animation for starting new game. Flashes are bad!
 // - Organise this - perhaps the worst organised module rn
 // - Respect which corner / side of board P1 is
-// - Move point indexes to one-indexed
 
 struct RGB {
     double r, g, b;
@@ -70,6 +69,8 @@ class BoardStyle {
     float pipBorderWidth = 3.0;         /// Width of pip border
     RGB p1Colour = RGB(0.0, 0.0, 0.0);  /// Colour of player 1's pips
     RGB p2Colour = RGB(1.0, 1.0, 1.0);  /// Colour of player 2's pips
+
+    long animationSpeed = 500;         /// Msecs to perform animation
 }
 
 /// A corner of the board. Useful for describing where a user's home should be.
@@ -416,14 +417,21 @@ class BackgammonBoard : DrawingArea {
             cr.stroke();
         }
 
+        auto frameTime = Clock.currTime;
+        transitionStack = transitionStack
+            .filter!(t => frameTime - t.startTime < style.animationSpeed.msecs)
+            .array;
+
         // Draw pips on each point
         uint pointNum = 0;
         foreach(point; this.potentialGameState.points) {
             uint numPoints = point.numPieces;
-            numPoints -= transitionStack
-                .filter!(t => t.endPoint == pointNum+1 && Clock.currTime - t.startTime < 2.seconds)
-                .array.length;
 
+            // Minus the ones that haven't arrived
+            numPoints -= transitionStack
+                .filter!(t => t.endPoint == pointNum+1)
+                .array.length;
+            
             foreach(n; 0..numPoints) {
                 auto pipPosition = getPipPosition(pointNum + 1, n);
                 drawPip(cast(uint) pipPosition.x, cast(uint) pipPosition.y,
@@ -446,10 +454,10 @@ class BackgammonBoard : DrawingArea {
         // Draw pip animations
         foreach (transition; transitionStack) {
             auto startPos = getPipPosition(transition.startPoint,
-                _gameState.points[transition.startPoint].numPieces-1);
+                potentialGameState.points[transition.startPoint].numPieces);
             auto endPos = getPipPosition(transition.endPoint,
                 potentialGameState.points[transition.endPoint].numPieces-1);
-            float progress = (Clock.currTime() - transition.startTime).total!"msecs" / 2000.0;
+            float progress = (frameTime - transition.startTime).total!"msecs" / cast(float) style.animationSpeed;
             progress = progress > 1.0 ? 1.0 : progress;
 
             // Tween between positions
@@ -459,7 +467,7 @@ class BackgammonBoard : DrawingArea {
             );
 
             drawPip(currPosition.x, currPosition.y,
-                _gameState.points[transition.startPoint].owner == Player.P1
+                potentialGameState.points[transition.endPoint].owner == Player.P1
                     ? style.p1Colour
                     : style.p2Colour);
         }

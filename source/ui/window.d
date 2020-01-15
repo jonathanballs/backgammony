@@ -117,9 +117,9 @@ class BackgammonWindow : MainWindow {
 
         this.addTickCallback(&handleThreadMessages);
 
-        // auto gs = new GameState();
-        // setGameState(gs);
-        // gs.newGame();
+        auto gs = new GameState();
+        setGameState(gs);
+        gs.newGame();
     }
 
     final void setGameState(GameState gs) {
