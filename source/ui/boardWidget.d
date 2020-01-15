@@ -259,16 +259,6 @@ class BackgammonBoard : DrawingArea {
         lastAnimation = currTime;
     }
 
-    ScreenCoords getPipCoords(uint pointNum, uint pipNum) {
-        auto pointPosition = getPointPosition(pointNum)[0];
-        double pointY = style.borderWidth + ((2 * pipNum + 1) * style.pipRadius);
-        if (pointNum >= 12) {
-            pointY = style.boardHeight - pointY;
-        }
-
-        return ScreenCoords(pointPosition.x, pointY);
-    }
-
     bool onDraw(Context cr, Widget widget) {
         // Centering and scaling the board
         auto scaleFactor = min(
@@ -324,7 +314,8 @@ class BackgammonBoard : DrawingArea {
     /// Params:
     ///     pointIndex = point number between 0 and 23
     Tuple!(ScreenCoords, ScreenCoords) getPointPosition(uint pointIndex) {
-        assert (pointIndex < 24);
+        assert (1 <= pointIndex && pointIndex <= 24);
+        pointIndex--;
 
         ScreenCoords start;
         ScreenCoords finish;
@@ -358,12 +349,24 @@ class BackgammonBoard : DrawingArea {
         return tuple(start, finish);
     }
 
+    ScreenCoords getPipPosition(uint pointNum, uint pipNum) {
+        assert (1 <= pointNum && pointNum <= 24);
+        pointNum--;
+        auto pointPosition = getPointPosition(pointNum+1)[0];
+        double pointY = style.borderWidth + ((2 * pipNum + 1) * style.pipRadius);
+        if (pointNum >= 12) {
+            pointY = style.boardHeight - pointY;
+        }
+
+        return ScreenCoords(pointPosition.x, pointY);
+    }
+
+
     /// The coordinates of each point on the screen in device.
     ScreenCoords[2][24] pointCoords;
     void drawPoints(Context cr) {
-
         foreach (uint i; 0..24) {
-            auto c = getPointPosition(i);
+            auto c = getPointPosition(i+1);
 
             // Record the point poisitoin
             ScreenCoords toDevice(ScreenCoords sc) {
@@ -422,7 +425,7 @@ class BackgammonBoard : DrawingArea {
                 .array.length;
 
             foreach(n; 0..numPoints) {
-                auto pipPosition = getPipCoords(pointNum, n);
+                auto pipPosition = getPipPosition(pointNum + 1, n);
                 drawPip(cast(uint) pipPosition.x, cast(uint) pipPosition.y,
                     point.owner == Player.P1 ? style.p1Colour : style.p2Colour);
             }
@@ -442,9 +445,9 @@ class BackgammonBoard : DrawingArea {
 
         // Draw pip animations
         foreach (transition; transitionStack) {
-            auto startPos = getPipCoords(transition.startPoint-1,
+            auto startPos = getPipPosition(transition.startPoint,
                 _gameState.points[transition.startPoint].numPieces-1);
-            auto endPos = getPipCoords(transition.endPoint-1,
+            auto endPos = getPipPosition(transition.endPoint,
                 potentialGameState.points[transition.endPoint].numPieces-1);
             float progress = (Clock.currTime() - transition.startTime).total!"msecs" / 2000.0;
             progress = progress > 1.0 ? 1.0 : progress;
