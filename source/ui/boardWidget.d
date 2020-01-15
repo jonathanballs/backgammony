@@ -1,10 +1,12 @@
 module ui.boardWidget;
 
-import std.algorithm : min, max;
+import std.array;
+import std.algorithm;
 import std.conv : to;
 import std.datetime.systime : SysTime, Clock;
 import std.stdio;
 import std.typecons;
+import core.time;
 
 import cairo.Context;
 import cairo.Matrix;
@@ -23,9 +25,18 @@ import ui.dicewidget;
 // - Pip movement animations
 // - Animation for starting new game. Flashes are bad!
 // - Organise this - perhaps the worst organised module rn
+// - Respect which corner / side of board P1 is
+// - Move point indexes to one-indexed
 
 struct RGB {
     double r, g, b;
+}
+
+private struct PipTransition {
+    uint startPoint;
+    uint endPoint;
+    bool undone;
+    SysTime startTime;
 }
 
 private struct ScreenCoords {
@@ -79,6 +90,7 @@ class BackgammonBoard : DrawingArea {
     /// Animation
     SysTime lastAnimation;
     AnimatedDieWidget[] dice;
+    PipTransition[] transitionStack;
 
     /// Fired when the user selects or undoes a potential move
     Signal!() onChangePotentialMovements;
@@ -182,13 +194,18 @@ class BackgammonBoard : DrawingArea {
                             ? moveValues ~ moveValues
                             : moveValues;
                         try {
-                            auto potentialMove = PipMovement(PipMoveType.Movement, i+1,
-                                gameState.currentPlayer == Player.P1 
+                            uint startPoint = i+1;
+                            uint endPoint = gameState.currentPlayer == Player.P1 
                                     ? i+1 - moveValues[potentialMoves.length]
-                                    : i+1 + moveValues[potentialMoves.length]);
+                                    : i+1 + moveValues[potentialMoves.length];
 
+                            auto potentialMove = PipMovement(PipMoveType.Movement,
+                                startPoint, endPoint);
                             potentialGameState.validateMovement(potentialMove);
+
                             _potentialMoves ~= potentialMove;
+                            transitionStack ~= PipTransition(startPoint, endPoint, false, Clock.currTime);
+
                             onChangePotentialMovements.emit();
                         } catch (Exception e) {
                             writeln("Invalid move: ", e.message);
@@ -207,7 +224,7 @@ class BackgammonBoard : DrawingArea {
      * Finish a turn but submitting the current potential moves to the game state.
      */
     void finishTurn() {
-        auto pMoves = _potentialMoves;
+        auto pMoves = potentialMoves;
         _potentialMoves = [];
         gameState.applyTurn(pMoves);
     }
@@ -243,13 +260,13 @@ class BackgammonBoard : DrawingArea {
     }
 
     ScreenCoords getPipCoords(uint pointNum, uint pipNum) {
-        auto coords = getPointPosition(pointNum)[0];
-        if (pointNum <= 12) {
-            coords.y -= cast(uint) ((2*pipNum + 1) * style.pipRadius);
-        } else {
-            coords.y += cast(uint) ((2*pipNum + 1) * style.pipRadius);
+        auto pointPosition = getPointPosition(pointNum)[0];
+        double pointY = style.borderWidth + ((2 * pipNum + 1) * style.pipRadius);
+        if (pointNum >= 12) {
+            pointY = style.boardHeight - pointY;
         }
-        return coords;
+
+        return ScreenCoords(pointPosition.x, pointY);
     }
 
     bool onDraw(Context cr, Widget widget) {
@@ -399,21 +416,20 @@ class BackgammonBoard : DrawingArea {
         // Draw pips on each point
         uint pointNum = 0;
         foreach(point; this.potentialGameState.points) {
-            auto pointX = getPointPosition(cast(uint) pointNum)[0].x;
+            uint numPoints = point.numPieces;
+            numPoints -= transitionStack
+                .filter!(t => t.endPoint == pointNum+1 && Clock.currTime - t.startTime < 2.seconds)
+                .array.length;
 
-            foreach(n; 0..point.numPieces) {
-                double pointY = style.borderWidth + style.pipRadius + (2*n*style.pipRadius);
-                if (pointNum >= 12) {
-                    pointY = style.boardHeight - pointY;
-                }
-
-                drawPip(pointX, pointY, point.owner == Player.P1 ? style.p1Colour : style.p2Colour);
+            foreach(n; 0..numPoints) {
+                auto pipPosition = getPipCoords(pointNum, n);
+                drawPip(cast(uint) pipPosition.x, cast(uint) pipPosition.y,
+                    point.owner == Player.P1 ? style.p1Colour : style.p2Colour);
             }
             pointNum++;
         }
 
         // Draw pips for the taken pieces.
-        // TODO: Respect P1 position on the board
         float pointX = style.boardWidth / 2;
         // Player 1 at the top. Pips start in the middle and work their way out
         foreach (player; [Player.P1, Player.P2]) {
@@ -422,6 +438,27 @@ class BackgammonBoard : DrawingArea {
                 if (player == Player.P2) pointY = style.boardHeight - pointY;
                 drawPip(pointX, pointY, player == Player.P1 ? style.p1Colour : style.p2Colour);
             }
+        }
+
+        // Draw pip animations
+        foreach (transition; transitionStack) {
+            auto startPos = getPipCoords(transition.startPoint-1,
+                _gameState.points[transition.startPoint].numPieces-1);
+            auto endPos = getPipCoords(transition.endPoint-1,
+                potentialGameState.points[transition.endPoint].numPieces-1);
+            float progress = (Clock.currTime() - transition.startTime).total!"msecs" / 2000.0;
+            progress = progress > 1.0 ? 1.0 : progress;
+
+            // Tween between positions
+            auto currPosition = ScreenCoords(
+                startPos.x + progress*(endPos.x - startPos.x),
+                startPos.y + progress*(endPos.y - startPos.y)
+            );
+
+            drawPip(currPosition.x, currPosition.y,
+                _gameState.points[transition.startPoint].owner == Player.P1
+                    ? style.p1Colour
+                    : style.p2Colour);
         }
     }
 }
