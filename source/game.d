@@ -416,7 +416,7 @@ class GameState {
      *     turn = The turn to apply
      *     partialTurn = Whether this is a partial (incomplete) turn.
      */
-    void applyTurn(Turn turn, bool partialTurn = false) {
+    GameState applyTurn(Turn turn, bool partialTurn = false) {
         assert(turnState == TurnState.MoveSelection,
             "Tried to applyTurn() before dice are rolled");
 
@@ -434,6 +434,8 @@ class GameState {
             _diceValues = [0, 0];
             onBeginTurn.emit(this, _currentPlayer);
         }
+
+        return this;
     }
 
     /// Need to validate with a dice roll as well
@@ -577,6 +579,18 @@ class GameState {
         return d;
     }
 
+    /**
+     * Test value equality
+     */
+    bool equals(GameState rhs) {
+        return this._currentPlayer == rhs._currentPlayer
+            && this._diceValues == rhs._diceValues
+            && this._turnState == rhs._turnState
+            && this.borneOffPieces == rhs.borneOffPieces
+            && this.takenPieces == rhs.takenPieces
+            && this.points == rhs.points;
+    }
+
     invariant {
         // Ensure that every player has 15 points
         // foreach (Player p; [Player.P1, Player.P2]) {
@@ -613,4 +627,9 @@ unittest {
         assert(turn[0] == PipMovement(PipMoveType.Entering, 0, 24));
         gs.dup.applyTurn(turn);
     }
+
+    /**
+     * Test opEquals
+     */
+    assert(gs.equals(gs.dup));
 }

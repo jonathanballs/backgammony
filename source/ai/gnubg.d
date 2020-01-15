@@ -61,17 +61,17 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
     import std.socket;
     import networking.connection;
 
-    PipMovement[][] pMovements = gs.generatePossibleTurns();
-    if(!pMovements.length) {
-        return [];
-    }
+    Turn[] pMovements;
+    GameState[] pGameStates;
 
-    GameState[] pGameStates = pMovements.map!((PipMovement[] turn) {
-        auto d = gs.dup();
-        // Not sure about this...
-        d.applyTurn(turn);
-        return d;
-    }).array;
+    outer: foreach (t; gs.generatePossibleTurns()) {
+        auto d = gs.dup().applyTurn(t);
+        foreach (f; pGameStates) {
+            if (d.equals(f)) continue outer;
+        }
+        pMovements ~= t;
+        pGameStates ~= d;
+    }
 
     string tmpFileName = "/tmp/gnubg-" ~ Clock.currTime().toISOString();
     string tmpSock = tmpFileName ~ ".sock";
@@ -113,6 +113,6 @@ unittest {
     writeln("Testing gnubg...");
     auto gs = new GameState();
     gs.newGame();
-    gs.rollDice(3, 1);
+    gs.rollDice(3, 3);
     gnubgGetTurn(gs, gnubgDefaultEvalContexts[2]);
 }
