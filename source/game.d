@@ -1,8 +1,11 @@
 module game;
 
+
+import std.algorithm : remove, reverse, uniq;
 import std.array;
 import std.format;
 import std.math;
+import std.range : enumerate, inputRangeObject;
 import std.stdio;
 
 import player;
@@ -122,7 +125,7 @@ uint homePointToBoardPoint(Player player, uint homePoint) {
     assert(1 <= homePoint && homePoint <= 6);
     assert(player != Player.NONE);
 
-    return player == Player.P1 ? homePoint - 1 : 24 - homePoint;
+    return player == Player.P1 ? homePoint : 25 - homePoint;
 }
 
 /**
@@ -279,31 +282,56 @@ class GameState {
     }
 
     private PipMovement[][] generatePossibleTurns(uint[] moveValues) {
-        import std.algorithm : remove, reverse, uniq;
-        import std.range : enumerate, inputRangeObject;
+        if (moveValues.length == 0) return [];
         // First find all possible movements of any length and then prune to
         // only the longest ones.
         PipMovement[][] ret;
 
-        if (moveValues.length == 0) return [];
 
-        // Check if player needs to enter the board
-        // if (canBearOff(currentPlayer)) {
-        //     if (takenPieces[currentPlayer]) {
-        //         foreach (i, moveValue; moveValues.uniq().enumerate()) {
-        //             auto boardPointNumber = homePointToBoardPoint(currentPlayer.opposite, moveValue);
-        //             auto point = points[boardPointNumber];
-        //             if (point.owner != currentPlayer.opposite || point.numPieces == 1) {
-        //                 // Player can enter on this area
-        //                 foreach (move; generatePossibleTurns(moveValues.dup.remove(i))) {
-        //                     ret ~= [[PipMovement(PipMoveType.Entering, boardPointNumber, 0, moveValue)] ~ move];
-        //                 }
-        //             }
-        //         }
-        //     }
+        /**
+         * Enter the board
+         */
+        if (takenPieces[currentPlayer]) {
+            foreach (i, moveValue; moveValues) {
+                auto potentialMovement = PipMovement( PipMoveType.Entering, 0,
+                    homePointToBoardPoint(currentPlayer.opposite, moveValue));
 
-        //     return ret;
-        // }
+                if (isValidPotentialMovement(potentialMovement)) {
+                    GameState potentialGS = this.dup;
+                    potentialGS.applyMovement(potentialMovement);
+                    auto nextMoves = potentialGS.generatePossibleTurns(moveValues.dup.remove(i));
+
+                    if (nextMoves) {
+                        foreach (m; nextMoves) {
+                            auto moveList = [[potentialMovement] ~ m.dup];
+                            ret ~= moveList;
+                        }
+                    } else {
+                        ret ~= [potentialMovement];
+                    }
+                }
+            }
+        }
+
+        /**
+         * Bearing off
+         */
+        if (canBearOff(currentPlayer)) {
+            if (takenPieces[currentPlayer]) {
+                foreach (i, moveValue; moveValues.uniq().enumerate()) {
+                    auto boardPointNumber = homePointToBoardPoint(currentPlayer.opposite, moveValue);
+                    auto point = points[boardPointNumber];
+                    if (point.owner != currentPlayer.opposite || point.numPieces == 1) {
+                        // Player can enter on this area
+                        foreach (move; generatePossibleTurns(moveValues.dup.remove(i))) {
+                            ret ~= [[PipMovement(PipMoveType.Entering, boardPointNumber, 0)] ~ move];
+                        }
+                    }
+                }
+            }
+
+            return ret;
+        }
 
         // Check if player can move
         foreach (i, moveValue; moveValues.uniq().enumerate()) {
@@ -359,6 +387,7 @@ class GameState {
             }
 
             if (points[pipMovement.endPoint].owner == currentPlayer.opposite()) {
+                assert(points[pipMovement.endPoint].numPieces == 1);
                 takenPieces[currentPlayer.opposite()]++;
                 points[pipMovement.endPoint].owner = Player.NONE;
                 points[pipMovement.endPoint].numPieces = 0;
@@ -366,6 +395,18 @@ class GameState {
 
             points[pipMovement.endPoint].numPieces++;
             points[pipMovement.endPoint].owner = currentPlayer;
+        } else if (pipMovement.moveType == PipMoveType.Entering) {
+            takenPieces[currentPlayer]--;
+
+            if (points[pipMovement.endPoint].owner == currentPlayer.opposite) {
+                assert(points[pipMovement.endPoint].numPieces == 1);
+                takenPieces[currentPlayer.opposite]++;
+                points[pipMovement.endPoint].owner = Player.NONE;
+                points[pipMovement.endPoint].numPieces = 0;
+            }
+
+            points[pipMovement.endPoint].owner = currentPlayer;
+            points[pipMovement.endPoint].numPieces++;
         }
     }
 
@@ -558,4 +599,18 @@ unittest {
     gs.newGame();
     gs.takenPieces[Player.P1] = 1;
     assert(gs.dup.takenPieces[Player.P1] == 1);
+
+    /**
+     * Test potential move generation
+     */
+    gs.newGame();
+    gs.points[24].numPieces--;
+    gs.takenPieces[Player.P1]++;
+    gs.rollDice(1, 6);
+    auto possibleTurns = gs.generatePossibleTurns();
+    assert(possibleTurns.length);
+    foreach (turn; possibleTurns) {
+        assert(turn[0] == PipMovement(PipMoveType.Entering, 0, 24));
+        gs.dup.applyTurn(turn);
+    }
 }
