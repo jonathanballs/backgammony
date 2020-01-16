@@ -26,6 +26,7 @@ import ui.dicewidget;
 // - Organise this - perhaps the worst organised module rn
 // - Respect which corner / side of board P1 is
 // - Testing & benchmarking animations (separate thread)
+// - Animation easing, curving
 
 struct RGB {
     double r, g, b;
@@ -71,7 +72,7 @@ class BoardStyle {
     RGB p1Colour = RGB(0.0, 0.0, 0.0);  /// Colour of player 1's pips
     RGB p2Colour = RGB(1.0, 1.0, 1.0);  /// Colour of player 2's pips
 
-    long animationSpeed = 1000;         /// Msecs to perform animation
+    long animationSpeed = 250;         /// Msecs to perform animation
 }
 
 /// A corner of the board. Useful for describing where a user's home should be.
@@ -83,7 +84,14 @@ enum Corner {
     TR
 }
 
+/**
+ * Widget for rendering a backgammon game state
+ */
 class BackgammonBoard : DrawingArea {
+    private:
+    /**
+     * The gameState gamestate that is being rendered
+     */
     GameState _gameState;
 
     /// The current styling. Will be modifiable in the future.
@@ -91,11 +99,14 @@ class BackgammonBoard : DrawingArea {
 
     /// Animation
     SysTime lastAnimation;
-    AnimatedDieWidget[] dice;
+    AnimatedDieWidget[] animatedDice;
     PipTransition[] transitionStack;
 
+    /// The coordinates of each point on the screen in device. Just store matrix?
+    ScreenCoords[2][24] pointCoords;
+
     /// Fired when the user selects or undoes a potential move
-    Signal!() onChangePotentialMovements;
+    public Signal!() onChangePotentialMovements;
 
     /**
      * Moves that are not part of the gamestate, but have been selected by the
@@ -107,7 +118,7 @@ class BackgammonBoard : DrawingArea {
     /**
      * Create a new Backgammon Board widget.
      */
-    this() {
+    public this() {
         super();
         this.onChangePotentialMovements = new Signal!();
 
@@ -132,7 +143,7 @@ class BackgammonBoard : DrawingArea {
     /**
      * Create a new BackgammonBoard widget and set the gamestate
      */
-    this(GameState gs) {
+    public this(GameState gs) {
         this();
         this.setGameState(gs);
     }
@@ -147,7 +158,7 @@ class BackgammonBoard : DrawingArea {
             return false;
         }
 
-        if (dice.length && dice[0].finished
+        if (animatedDice.length && animatedDice[0].finished
                 && this.getGameState().turnState == TurnState.MoveSelection
                 && this.getGameState().players[getGameState().currentPlayer].type == PlayerType.User) {
             auto possibleTurns = getGameState().generatePossibleTurns();
@@ -175,7 +186,7 @@ class BackgammonBoard : DrawingArea {
 
                         auto selectedMove = PipMovement(PipMoveType.Movement,
                             startPoint, endPoint);
-                        potentialGameState.validateMovement(selectedMove);
+                        selectedGameState.validateMovement(selectedMove);
 
                         _selectedMoves ~= selectedMove;
                         transitionStack ~= PipTransition(startPoint, endPoint, false, Clock.currTime);
@@ -195,14 +206,14 @@ class BackgammonBoard : DrawingArea {
     /**
      * Return moves currently selected
      */
-    PipMovement[] getSelectedMoves() {
+    public PipMovement[] getSelectedMoves() {
         return _selectedMoves.dup;
     }
 
     /**
      * Submit a move to the board.
      */
-    void selectMove(PipMovement move) {
+    public void selectMove(PipMovement move) {
         _selectedMoves ~= move;
         transitionStack ~= PipTransition(
             move.startPoint,
@@ -214,7 +225,7 @@ class BackgammonBoard : DrawingArea {
     /**
      * Remove the most recent potential move
      */
-    void undoSelectedMove() {
+    public void undoSelectedMove() {
         if (_selectedMoves.length > 0) {
             _selectedMoves = _selectedMoves[0..$-1];
             onChangePotentialMovements.emit();
@@ -225,7 +236,7 @@ class BackgammonBoard : DrawingArea {
     /**
      * Get the current gameState
      */
-    GameState getGameState() {
+    public GameState getGameState() {
         return _gameState;
     }
 
@@ -233,9 +244,9 @@ class BackgammonBoard : DrawingArea {
      * Set the current gamestate and start listening to its events
      * TODO: Wipe current listeners
      */
-    void setGameState(GameState gameState) {
+    public void setGameState(GameState gameState) {
         gameState.onDiceRoll.connect((GameState gs, uint a, uint b) {
-            dice = [
+            animatedDice = [
                 new AnimatedDieWidget(a, false),
                 new AnimatedDieWidget(b, false)
             ];
@@ -249,8 +260,17 @@ class BackgammonBoard : DrawingArea {
         this._gameState = gameState;
     }
 
-    /// The current gamestate with the potential moves applied
-    GameState potentialGameState() {
+    /**
+     * Returns whether the board is currently performing an animation
+     */
+    public bool isAnimating() {
+        return !!transitionStack.length
+            && (!animatedDice.length || animatedDice[0].finished);
+    }
+
+    /// The current gamestate with selected moves applied. Transitions are
+    /// Transitioning towards this
+    public GameState selectedGameState() {
         if (getGameState().turnState == TurnState.DiceRoll) {
             assert(getSelectedMoves().length == 0);
             return getGameState();
@@ -264,29 +284,19 @@ class BackgammonBoard : DrawingArea {
 
     /**
      * Finish a turn but submitting the current potential moves to the game state.
+     * Maybe remove this... Don't like the idea of renderer managing gamestate
      */
-    void finishTurn() {
+    public void finishTurn() {
         auto pMoves = getSelectedMoves();
         _selectedMoves = [];
         getGameState().applyTurn(pMoves);
-    }
-
-    /**
-     * Logic for resizing self
-     */
-    bool onConfigureEvent(Event e, Widget w) {
-        auto short_edge = min(getAllocatedHeight(), getAllocatedWidth());
-        auto border_width = cast(uint) style.pointWidth / 2;
-        short_edge -= 2 * border_width;
-        setSizeRequest(short_edge, short_edge);
-        return true;
     }
 
     void drawDice(Context cr) {
         auto currTime = Clock.currTime();
         auto dt = currTime - lastAnimation;
 
-        foreach (i, die; dice) {
+        foreach (i, die; animatedDice) {
             cr.save();
 
             die.update(dt.total!"usecs" / 1_000_000.0);
@@ -393,7 +403,9 @@ class BackgammonBoard : DrawingArea {
 
     ScreenCoords getPipPosition(uint pointNum, uint pipNum) {
         assert (1 <= pointNum && pointNum <= 24);
+        assert (pipNum);
         pointNum--;
+        pipNum--;
         auto pointPosition = getPointPosition(pointNum+1)[0];
         double pointY = style.borderWidth + ((2 * pipNum + 1) * style.pipRadius);
         if (pointNum >= 12) {
@@ -403,9 +415,6 @@ class BackgammonBoard : DrawingArea {
         return ScreenCoords(pointPosition.x, pointY);
     }
 
-
-    /// The coordinates of each point on the screen in device.
-    ScreenCoords[2][24] pointCoords;
     void drawPoints(Context cr) {
         foreach (uint i; 0..24) {
             auto c = getPointPosition(i+1);
@@ -440,7 +449,32 @@ class BackgammonBoard : DrawingArea {
     }
 
     /**
-     * Draw gamestae pips onto the context
+     * Calculates what a point will look like at a certain point in time
+     */
+    Point calculatePointAtTime(uint pointNum, SysTime time) {
+        assert(1 <= pointNum && pointNum <= 24);
+
+        auto numPips = selectedGameState().points[pointNum].numPieces;
+
+        // Minus the ones that haven't arrived
+        numPips -= transitionStack
+            .filter!(t => t.endPoint == pointNum)
+            .filter!(t => t.startTime + style.animationSpeed.msecs > time)
+            .array.length;
+
+        // Add the ones that hadn't left yet
+        numPips += transitionStack
+            .filter!(t => t.startPoint == pointNum)
+            .filter!(t => t.startTime >= time)
+            .array.length;
+        
+        if (numPips > 100) numPips = 0;
+
+        return Point(Player.P1, numPips);
+    }
+
+    /**
+     * Draw gamestate pips onto the context
      */
     void drawPips(Context cr) {
         // General function for drawing a pip at a certain point
@@ -465,18 +499,11 @@ class BackgammonBoard : DrawingArea {
 
         // Draw pips on each point
         uint pointNum = 0;
-        foreach(point; this.potentialGameState.points) {
-            uint numPoints = point.numPieces;
+        foreach(point; this.selectedGameState.points) {
+            auto calculatedPoint = calculatePointAtTime(pointNum+1, frameTime);
 
-            // Minus the ones that haven't arrived
-            numPoints -= transitionStack
-                .filter!(t => t.endPoint == pointNum+1)
-                .array.length;
-
-            if (numPoints > 100) numPoints = 0; // Handle overflows
-            
-            foreach(n; 0..numPoints) {
-                auto pipPosition = getPipPosition(pointNum + 1, n);
+            foreach(n; 0..calculatedPoint.numPieces) {
+                auto pipPosition = getPipPosition(pointNum + 1, n + 1);
                 drawPip(cast(uint) pipPosition.x, cast(uint) pipPosition.y,
                     point.owner == Player.P1 ? style.p1Colour : style.p2Colour);
             }
@@ -487,7 +514,7 @@ class BackgammonBoard : DrawingArea {
         float pointX = style.boardWidth / 2;
         // Player 1 at the top. Pips start in the middle and work their way out
         foreach (player; [Player.P1, Player.P2]) {
-            foreach (uint i; 0..potentialGameState.takenPieces[player]) {
+            foreach (uint i; 0..selectedGameState.takenPieces[player]) {
                 float pointY = style.boardHeight/2 - (i+2)*style.pipRadius;
                 if (player == Player.P2) pointY = style.boardHeight - pointY;
                 drawPip(pointX, pointY, player == Player.P1 ? style.p1Colour : style.p2Colour);
@@ -497,10 +524,12 @@ class BackgammonBoard : DrawingArea {
         // Draw pip animations
         foreach (transition; transitionStack) {
             if (!transition.startPoint || !transition.endPoint) continue; // Ignore non movements
-            auto startPos = getPipPosition(transition.startPoint,
-                potentialGameState.points[transition.startPoint].numPieces);
-            auto endPos = getPipPosition(transition.endPoint,
-                potentialGameState.points[transition.endPoint].numPieces-1);
+            auto startPoint = calculatePointAtTime(transition.startPoint, transition.startTime);
+            auto startPos = getPipPosition(transition.startPoint, startPoint.numPieces);
+            auto endPoint = calculatePointAtTime(transition.endPoint,
+                                transition.startTime + style.animationSpeed.msecs);
+            auto endPos = getPipPosition(transition.endPoint, endPoint.numPieces);
+
             float progress = (frameTime - transition.startTime).total!"msecs" / cast(float) style.animationSpeed;
             progress = progress > 1.0 ? 1.0 : progress;
 
@@ -511,9 +540,32 @@ class BackgammonBoard : DrawingArea {
             );
 
             drawPip(currPosition.x, currPosition.y,
-                potentialGameState.points[transition.endPoint].owner == Player.P1
+                selectedGameState.points[transition.endPoint].owner == Player.P1
                     ? style.p1Colour
                     : style.p2Colour);
         }
+    }
+
+    /**
+     * Logic for resizing self
+     */
+    bool onConfigureEvent(Event e, Widget w) {
+        auto short_edge = min(getAllocatedHeight(), getAllocatedWidth());
+        auto border_width = cast(uint) style.pointWidth / 2;
+        short_edge -= 2 * border_width;
+        setSizeRequest(short_edge, short_edge);
+        return true;
+    }
+
+    unittest {
+        /**
+        * Test point calculation
+        */
+        auto gs = new GameState();
+        auto b = new BackgammonBoard(gs);
+        gs.rollDice(3, 3);
+        b.selectMove(PipMovement(PipMoveType.Movement, 13, 10));
+        // should be animating now
+        assert(b.calculatePointAtTime(10, Clock.currTime).numPieces == 4);
     }
 }

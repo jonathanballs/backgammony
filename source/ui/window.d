@@ -33,6 +33,7 @@ import ai.gnubg;
  * for receiving button presses, network events etc.
  */
 class BackgammonWindow : MainWindow {
+    private:
     HeaderBar header;
     Button newGameBtn;
     Button inetGameBtn;
@@ -44,7 +45,10 @@ class BackgammonWindow : MainWindow {
 
     GameState gameState;
 
-    this() {
+    /**
+     * Create a new backgammon board window
+     */
+    public this() {
         super("Backgammon");
 
         header = new HeaderBar();
@@ -97,7 +101,7 @@ class BackgammonWindow : MainWindow {
         header.packEnd(finishMoveBtn);
         header.packEnd(undoMoveBtn);
 
-        // // Game board
+        // Game board
         backgammonBoard = new BackgammonBoard();
         backgammonBoard.onChangePotentialMovements.connect(() {
             undoMoveBtn.setSensitive(!!backgammonBoard.getSelectedMoves().length);
@@ -130,7 +134,7 @@ class BackgammonWindow : MainWindow {
         gs.newGame();
     }
 
-    final void setGameState(GameState gs) {
+    void setGameState(GameState gs) {
         this.aiGetTurn = null;
 
         backgammonBoard.setGameState(gs);
@@ -152,15 +156,15 @@ class BackgammonWindow : MainWindow {
     }
 
     Task!(gnubgGetTurn, GameState, GnubgEvalContext) *aiGetTurn;
-    bool isAnimatingTurn = false;
+    bool isWaitingForAnimation = false;
     Turn remoteResult;
 
     bool handleThreadMessages(Widget w, FrameClock f) {
         import networking.messages;
 
-        if (isAnimatingTurn && !backgammonBoard.transitionStack.length) {
+        if (isWaitingForAnimation && !backgammonBoard.isAnimating) {
             gameState.applyTurn(remoteResult);
-            isAnimatingTurn = false;
+            isWaitingForAnimation = false;
         }
 
         if (aiGetTurn && aiGetTurn.done) {
@@ -169,7 +173,7 @@ class BackgammonWindow : MainWindow {
             foreach (move; remoteResult) {
                 backgammonBoard.selectMove(move);
             }
-            isAnimatingTurn = true;
+            isWaitingForAnimation = true;
         }
 
         if (netThread && netThread.isRunning) {
@@ -192,5 +196,5 @@ class BackgammonWindow : MainWindow {
         return true;
     }
 
-    mixin AddTickCallback;
+    public mixin AddTickCallback;
 }
