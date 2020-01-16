@@ -130,6 +130,12 @@ class BackgammonWindow : MainWindow {
         //     PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
         // );
         auto gs = new GameState();
+        // gs.points[6] = Point(Player.P2, 1);
+        gs.points[5] = Point(Player.P2, 1);
+        gs.points[4] = Point(Player.P2, 1);
+        gs.points[3] = Point(Player.P2, 1);
+        gs.points[2] = Point(Player.P2, 1);
+        gs.points[1] = Point(Player.P2, 1);
         setGameState(gs);
         gs.newGame();
     }

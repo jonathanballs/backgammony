@@ -27,6 +27,7 @@ import ui.dicewidget;
 // - Respect which corner / side of board P1 is
 // - Testing & benchmarking animations (separate thread)
 // - Animation easing, curving
+// - Use GDK frameclock for animations
 
 struct RGB {
     double r, g, b;
@@ -99,6 +100,7 @@ class BackgammonBoard : DrawingArea {
 
     /// Animation
     SysTime lastAnimation;
+    SysTime frameTime;
     AnimatedDieWidget[] animatedDice;
     PipTransition[] transitionStack;
 
@@ -341,6 +343,7 @@ class BackgammonBoard : DrawingArea {
 
         drawBoard(cr);
 
+        frameTime = Clock.currTime(); // for animations
         if (this.getGameState()) {
             drawPips(cr);
             drawDice(cr);
@@ -464,6 +467,12 @@ class BackgammonBoard : DrawingArea {
         }
     }
 
+    PipTransition[] getCurrentTransitions() {
+        return transitionStack
+            .filter!(t => frameTime - t.startTime < style.animationSpeed.msecs)
+            .array;
+    }
+
     /**
      * Calculates what a point will look like at a certain point in time
      */
@@ -484,9 +493,22 @@ class BackgammonBoard : DrawingArea {
             .filter!(t => t.startTime >= time)
             .array.length;
         
+        // What if the point contains a taken point?
+        if (getGameState().points[pointNum].owner 
+                == getGameState().currentPlayer.opposite
+            && numPips == 0
+            && selectedGameState().points[pointNum].owner
+                != getGameState().currentPlayer.opposite()) {
+            // This is a taken piece but has it been landed on
+            if (transitionStack.filter!(t => t.startTime+style.animationSpeed.msecs > frameTime
+                && t.endPoint == pointNum).array.length) {
+                return Point(selectedGameState.points[pointNum].owner.opposite, 1);
+            }
+        }
+        
         if (numPips > 100) numPips = 0;
 
-        return Point(Player.P1, numPips);
+        return Point(selectedGameState.points[pointNum].owner, numPips);
     }
 
     /**
@@ -508,20 +530,15 @@ class BackgammonBoard : DrawingArea {
             cr.stroke();
         }
 
-        auto frameTime = Clock.currTime;
-        transitionStack = transitionStack
-            .filter!(t => frameTime - t.startTime < style.animationSpeed.msecs)
-            .array;
-
         // Draw pips on each point
         uint pointNum = 0;
         foreach(point; this.selectedGameState.points) {
-            auto calculatedPoint = calculatePointAtTime(pointNum+1, frameTime);
+            const auto calculatedPoint = calculatePointAtTime(pointNum+1, frameTime);
 
             foreach(n; 0..calculatedPoint.numPieces) {
                 auto pipPosition = getPipPosition(pointNum + 1, n + 1);
                 drawPip(cast(uint) pipPosition.x, cast(uint) pipPosition.y,
-                    point.owner == Player.P1 ? style.p1Colour : style.p2Colour);
+                    calculatedPoint.owner == Player.P1 ? style.p1Colour : style.p2Colour);
             }
             pointNum++;
         }
@@ -538,7 +555,7 @@ class BackgammonBoard : DrawingArea {
         }
 
         // Draw pip animations
-        foreach (transition; transitionStack) {
+        foreach (transition; getCurrentTransitions()) {
             if (!transition.startPoint || !transition.endPoint) continue; // Ignore non movements
             auto startPoint = calculatePointAtTime(transition.startPoint, transition.startTime);
             auto startPos = getPipPosition(transition.startPoint, startPoint.numPieces);
