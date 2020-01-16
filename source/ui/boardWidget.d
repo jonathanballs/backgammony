@@ -469,7 +469,8 @@ class BackgammonBoard : DrawingArea {
 
     PipTransition[] getCurrentTransitions() {
         return transitionStack
-            .filter!(t => frameTime - t.startTime < style.animationSpeed.msecs)
+            .filter!(t => t.startTime + style.animationSpeed.msecs > frameTime)
+            .filter!(t => t.startTime < frameTime)
             .array;
     }
 
