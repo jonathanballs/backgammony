@@ -2,8 +2,8 @@ module ui.boardWidget;
 
 import std.array;
 import std.algorithm;
-import std.conv : to;
-import std.datetime.systime : SysTime, Clock;
+import std.conv;
+import std.datetime.systime;
 import std.stdio;
 import std.typecons;
 import core.time;
@@ -53,16 +53,16 @@ static void setSourceRgbStruct(Context cr, RGB color) {
  * resize to fit its layout
  */
 class BoardStyle {
-    float boardWidth = 1200.0;      /// Width of the board.
-    float boardHeight = 800.0;      /// Height of the board
+    float boardWidth = 1200.0;          /// Width of the board.
+    float boardHeight = 800.0;          /// Height of the board
     RGB boardColor = RGB(0.18, 0.204, 0.212); /// Board background colour 
 
-    float borderWidth = 15.0;       /// Width of the border enclosing the board
-    float barWidth = 70.0;         /// Width of bar in the centre of the board
+    float borderWidth = 15.0;           /// Width of the border enclosing the board
+    float barWidth = 70.0;              /// Width of bar in the centre of the board
     RGB borderColor = RGB(0.14969, 0.15141, 0.15141); /// Colour of the border
 
-    float pointWidth = 75.0;        /// Width of each point
-    float pointHeight = 300.0;       /// Height of each point
+    float pointWidth = 75.0;            /// Width of each point
+    float pointHeight = 300.0;          /// Height of each point
     RGB lightPointColor = RGB(0.546875, 0.390625, 0.167969); /// Colour of light points
     RGB darkPointColor = RGB(0.171875, 0.2421875, 0.3125);   /// Colour of dark points
 
@@ -71,7 +71,7 @@ class BoardStyle {
     RGB p1Colour = RGB(0.0, 0.0, 0.0);  /// Colour of player 1's pips
     RGB p2Colour = RGB(1.0, 1.0, 1.0);  /// Colour of player 2's pips
 
-    long animationSpeed = 500;         /// Msecs to perform animation
+    long animationSpeed = 1000;         /// Msecs to perform animation
 }
 
 /// A corner of the board. Useful for describing where a user's home should be.
@@ -97,77 +97,18 @@ class BackgammonBoard : DrawingArea {
     /// Fired when the user selects or undoes a potential move
     Signal!() onChangePotentialMovements;
 
-    /// Potential moves of the current player.
-    private PipMovement[] _potentialMoves;
+    /**
+     * Moves that are not part of the gamestate, but have been selected by the
+     * user as potential moves. The board will animate these movements if
+     * Animation is enabled
+     */
+    PipMovement[] _selectedMoves;
 
-    PipMovement[] potentialMoves() {
-        return _potentialMoves.dup;
-    }
-
-    // For animation
-    void animateTurn(Turn turn) {
-        _potentialMoves = [];
-        transitionStack = [];
-        foreach (move; turn) {
-            _potentialMoves ~= move;
-            transitionStack ~= PipTransition(
-                move.startPoint,
-                move.endPoint,
-                false,
-                Clock.currTime);
-        }
-    }
-
-    GameState gameState() {
-        return _gameState;
-    }
-
-    /// Set gamestate
-    void setGameState(GameState gs) {
-        gs.onDiceRoll.connect((GameState gs, uint a, uint b) {
-            dice = [
-                new AnimatedDieWidget(a, false),
-                new AnimatedDieWidget(b, false)
-            ];
-            lastAnimation = Clock.currTime;
-        });
-        gs.onBeginTurn.connect((GameState gs, Player p) {
-            _potentialMoves = [];
-            onChangePotentialMovements.emit();
-        });
-
-        this._gameState = gs;
-    }
-
-    /// Remove the most recent potential move
-    void undoPotentialMove() {
-        if (_potentialMoves.length > 0) {
-            _potentialMoves = _potentialMoves[0..$-1];
-            onChangePotentialMovements.emit();
-        }
-    }
-
-    /// The current gamestate with the potential moves applied
-    GameState potentialGameState() {
-        if (gameState.turnState == TurnState.DiceRoll) {
-            assert(potentialMoves.length == 0);
-            return gameState;
-        }
-
-        GameState r = gameState.dup;
-
-        r.applyTurn(potentialMoves, true);
-        return r;
-    }
-
-    this(GameState gs) {
-        this();
-        this.setGameState = gs;
-    }
-
-    /// Create a new board widget.
+    /**
+     * Create a new Backgammon Board widget.
+     */
     this() {
-        super(300, 300);
+        super();
         this.onChangePotentialMovements = new Signal!();
 
         setHalign(GtkAlign.FILL);
@@ -184,65 +125,150 @@ class BackgammonBoard : DrawingArea {
             return true;
         });
         this.addOnButtonPress(delegate bool (Event e, Widget w) {
-            // Ignore double click events
-            if (e.button.type != GdkEventType.BUTTON_PRESS) {
-                return false;
-            }
+            return this.handleButtonPress(e);
+        });
+    }
 
-            if (dice.length && dice[0].finished
-                    && this.gameState.turnState == TurnState.MoveSelection
-                    && this.gameState.players[gameState.currentPlayer].type == PlayerType.User) {
-                auto possibleTurns = gameState.generatePossibleTurns();
-                if (!possibleTurns.length) return false;
+    /**
+     * Create a new BackgammonBoard widget and set the gamestate
+     */
+    this(GameState gs) {
+        this();
+        this.setGameState(gs);
+    }
 
-                if (potentialMoves.length == possibleTurns[0].length) return false;
+    /**
+     * Handles GTK button press events. This currently only includes piece
+     * movement.
+     */
+    bool handleButtonPress(Event e) {
+        // Only accept left clicks - ignore right clicks and double click events
+        if (e.button.type != GdkEventType.BUTTON_PRESS) {
+            return false;
+        }
 
-                // And check that player is user
-                foreach (uint i, c; pointCoords) {
-                    if (e.button.y > min(c[0].y, c[1].y)
-                            && e.button.y < max(c[0].y, c[1].y)
-                            && e.button.x > c[0].x - style.pointWidth/2.5
-                            && e.button.x < c[0].x + style.pointWidth/2.5) {
+        if (dice.length && dice[0].finished
+                && this.getGameState().turnState == TurnState.MoveSelection
+                && this.getGameState().players[getGameState().currentPlayer].type == PlayerType.User) {
+            auto possibleTurns = getGameState().generatePossibleTurns();
+            if (!possibleTurns.length) return false;
 
-                        // TODO: Potential move might not be first avaiable dice
-                        uint[] moveValues = gameState.diceValues;
-                        moveValues = moveValues[0] == moveValues[1]
-                            ? moveValues ~ moveValues
-                            : moveValues;
-                        try {
-                            uint startPoint = i+1;
-                            uint endPoint = gameState.currentPlayer == Player.P1 
-                                    ? i+1 - moveValues[potentialMoves.length]
-                                    : i+1 + moveValues[potentialMoves.length];
+            if (getSelectedMoves().length == possibleTurns[0].length) return false;
 
-                            auto potentialMove = PipMovement(PipMoveType.Movement,
-                                startPoint, endPoint);
-                            potentialGameState.validateMovement(potentialMove);
+            // And check that player is user
+            foreach (uint i, c; pointCoords) {
+                if (e.button.y > min(c[0].y, c[1].y)
+                        && e.button.y < max(c[0].y, c[1].y)
+                        && e.button.x > c[0].x - style.pointWidth/2.5
+                        && e.button.x < c[0].x + style.pointWidth/2.5) {
 
-                            _potentialMoves ~= potentialMove;
-                            transitionStack ~= PipTransition(startPoint, endPoint, false, Clock.currTime);
+                    // TODO: Potential move might not be first avaiable dice
+                    uint[] moveValues = getGameState().diceValues;
+                    moveValues = moveValues[0] == moveValues[1]
+                        ? moveValues ~ moveValues
+                        : moveValues;
+                    try {
+                        uint startPoint = i+1;
+                        uint endPoint = getGameState().currentPlayer == Player.P1 
+                                ? i+1 - moveValues[this.getSelectedMoves().length]
+                                : i+1 + moveValues[this.getSelectedMoves().length];
 
-                            onChangePotentialMovements.emit();
-                        } catch (Exception e) {
-                            writeln("Invalid move: ", e.message);
-                        }
+                        auto selectedMove = PipMovement(PipMoveType.Movement,
+                            startPoint, endPoint);
+                        potentialGameState.validateMovement(selectedMove);
 
-                        break;
+                        _selectedMoves ~= selectedMove;
+                        transitionStack ~= PipTransition(startPoint, endPoint, false, Clock.currTime);
+
+                        onChangePotentialMovements.emit();
+                    } catch (Exception e) {
+                        writeln("Invalid move: ", e.message);
                     }
+
+                    break;
                 }
             }
+        }
+        return false;
+    }
 
-            return false;
+    /**
+     * Return moves currently selected
+     */
+    PipMovement[] getSelectedMoves() {
+        return _selectedMoves.dup;
+    }
+
+    /**
+     * Submit a move to the board.
+     */
+    void selectMove(PipMovement move) {
+        _selectedMoves ~= move;
+        transitionStack ~= PipTransition(
+            move.startPoint,
+            move.endPoint,
+            false,
+            Clock.currTime);
+    }
+
+    /**
+     * Remove the most recent potential move
+     */
+    void undoSelectedMove() {
+        if (_selectedMoves.length > 0) {
+            _selectedMoves = _selectedMoves[0..$-1];
+            onChangePotentialMovements.emit();
+        }
+    }
+
+
+    /**
+     * Get the current gameState
+     */
+    GameState getGameState() {
+        return _gameState;
+    }
+
+    /**
+     * Set the current gamestate and start listening to its events
+     * TODO: Wipe current listeners
+     */
+    void setGameState(GameState gameState) {
+        gameState.onDiceRoll.connect((GameState gs, uint a, uint b) {
+            dice = [
+                new AnimatedDieWidget(a, false),
+                new AnimatedDieWidget(b, false)
+            ];
+            lastAnimation = Clock.currTime;
         });
+        gameState.onBeginTurn.connect((GameState gs, Player p) {
+            _selectedMoves = [];
+            onChangePotentialMovements.emit();
+        });
+
+        this._gameState = gameState;
+    }
+
+    /// The current gamestate with the potential moves applied
+    GameState potentialGameState() {
+        if (getGameState().turnState == TurnState.DiceRoll) {
+            assert(getSelectedMoves().length == 0);
+            return getGameState();
+        }
+
+        GameState r = getGameState().dup;
+
+        r.applyTurn(getSelectedMoves(), true);
+        return r;
     }
 
     /**
      * Finish a turn but submitting the current potential moves to the game state.
      */
     void finishTurn() {
-        auto pMoves = potentialMoves;
-        _potentialMoves = [];
-        gameState.applyTurn(pMoves);
+        auto pMoves = getSelectedMoves();
+        _selectedMoves = [];
+        getGameState().applyTurn(pMoves);
     }
 
     /**
@@ -289,7 +315,7 @@ class BackgammonBoard : DrawingArea {
 
         drawBoard(cr);
 
-        if (this.gameState) {
+        if (this.getGameState()) {
             drawPips(cr);
             drawDice(cr);
         }

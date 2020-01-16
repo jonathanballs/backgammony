@@ -85,7 +85,7 @@ class BackgammonWindow : MainWindow {
         inetImg.setFromGicon(icon, IconSize.BUTTON);
         undoMoveBtn.add(inetImg);
         undoMoveBtn.addOnClicked((Button b) {
-            backgammonBoard.undoPotentialMove();
+            backgammonBoard.undoSelectedMove();
         });
         undoMoveBtn.setSensitive(false);
 
@@ -100,12 +100,12 @@ class BackgammonWindow : MainWindow {
         // // Game board
         backgammonBoard = new BackgammonBoard();
         backgammonBoard.onChangePotentialMovements.connect(() {
-            undoMoveBtn.setSensitive(!!backgammonBoard.potentialMoves.length);
+            undoMoveBtn.setSensitive(!!backgammonBoard.getSelectedMoves().length);
 
             finishMoveBtn.setSensitive(false);
             if (gameState.turnState == TurnState.MoveSelection) {
                 try {
-                    backgammonBoard.gameState.validateTurn(backgammonBoard.potentialMoves);
+                    backgammonBoard.getGameState().validateTurn(backgammonBoard.getSelectedMoves());
                     finishMoveBtn.setSensitive(true);
                 } catch (Exception e) {
                     finishMoveBtn.setSensitive(false);
@@ -119,12 +119,13 @@ class BackgammonWindow : MainWindow {
         this.addTickCallback(&handleThreadMessages);
 
 
-        Variant aiConfig;
-        aiConfig = gnubgDefaultEvalContexts[0];
-        auto gs = new GameState(
-            PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig),
-            PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
-        );
+        // Variant aiConfig;
+        // aiConfig = gnubgDefaultEvalContexts[0];
+        // auto gs = new GameState(
+        //     PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig),
+        //     PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
+        // );
+        auto gs = new GameState();
         setGameState(gs);
         gs.newGame();
     }
@@ -165,7 +166,9 @@ class BackgammonWindow : MainWindow {
         if (aiGetTurn && aiGetTurn.done) {
             remoteResult = aiGetTurn.yieldForce;
             aiGetTurn = null;
-            backgammonBoard.animateTurn(remoteResult);
+            foreach (move; remoteResult) {
+                backgammonBoard.selectMove(move);
+            }
             isAnimatingTurn = true;
         }
 
@@ -182,7 +185,7 @@ class BackgammonWindow : MainWindow {
                     this.networkingWidget.destroy();
                 },
                 (NetworkNewDiceRoll diceRoll) {
-                    this.backgammonBoard.gameState.rollDice(diceRoll.dice1, diceRoll.dice2);
+                    this.backgammonBoard.getGameState.rollDice(diceRoll.dice1, diceRoll.dice2);
                 }
             );
         }

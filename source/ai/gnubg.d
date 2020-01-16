@@ -1,3 +1,6 @@
+/**
+ * Manages interfacing with GnuBackgammon
+ */
 module ai.gnubg;
 
 import core.thread;
@@ -13,10 +16,6 @@ import std.string;
 
 import formats.fibs;
 import game;
-
-/**
- * Manages interfacing with GnuBackgammon
- */
 
 /**
  * Gnubg Evaluation settings

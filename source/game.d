@@ -293,21 +293,21 @@ class GameState {
          */
         if (takenPieces[currentPlayer]) {
             foreach (i, moveValue; moveValues) {
-                auto potentialMovement = PipMovement( PipMoveType.Entering, 0,
+                auto selectedMovement = PipMovement( PipMoveType.Entering, 0,
                     homePointToBoardPoint(currentPlayer.opposite, moveValue));
 
-                if (isValidPotentialMovement(potentialMovement)) {
+                if (isValidPotentialMovement(selectedMovement)) {
                     GameState potentialGS = this.dup;
-                    potentialGS.applyMovement(potentialMovement);
+                    potentialGS.applyMovement(selectedMovement);
                     auto nextMoves = potentialGS.generatePossibleTurns(moveValues.dup.remove(i));
 
                     if (nextMoves) {
                         foreach (m; nextMoves) {
-                            auto moveList = [[potentialMovement] ~ m.dup];
+                            auto moveList = [[selectedMovement] ~ m.dup];
                             ret ~= moveList;
                         }
                     } else {
-                        ret ~= [potentialMovement];
+                        ret ~= [selectedMovement];
                     }
                 }
             }
@@ -341,22 +341,22 @@ class GameState {
 
                 if (point.owner == currentPlayer) {
                     try {
-                        PipMovement potentialMovement = PipMovement(
+                        PipMovement selectedMovement = PipMovement(
                             PipMoveType.Movement,
                             pointIndex,
                             _currentPlayer == Player.P1 ? pointIndex-moveValue : pointIndex+moveValue);
-                        if (isValidPotentialMovement(potentialMovement)) {
+                        if (isValidPotentialMovement(selectedMovement)) {
                             GameState potentialGS = this.dup;
-                            potentialGS.applyMovement(potentialMovement);
+                            potentialGS.applyMovement(selectedMovement);
                             auto nextMoves = potentialGS.generatePossibleTurns(moveValues.dup.remove(i));
 
                             if (nextMoves) {
                                 foreach (m; nextMoves) {
-                                    auto moveList = [[potentialMovement] ~ m.dup];
+                                    auto moveList = [[selectedMovement] ~ m.dup];
                                     ret ~= moveList;
                                 }
                             } else {
-                                ret ~= [potentialMovement];
+                                ret ~= [selectedMovement];
                             }
                         }
                     } catch (Exception e) {
