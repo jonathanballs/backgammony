@@ -158,6 +158,22 @@ class BackgammonBoard : DrawingArea {
             return false;
         }
 
+        /**
+         * Back and forward buttons
+         */
+        if (e.button.button == 8) {
+            this.undoSelectedMove();
+            return false;
+        } else if (e.button.button == 9) {
+            try {
+                getGameState().validateTurn(getSelectedMoves());
+                this.finishTurn();
+            } catch (Exception e) {
+                // Wasn't valid, won't fish turn
+            }
+            return false;
+        }
+
         if (animatedDice.length && animatedDice[0].finished
                 && this.getGameState().turnState == TurnState.MoveSelection
                 && this.getGameState().players[getGameState().currentPlayer].type == PlayerType.User) {
