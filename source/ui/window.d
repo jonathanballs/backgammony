@@ -3,6 +3,7 @@ module ui.window;
 import std.concurrency;
 import std.parallelism;
 import std.stdio;
+import std.variant;
 import core.thread;
 
 import gdk.FrameClock;
@@ -117,7 +118,13 @@ class BackgammonWindow : MainWindow {
 
         this.addTickCallback(&handleThreadMessages);
 
-        auto gs = new GameState();
+
+        Variant aiConfig;
+        aiConfig = gnubgDefaultEvalContexts[0];
+        auto gs = new GameState(
+            PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig),
+            PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
+        );
         setGameState(gs);
         gs.newGame();
     }
@@ -144,14 +151,22 @@ class BackgammonWindow : MainWindow {
     }
 
     Task!(gnubgGetTurn, GameState, GnubgEvalContext) *aiGetTurn;
+    bool isAnimatingTurn = false;
+    Turn remoteResult;
 
     bool handleThreadMessages(Widget w, FrameClock f) {
         import networking.messages;
 
+        if (isAnimatingTurn && !backgammonBoard.transitionStack.length) {
+            gameState.applyTurn(remoteResult);
+            isAnimatingTurn = false;
+        }
+
         if (aiGetTurn && aiGetTurn.done) {
-            auto result = aiGetTurn.yieldForce;
+            remoteResult = aiGetTurn.yieldForce;
             aiGetTurn = null;
-            gameState.applyTurn(result);
+            backgammonBoard.animateTurn(remoteResult);
+            isAnimatingTurn = true;
         }
 
         if (netThread && netThread.isRunning) {

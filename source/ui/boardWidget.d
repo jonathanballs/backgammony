@@ -22,15 +22,16 @@ import utils.signals;
 import ui.dicewidget;
 
 // TODO:
-// - Pip movement animations
 // - Animation for starting new game. Flashes are bad!
 // - Organise this - perhaps the worst organised module rn
 // - Respect which corner / side of board P1 is
+// - Testing & benchmarking animations (separate thread)
 
 struct RGB {
     double r, g, b;
 }
 
+// Start Pip, End Pip?
 private struct PipTransition {
     uint startPoint;
     uint endPoint;
@@ -101,6 +102,20 @@ class BackgammonBoard : DrawingArea {
 
     PipMovement[] potentialMoves() {
         return _potentialMoves.dup;
+    }
+
+    // For animation
+    void animateTurn(Turn turn) {
+        _potentialMoves = [];
+        transitionStack = [];
+        foreach (move; turn) {
+            _potentialMoves ~= move;
+            transitionStack ~= PipTransition(
+                move.startPoint,
+                move.endPoint,
+                false,
+                Clock.currTime);
+        }
     }
 
     GameState gameState() {
@@ -431,6 +446,8 @@ class BackgammonBoard : DrawingArea {
             numPoints -= transitionStack
                 .filter!(t => t.endPoint == pointNum+1)
                 .array.length;
+
+            if (numPoints > 100) numPoints = 0; // Handle overflows
             
             foreach(n; 0..numPoints) {
                 auto pipPosition = getPipPosition(pointNum + 1, n);
@@ -453,6 +470,7 @@ class BackgammonBoard : DrawingArea {
 
         // Draw pip animations
         foreach (transition; transitionStack) {
+            if (!transition.startPoint || !transition.endPoint) continue; // Ignore non movements
             auto startPos = getPipPosition(transition.startPoint,
                 potentialGameState.points[transition.startPoint].numPieces);
             auto endPos = getPipPosition(transition.endPoint,
