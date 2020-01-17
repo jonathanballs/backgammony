@@ -121,27 +121,22 @@ class BackgammonWindow : MainWindow {
         this.addTickCallback(&handleThreadMessages);
 
 
-        // Variant aiConfig;
-        // aiConfig = gnubgDefaultEvalContexts[0];
+        // AI example
+        // Variant aiConfig = gnubgDefaultEvalContexts[0];
         // auto gs = new GameState(
         //     PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig),
         //     PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
         // );
+        // setGameState(gs);
+        // gs.newGame();
+
+        // Taking a piece and moving on
         auto gs = new GameState();
-        gs.points[6] = Point(Player.P2, 1);
-        gs.points[5] = Point(Player.P2, 1);
-        gs.points[4] = Point(Player.P2, 1);
-        gs.points[3] = Point(Player.P2, 1);
-        gs.points[2] = Point(Player.P2, 1);
-        gs.points[1] = Point(Player.P2, 1);
         setGameState(gs);
         gs.newGame();
-
-        /**
-         * Testing double movements
-         */
-        // backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 24, 18));
-        // backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 18, 13));
+        gs.points[5] = Point(Player.P2, 1);
+        backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 6, 5));
+        backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 5, 3));
     }
 
     /**
