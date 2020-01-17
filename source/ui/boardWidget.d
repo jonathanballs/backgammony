@@ -558,10 +558,14 @@ class BackgammonBoard : DrawingArea {
      */
     uint calculateTakenPiecesAtTime(Player player, SysTime time) {
         uint numPips = getGameState().takenPieces[player];
+        // Add points that have arrived
         if (player == getGameState().currentPlayer().opposite) {
             numPips += transitionStack.filter!(t => t.takesPiece
                 && t.startTime + 2*style.animationSpeed.msecs <= time).array.length;
+        } else {
+            numPips -= transitionStack.filter!(t => !t.startPoint && t.startTime < time).array.length;
         }
+        // Minus points that have left
         return numPips;
     }
 
@@ -626,7 +630,7 @@ class BackgammonBoard : DrawingArea {
             }
         }
 
-        // Taken animations pieces go under everything else
+        // Draw pieces being taken
         foreach (takenTransition; transitionStack
                 .filter!(t => t.takesPiece)
                 .filter!(t => t.startTime + 2*style.animationSpeed.msecs > frameTime)
@@ -642,15 +646,26 @@ class BackgammonBoard : DrawingArea {
             tweenPip(startPos, endPos, progress, getGameState().currentPlayer.opposite);
         }
 
-
         // Draw pip movement animations
         foreach (transition; getCurrentTransitions()) {
-            if (!transition.startPoint || !transition.endPoint) continue; // Ignore non movements
-            auto startPoint = calculatePointAtTime(transition.startPoint, transition.startTime);
-            auto startPos = getPipPosition(transition.startPoint, startPoint.numPieces);
+            if (!transition.endPoint) continue;
+            ScreenCoords startPos;
+            ScreenCoords endPos;
+
+            // If it's coming from the bar
+            if (!transition.startPoint) {
+                auto startingPip = calculateTakenPiecesAtTime(
+                    getGameState().currentPlayer, transition.startTime
+                );
+                startPos = getTakenPipPosition(getGameState().currentPlayer, startingPip);
+            } else {
+                auto startPoint = calculatePointAtTime(transition.startPoint, transition.startTime);
+                startPos = getPipPosition(transition.startPoint, startPoint.numPieces);
+            }
+
             auto endPoint = calculatePointAtTime(transition.endPoint,
                                 transition.startTime + style.animationSpeed.msecs);
-            auto endPos = getPipPosition(transition.endPoint, endPoint.numPieces);
+            endPos = getPipPosition(transition.endPoint, endPoint.numPieces);
 
             float progress = (frameTime - transition.startTime).total!"msecs" / cast(float) style.animationSpeed;
             progress = progress > 1.0 ? 1.0 : progress;
