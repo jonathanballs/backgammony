@@ -73,7 +73,7 @@ class BoardStyle {
     RGB p1Colour = RGB(0.0, 0.0, 0.0);  /// Colour of player 1's pips
     RGB p2Colour = RGB(1.0, 1.0, 1.0);  /// Colour of player 2's pips
 
-    long animationSpeed = 250;         /// Msecs to perform animation
+    long animationSpeed = 1000;         /// Msecs to perform animation
 }
 
 /// A corner of the board. Useful for describing where a user's home should be.
@@ -279,10 +279,13 @@ class BackgammonBoard : DrawingArea {
     }
 
     /**
-     * Returns whether the board is currently performing an animation
+     * Returns whether the board has unfinished animations either from selection
+     * or from dice roll
      */
     public bool isAnimating() {
-        return !!transitionStack.length
+        return !!transitionStack
+                .filter!(t => t.startTime + style.animationSpeed.msecs > frameTime)
+                .array.length
             && (!animatedDice.length || animatedDice[0].finished);
     }
 
