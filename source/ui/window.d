@@ -7,6 +7,7 @@ import std.variant;
 import core.thread;
 
 import gdk.FrameClock;
+import gdk.Keysyms;
 import gio.ThemedIcon;
 import gtk.Box;
 import gtk.Button;
@@ -45,6 +46,10 @@ class BackgammonWindow : MainWindow {
 
     GameState gameState;
 
+    Task!(gnubgGetTurn, GameState, GnubgEvalContext) *aiGetTurn;
+    bool isWaitingForAnimation = false;
+    Turn remoteResult;
+
     /**
      * Create a new backgammon board window
      */
@@ -57,17 +62,7 @@ class BackgammonWindow : MainWindow {
         this.setTitlebar(header);
 
         newGameBtn = new Button("New Game");
-        newGameBtn.addOnClicked((Button b) {
-            // Create new game
-            newGameDialog = new NewGameDialog(this);
-            newGameDialog.onCreateNewGame.connect((GameState gs) {
-                setGameState(gs);
-                gs.newGame();
-                auto t = newGameDialog;
-                t.destroy();
-                newGameDialog = null;
-            });
-        });
+        newGameBtn.addOnClicked((Button b) => openNewGameDialog() );
         header.packStart(newGameBtn);
 
         // Internet game
@@ -100,6 +95,9 @@ class BackgammonWindow : MainWindow {
         finishMoveBtn.setSensitive(false);
         header.packEnd(finishMoveBtn);
         header.packEnd(undoMoveBtn);
+
+        // Keyboard shortcuts
+        this.addOnKeyPress(&onKeyPress);
 
         // Game board
         backgammonBoard = new BackgammonBoard();
@@ -140,6 +138,37 @@ class BackgammonWindow : MainWindow {
         gs.newGame();
     }
 
+    /**
+     * Keyboard Shortcuts
+     */
+    bool onKeyPress(GdkEventKey* g, Widget w) {
+        // If CTRL key pressed
+        if (g.state & ModifierType.CONTROL_MASK) {
+            switch(g.keyval) {
+            case Keysyms.GDK_n:
+                this.openNewGameDialog();
+                break;
+            default: break;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Open the new game dialog
+     */
+    void openNewGameDialog() {
+        // Create new game
+        newGameDialog = new NewGameDialog(this);
+        newGameDialog.onCreateNewGame.connect((GameState gs) {
+            setGameState(gs);
+            gs.newGame();
+            newGameDialog.destroy();
+            newGameDialog = null;
+        });
+    }
+
     void setGameState(GameState gs) {
         this.aiGetTurn = null;
 
@@ -160,10 +189,6 @@ class BackgammonWindow : MainWindow {
             }
         });
     }
-
-    Task!(gnubgGetTurn, GameState, GnubgEvalContext) *aiGetTurn;
-    bool isWaitingForAnimation = false;
-    Turn remoteResult;
 
     bool handleThreadMessages(Widget w, FrameClock f) {
         import networking.messages;
