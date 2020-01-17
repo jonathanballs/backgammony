@@ -45,26 +45,24 @@ class AnimatedDieWidget {
 
     bool finished = false;
 
-    this(int diceValue, bool enableAnimation = true) {
+    this(int diceValue, long animationTime) {
         assert (1 <= diceValue && diceValue <= 6,
             "Can't create dice widget with value " ~ diceValue.to!string);
         // Calculate the end position and go back from there.
         pos = vec3(0.0, 0.0, 0.0);
         finalRot = rot = dieFaces[diceValue-1].rot.inverse();
 
-        vel = vec3(-4.0, 0.3, 0.0);
+        vel = (1000.0 / animationTime) * vec3(-4.0, 0.3, 0.0);
         rotAxis = vec3(0.11, -1.0, 0.0);
         angVel = PI * 3;
 
-        _enableAnimation = enableAnimation;
-        if (!enableAnimation) {
+        if (!animationTime) {
             finished = true;
             return;
         }
 
-
         // Assume 1 second animation.
-        pos -= 2 * vel;
+        pos -= vel;
 
         Quaternion!float rotationQuat;
         auto rota = rotationQuat.axis_rotation(2 * angVel, rotAxis).to_matrix!(3, 3);

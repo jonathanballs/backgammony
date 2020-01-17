@@ -122,23 +122,25 @@ class BackgammonWindow : MainWindow {
 
 
         // AI example
-        Variant aiConfig = gnubgDefaultEvalContexts[0];
-        auto gs = new GameState(
-            PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig),
-            PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
-        );
-        setGameState(gs);
-        gs.newGame();
+        // Variant aiConfig = gnubgDefaultEvalContexts[0];
+        // auto gs = new GameState(
+        //     PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig),
+        //     PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
+        // );
+        // setGameState(gs);
+        // gs.newGame();
 
         // Taking a piece and moving on
 
         // Entering the board
-        // auto gs = new GameState();
-        // setGameState(gs);
-        // gs.newGame();
-        // gs.takenPieces[Player.P1] = 1;
+        auto gs = new GameState();
+        setGameState(gs);
+        gs.newGame();
         // backgammonBoard.selectMove(PipMovement(PipMoveType.Entering, 0, 23));
-        // backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 5, 3));
+        backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 6, 5));
+        backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 5, 4));
+        backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 4, 3));
+        backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 3, 2));
     }
 
     /**
@@ -201,7 +203,7 @@ class BackgammonWindow : MainWindow {
             isWaitingForAnimation = false;
         }
 
-        if (aiGetTurn && aiGetTurn.done) {
+        if (aiGetTurn && aiGetTurn.done && !backgammonBoard.isAnimating) {
             remoteResult = aiGetTurn.yieldForce;
             aiGetTurn = null;
             foreach (move; remoteResult) {

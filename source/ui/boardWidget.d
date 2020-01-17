@@ -97,7 +97,9 @@ class BackgammonBoard : DrawingArea {
      */
     GameState _gameState;
 
-    /// The current styling. Will be modifiable in the future.
+    /**
+     * The current styling. Will be modifiable in the future.
+     */
     BoardStyle style;
 
     /**
@@ -235,12 +237,16 @@ class BackgammonBoard : DrawingArea {
     public void selectMove(PipMovement move) {
         // Assert that its a valid move... Contract programming?
 
+        // Do we need to wait for another point?
         SysTime startTime = Clock.currTime;
         if (move.startPoint) {
             const auto pointAtStart = calculatePointAtTime(move.startPoint, startTime);
-            if (move.startPoint && (pointAtStart.numPieces == 0
-                    || pointAtStart.owner == getGameState.currentPlayer.opposite)) {
-                startTime += style.animationSpeed.msecs;
+            if (pointAtStart.numPieces == 0
+                    || pointAtStart.owner == getGameState.currentPlayer.opposite) {
+                // Find the last time that someone landed there
+                auto landed = transitionStack.filter!(t => t.endPoint == move.startPoint).array;
+                assert(landed.length);
+                startTime = landed[$-1].startTime + style.animationSpeed.msecs;
             }
         }
 
@@ -299,8 +305,8 @@ class BackgammonBoard : DrawingArea {
     public void setGameState(GameState gameState) {
         gameState.onDiceRoll.connect((GameState gs, uint a, uint b) {
             animatedDice = [
-                new AnimatedDieWidget(a, false),
-                new AnimatedDieWidget(b, false)
+                new AnimatedDieWidget(a, 2 * style.animationSpeed),
+                new AnimatedDieWidget(b, 2 * style.animationSpeed),
             ];
             lastAnimation = Clock.currTime;
         });
@@ -317,11 +323,12 @@ class BackgammonBoard : DrawingArea {
      * or from dice roll
      */
     public bool isAnimating() {
+        const bool isDiceRolling = !!animatedDice.length ? !animatedDice[0].finished : false;
         return !!transitionStack
                 .filter!(t => (t.startTime + style.animationSpeed.msecs > frameTime)
                     || (t.takesPiece && t.startTime + 2*style.animationSpeed.msecs > frameTime))
                 .array.length
-            && (!animatedDice.length || animatedDice[0].finished);
+            || isDiceRolling;
     }
 
     /**
@@ -547,8 +554,15 @@ class BackgammonBoard : DrawingArea {
         }
         
         // Should change this to an assert tbqh
-        // if (numPips > 100) numPips = 0;
-        assert(numPips < 100);
+        if (numPips > 100) {
+            writeln(getGameState.currentPlayer);
+            writeln(pointNum, " ", getGameState.points[pointNum]);
+            writeln(time);
+            writeln(transitionStack);
+            writeln(getSelectedMoves);
+            assert(0);
+        }
+        // assert(numPips < 100);
 
         return Point(getGameState.points[pointNum].owner, numPips);
     }
