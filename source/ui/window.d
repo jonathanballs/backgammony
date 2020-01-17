@@ -200,7 +200,7 @@ class BackgammonWindow : MainWindow {
         import networking.messages;
 
         if (isWaitingForAnimation && !backgammonBoard.isAnimating) {
-            gameState.applyTurn(remoteResult);
+            backgammonBoard.finishTurn();
             isWaitingForAnimation = false;
         }
 

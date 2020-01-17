@@ -318,6 +318,7 @@ class BackgammonBoard : DrawingArea {
     public void finishTurn() {
         auto pMoves = getSelectedMoves();
         _selectedMoves = [];
+        transitionStack = [];
         getGameState().applyTurn(pMoves);
     }
 
