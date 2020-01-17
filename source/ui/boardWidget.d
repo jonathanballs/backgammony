@@ -73,7 +73,7 @@ class BoardStyle {
     RGB p1Colour = RGB(0.0, 0.0, 0.0);  /// Colour of player 1's pips
     RGB p2Colour = RGB(1.0, 1.0, 1.0);  /// Colour of player 2's pips
 
-    long animationSpeed = 1000;         /// Msecs to perform animation
+    long animationSpeed = 250;         /// Msecs to perform animation
 }
 
 /// A corner of the board. Useful for describing where a user's home should be.
@@ -232,12 +232,19 @@ class BackgammonBoard : DrawingArea {
      * Submit a move to the board.
      */
     public void selectMove(PipMovement move) {
+        // Assert that its a valid move... Contract programming?
+
+        SysTime startTime = Clock.currTime;
+        if (move.startPoint && calculatePointAtTime(move.startPoint, startTime).numPieces == 0) {
+            startTime += style.animationSpeed.msecs;
+        }
+
         _selectedMoves ~= move;
         transitionStack ~= PipTransition(
             move.startPoint,
             move.endPoint,
             false,
-            Clock.currTime);
+            startTime);
     }
 
     /**
@@ -246,6 +253,7 @@ class BackgammonBoard : DrawingArea {
     public void undoSelectedMove() {
         if (_selectedMoves.length > 0) {
             _selectedMoves = _selectedMoves[0..$-1];
+            transitionStack = transitionStack[0..$-1]; // Might want to undo more
             onChangePotentialMovements.emit();
         }
     }
@@ -465,7 +473,7 @@ class BackgammonBoard : DrawingArea {
             // Draw numbers
             cr.moveTo(c[0].x, c[0].y + (i < 12 ? 20 : -10));
             cr.setSourceRgb(1.0, 1.0, 1.0);
-            cr.showText(i.to!string);
+            cr.showText((i+1).to!string);
             cr.newPath();
         }
     }
@@ -483,36 +491,34 @@ class BackgammonBoard : DrawingArea {
     Point calculatePointAtTime(uint pointNum, SysTime time) {
         assert(1 <= pointNum && pointNum <= 24);
 
-        auto numPips = selectedGameState().points[pointNum].numPieces;
+        auto numPips = getGameState().points[pointNum].numPieces;
 
-        // Minus the ones that haven't arrived
-        numPips -= transitionStack
+        // Add the ones that arrived
+        numPips += transitionStack
             .filter!(t => t.endPoint == pointNum)
-            .filter!(t => t.startTime + style.animationSpeed.msecs > time)
+            .filter!(t => t.startTime + style.animationSpeed.msecs <= time)
             .array.length;
 
-        // Add the ones that hadn't left yet
-        numPips += transitionStack
+        // Minus the ones that left
+        numPips -= transitionStack
             .filter!(t => t.startPoint == pointNum)
-            .filter!(t => t.startTime >= time)
+            .filter!(t => t.startTime < time)
             .array.length;
         
-        // What if the point contains a taken point?
-        if (getGameState().points[pointNum].owner 
-                == getGameState().currentPlayer.opposite
-            && numPips == 0
-            && selectedGameState().points[pointNum].owner
-                != getGameState().currentPlayer.opposite()) {
-            // This is a taken piece but has it been landed on
-            if (transitionStack.filter!(t => t.startTime+style.animationSpeed.msecs > frameTime
-                && t.endPoint == pointNum).array.length) {
-                return Point(selectedGameState.points[pointNum].owner.opposite, 1);
+        // Has it been visited in a transition?
+        if (transitionStack.filter!(t => t.endPoint == pointNum)
+                .filter!(t => t.startTime + style.animationSpeed.msecs <= time).array.length) {
+
+            if (getGameState().points[pointNum].owner == getGameState().currentPlayer.opposite) {
+                return Point(getGameState().currentPlayer, --numPips);
+            } else  {
+                return Point(getGameState().currentPlayer, numPips);
             }
         }
         
         if (numPips > 100) numPips = 0;
 
-        return Point(selectedGameState.points[pointNum].owner, numPips);
+        return Point(getGameState.points[pointNum].owner, numPips);
     }
 
     /**
