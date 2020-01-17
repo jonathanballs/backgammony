@@ -577,10 +577,16 @@ class BackgammonBoard : DrawingArea {
             float progress = (frameTime - transition.startTime).total!"msecs" / cast(float) style.animationSpeed;
             progress = progress > 1.0 ? 1.0 : progress;
 
+            // Functions found here https://gist.github.com/gre/1650294
+            // in/out quadratic easing
+            float easingFunc(float t) {
+                return t<.5 ? 2*t*t : -1+(4-2*t)*t;
+            }
+
             // Tween between positions
             auto currPosition = ScreenCoords(
-                startPos.x + progress*(endPos.x - startPos.x),
-                startPos.y + progress*(endPos.y - startPos.y)
+                startPos.x + easingFunc(progress)*(endPos.x - startPos.x),
+                startPos.y + easingFunc(progress)*(endPos.y - startPos.y)
             );
 
             drawPip(currPosition.x, currPosition.y,
