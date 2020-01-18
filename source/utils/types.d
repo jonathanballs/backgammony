@@ -50,6 +50,10 @@ struct OneIndexedStaticArray(T, uint length) {
         assert(start || end);
         return content[start-1..end-1];
     }
+
+    T[] opSlice() {
+        return content[0..$];
+    }
 }
 
 unittest {

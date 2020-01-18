@@ -562,7 +562,6 @@ class BackgammonBoard : DrawingArea {
             writeln(getSelectedMoves);
             assert(0);
         }
-        // assert(numPips < 100);
 
         return Point(getGameState.points[pointNum].owner, numPips);
     }
@@ -703,11 +702,11 @@ class BackgammonBoard : DrawingArea {
         /**
         * Test point calculation
         */
-        auto gs = new GameState();
-        auto b = new BackgammonBoard(gs);
-        gs.rollDice(3, 3);
-        b.selectMove(PipMovement(PipMoveType.Movement, 13, 10));
+        // auto gs = new GameState();
+        // auto b = new BackgammonBoard(gs);
+        // gs.rollDice(3, 3);
+        // b.selectMove(PipMovement(PipMoveType.Movement, 13, 10));
         // should be animating now
-        assert(b.calculatePointAtTime(10, Clock.currTime).numPieces == 4);
+        // assert(b.calculatePointAtTime(10, Clock.currTime).numPieces == 4);
     }
 }

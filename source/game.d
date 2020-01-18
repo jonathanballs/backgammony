@@ -1,7 +1,7 @@
 module game;
 
 
-import std.algorithm : remove, reverse, uniq;
+import std.algorithm;
 import std.array;
 import std.format;
 import std.math;
@@ -281,6 +281,7 @@ class GameState {
         return generatePossibleTurns(moveValues);
     }
 
+    /// This could definitely be better written
     private PipMovement[][] generatePossibleTurns(uint[] moveValues) {
         if (moveValues.length == 0) return [];
         // First find all possible movements of any length and then prune to
@@ -317,34 +318,56 @@ class GameState {
          * Bearing off
          */
         if (canBearOff(currentPlayer)) {
-            if (takenPieces[currentPlayer]) {
-                foreach (i, moveValue; moveValues.uniq().enumerate()) {
-                    auto boardPointNumber = homePointToBoardPoint(currentPlayer.opposite, moveValue);
-                    auto point = points[boardPointNumber];
-                    if (point.owner != currentPlayer.opposite || point.numPieces == 1) {
-                        // Player can enter on this area
-                        foreach (move; generatePossibleTurns(moveValues.dup.remove(i))) {
-                            ret ~= [[PipMovement(PipMoveType.Entering, boardPointNumber, 0)] ~ move];
+            foreach (i, moveValue; moveValues.uniq().enumerate()) {
+                try {
+                    PipMovement[] possibleBearoffs;
+
+                    auto noHigherPips = [1,2,3,4,5,6][moveValue..6].map!((mv) {
+                        return points[homePointToBoardPoint(currentPlayer, moveValue)].owner != currentPlayer;
+                    }).fold!((a, b) => a && b)(true);
+                    foreach_reverse (homePoint; 1..moveValue) {
+                        auto point = points[homePointToBoardPoint(currentPlayer, homePoint)];
+                        if (point.owner == currentPlayer) {
+                            possibleBearoffs ~= PipMovement(PipMoveType.BearingOff,
+                                homePointToBoardPoint(currentPlayer, homePoint), 0);
+                            break;
+                        }
+                        if (!noHigherPips) break;
+                    }
+
+                    foreach (selectedMovement; possibleBearoffs) {
+                        if (isValidPotentialMovement(selectedMovement)) {
+                            GameState potentialGS = this.dup;
+                            potentialGS.applyMovement(selectedMovement);
+                            auto nextMoves = potentialGS.generatePossibleTurns(moveValues.dup.remove(i));
+
+                            if (nextMoves) {
+                                foreach (m; nextMoves) {
+                                    auto moveList = [[selectedMovement] ~ m.dup];
+                                    ret ~= moveList;
+                                }
+                            } else {
+                                ret ~= [selectedMovement];
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    // Ignore
                 }
             }
-
-            return ret;
         }
 
         // Check if player can move
         foreach (i, moveValue; moveValues.uniq().enumerate()) {
-            uint pointIndex;
-            foreach (point; points) {
+            foreach (pointIndex, point; points[]) {
                 pointIndex = pointIndex+1;
 
                 if (point.owner == currentPlayer) {
                     try {
                         PipMovement selectedMovement = PipMovement(
                             PipMoveType.Movement,
-                            pointIndex,
-                            _currentPlayer == Player.P1 ? pointIndex-moveValue : pointIndex+moveValue);
+                            cast(uint) pointIndex,
+                            _currentPlayer == Player.P1 ? cast(uint) pointIndex-moveValue : cast(uint) pointIndex+moveValue);
                         if (isValidPotentialMovement(selectedMovement)) {
                             GameState potentialGS = this.dup;
                             potentialGS.applyMovement(selectedMovement);
@@ -364,7 +387,6 @@ class GameState {
                     }
                 }
             }
-            pointIndex++;
         }
 
         uint longestTurn = 0;
@@ -407,6 +429,11 @@ class GameState {
 
             points[pipMovement.endPoint].owner = currentPlayer;
             points[pipMovement.endPoint].numPieces++;
+        } else if (pipMovement.moveType == PipMoveType.BearingOff) {
+            if (!--points[pipMovement.startPoint].numPieces) {
+                points[pipMovement.startPoint].owner = Player.NONE;
+            }
+            borneOffPieces[currentPlayer]++;
         }
     }
 
@@ -632,4 +659,15 @@ unittest {
      * Test opEquals
      */
     assert(gs.equals(gs.dup));
+
+    /**
+     * Test bearing off. Player 1 has 1 piece to take off
+     */
+    gs = new GameState();
+    gs.points[1] = Point(Player.P1, 1);
+    gs.points[24] = Point(Player.P2, 1);
+    gs._currentPlayer = Player.P1;
+    gs.rollDice(3, 6);
+    assert(gs.generatePossibleTurns[0].length == 1);
+    assert(gs.generatePossibleTurns[0][0] == PipMovement(PipMoveType.BearingOff, 1, 0));
 }
