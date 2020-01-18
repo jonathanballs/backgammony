@@ -117,6 +117,7 @@ class BackgammonBoard : DrawingArea {
 
     /// The coordinates of each point on the screen in device. Just store matrix?
     ScreenCoords[2][24] pointCoords;
+    double[2] barXCoordinates;
 
     /// Fired when the user selects or undoes a potential move
     public Signal!() onChangePotentialMovements;
@@ -142,7 +143,7 @@ class BackgammonBoard : DrawingArea {
             return true;
         });
         this.addOnButtonPress(delegate bool (Event e, Widget w) {
-            return this.handleButtonPress(e);
+            return this.handleMouseClick(e);
         });
     }
 
@@ -155,10 +156,10 @@ class BackgammonBoard : DrawingArea {
     }
 
     /**
-     * Handles GTK button press events. This currently only includes piece
-     * movement.
+     * Handles GTK moust click events. This currently includes piece movement
+     * as well as forward/backward buttons for undo/complete move.
      */
-    bool handleButtonPress(Event e) {
+    bool handleMouseClick(Event e) {
         // Only accept left clicks - ignore right clicks and double click events
         if (e.button.type != GdkEventType.BUTTON_PRESS) {
             return false;
@@ -180,6 +181,7 @@ class BackgammonBoard : DrawingArea {
             return false;
         }
 
+        // If we aren't animating and it's a user's turn
         if (animatedDice.length && animatedDice[0].finished
                 && this.getGameState().turnState == TurnState.MoveSelection
                 && this.getGameState().players[getGameState().currentPlayer].type == PlayerType.User) {
@@ -188,37 +190,50 @@ class BackgammonBoard : DrawingArea {
 
             if (getSelectedMoves().length == possibleTurns[0].length) return false;
 
+            // Where have we clicked?
+            uint startPos;
+
             // And check that player is user
             foreach (uint i, c; pointCoords) {
+                writeln(i, c);
                 if (e.button.y > min(c[0].y, c[1].y)
                         && e.button.y < max(c[0].y, c[1].y)
                         && e.button.x > c[0].x - style.pointWidth/2.5
                         && e.button.x < c[0].x + style.pointWidth/2.5) {
-
-                    // TODO: Potential move might not be first avaiable dice
-                    uint[] moveValues = getGameState().diceValues;
-                    moveValues = moveValues[0] == moveValues[1]
-                        ? moveValues ~ moveValues
-                        : moveValues;
-                    try {
-                        outer: foreach (t; possibleTurns) {
-                            // If it starts with the moves we've already done
-                            foreach (j; 0..getSelectedMoves.length) {
-                                if (getSelectedMoves[j] != t[j]) continue outer;
-                            }
-                            if (t[getSelectedMoves.length].startPoint == i+1) {
-                                selectMove(t[getSelectedMoves.length]);
-                                break;
-                            }
-                        }
-
-                        onChangePotentialMovements.emit();
-                    } catch (Exception e) {
-                        writeln("Invalid move: ", e.message);
-                    }
-
+                    writeln(i);
+                    startPos = i + 1;
                     break;
                 }
+            }
+
+            if (!startPos) {
+                if (barXCoordinates[0] < e.button.x && e.button.x < barXCoordinates[1]) {
+                    startPos = 0;
+                } else {
+                    return false;
+                }
+            }
+
+            // TODO: Potential move might not be first avaiable dice
+            uint[] moveValues = getGameState().diceValues;
+            moveValues = moveValues[0] == moveValues[1]
+                ? moveValues ~ moveValues
+                : moveValues;
+            try {
+                outer: foreach (t; possibleTurns) {
+                    // If it starts with the moves we've already done
+                    foreach (j; 0..getSelectedMoves.length) {
+                        if (getSelectedMoves[j] != t[j]) continue outer;
+                    }
+                    if (t[getSelectedMoves.length].startPoint == startPos) {
+                        selectMove(t[getSelectedMoves.length]);
+                        break;
+                    }
+                }
+
+                onChangePotentialMovements.emit();
+            } catch (Exception e) {
+                writeln("Invalid move: ", e.message);
             }
         }
         return false;
@@ -416,6 +431,14 @@ class BackgammonBoard : DrawingArea {
         cr.lineTo((style.boardWidth + style.barWidth) / 2, style.boardHeight);
         cr.lineTo((style.boardWidth - style.barWidth) / 2, style.boardHeight);
         cr.fill;
+        // And save it for clicks
+        double yCoord = 0.0;
+        barXCoordinates[0] = (style.boardWidth - style.barWidth) / 2;
+        barXCoordinates[1] = (style.boardWidth + style.barWidth) / 2;
+        cr.userToDevice(barXCoordinates[0], yCoord);
+        cr.userToDevice(barXCoordinates[1], yCoord);
+        barXCoordinates[0]-=25;
+        barXCoordinates[1]-=25;
 
         foreach (uint i; 0..24) {
             auto c = getPointPosition(i+1);

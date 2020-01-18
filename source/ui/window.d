@@ -135,11 +135,10 @@ class BackgammonWindow : MainWindow {
         // Entering the board
         auto gs = new GameState();
         setGameState(gs);
-
         gs.newGame();
-        foreach (i; 1..25) gs.points[i] = Point(Player.NONE, 0);
-        gs.points[6] = Point(Player.P1, 4);
-        gs.points[24] = Point(Player.P2, 1);
+        // foreach (i; 1..25) gs.points[i] = Point(Player.NONE, 0);
+        // gs.points[6] = Point(Player.P1, 4);
+        // gs.points[24] = Point(Player.P2, 1);
 
         // backgammonBoard.selectMove(PipMovement(PipMoveType.Entering, 0, 23));
         // backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 6, 5));
