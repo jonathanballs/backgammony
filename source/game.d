@@ -322,10 +322,13 @@ class GameState {
                 try {
                     PipMovement[] possibleBearoffs;
 
-                    auto noHigherPips = [1,2,3,4,5,6][moveValue..6].map!((mv) {
-                        return points[homePointToBoardPoint(currentPlayer, moveValue)].owner != currentPlayer;
+                    auto noHigherPips = [1,2,3,4,5,6][moveValue..$].map!((mv) {
+                        auto p = points[homePointToBoardPoint(currentPlayer, mv)];
+                        return p.owner != currentPlayer;
+
                     }).fold!((a, b) => a && b)(true);
-                    foreach_reverse (homePoint; 1..moveValue) {
+
+                    foreach_reverse (homePoint; 1..moveValue+1) {
                         auto point = points[homePointToBoardPoint(currentPlayer, homePoint)];
                         if (point.owner == currentPlayer) {
                             possibleBearoffs ~= PipMovement(PipMoveType.BearingOff,

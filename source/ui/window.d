@@ -138,7 +138,7 @@ class BackgammonWindow : MainWindow {
 
         gs.newGame();
         foreach (i; 1..25) gs.points[i] = Point(Player.NONE, 0);
-        gs.points[1] = Point(Player.P1, 1);
+        gs.points[6] = Point(Player.P1, 4);
         gs.points[24] = Point(Player.P2, 1);
 
         // backgammonBoard.selectMove(PipMovement(PipMoveType.Entering, 0, 23));
