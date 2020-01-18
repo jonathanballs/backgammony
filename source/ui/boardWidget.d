@@ -201,15 +201,15 @@ class BackgammonBoard : DrawingArea {
                         ? moveValues ~ moveValues
                         : moveValues;
                     try {
-                        uint startPoint = i+1;
-                        uint endPoint = getGameState().currentPlayer == Player.P1 
-                                ? i+1 - moveValues[this.getSelectedMoves().length]
-                                : i+1 + moveValues[this.getSelectedMoves().length];
+                        outer: foreach (t; possibleTurns) {
+                            // If it starts with the moves we've already done
+                            foreach (j; 0..getSelectedMoves.length) {
+                                if (getSelectedMoves[j] != t[j]) continue outer;
+                            }
+                            selectMove(t[getSelectedMoves.length]);
+                            break;
+                        }
 
-                        auto selectedMove = PipMovement(PipMoveType.Movement,
-                            startPoint, endPoint);
-                        selectedGameState.validateMovement(selectedMove);
-                        selectMove(selectedMove);
                         onChangePotentialMovements.emit();
                     } catch (Exception e) {
                         writeln("Invalid move: ", e.message);
@@ -252,7 +252,7 @@ class BackgammonBoard : DrawingArea {
 
         // Is this going to take a piece?
         bool takesPiece = false;
-        if (selectedGameState.points[move.endPoint].owner == getGameState().currentPlayer.opposite) {
+        if (move.endPoint && selectedGameState.points[move.endPoint].owner == getGameState().currentPlayer.opposite) {
             takesPiece = true;
         }
 
