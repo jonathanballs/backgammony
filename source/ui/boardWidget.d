@@ -184,7 +184,6 @@ class BackgammonBoard : DrawingArea {
                 && this.getGameState().turnState == TurnState.MoveSelection
                 && this.getGameState().players[getGameState().currentPlayer].type == PlayerType.User) {
             auto possibleTurns = getGameState().generatePossibleTurns();
-            writeln(possibleTurns);
             if (!possibleTurns.length) return false;
 
             if (getSelectedMoves().length == possibleTurns[0].length) return false;
@@ -319,6 +318,8 @@ class BackgammonBoard : DrawingArea {
         });
 
         this._gameState = gameState;
+        this.transitionStack = [];
+        this._selectedMoves = [];
     }
 
     /**

@@ -181,6 +181,7 @@ class BackgammonWindow : MainWindow {
 
     void setGameState(GameState gs) {
         this.aiGetTurn = null;
+        this.isWaitingForAnimation = false;
 
         backgammonBoard.setGameState(gs);
         this.gameState = gs;
