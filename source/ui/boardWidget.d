@@ -465,7 +465,10 @@ class BackgammonBoard : DrawingArea {
             cr.stroke();
 
             // Draw numbers
-            cr.moveTo(c[0].x, c[0].y + (i < 12 ? 20 : -10));
+            cairo_text_extents_t extents;
+            cr.textExtents((i+1).to!string, &extents);
+
+            cr.moveTo(c[0].x - extents.width/2, c[0].y + (i < 12 ? 20 : -10));
             cr.setSourceRgb(1.0, 1.0, 1.0);
             cr.showText((i+1).to!string);
             cr.newPath();
