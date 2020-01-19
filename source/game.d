@@ -164,6 +164,11 @@ class GameState {
     Signal!(GameState, Player) onBeginTurn;
 
     /**
+     * Fired at the start of a game
+     */
+    Signal!(GameState) onStartGame;
+
+    /**
      * Fired at the end of the game.
      */
     Signal!(GameState, Player) onEndGame;
@@ -181,6 +186,7 @@ class GameState {
         onBeginTurn = new Signal!(GameState, Player);
         onDiceRoll = new Signal!(GameState, uint, uint);
         onEndGame = new Signal!(GameState, Player);
+        onStartGame = new Signal!(GameState);
     }
 
     /**
@@ -214,6 +220,7 @@ class GameState {
         points[17] = Point(Player.P2, 3);
         points[19] = Point(Player.P2, 5);
 
+        onStartGame.emit(this);
         onBeginTurn.emit(this, _currentPlayer);
     }
 

@@ -320,7 +320,7 @@ class BackgammonBoard : DrawingArea {
 
     /**
      * Set the current gamestate and start listening to its events
-     * TODO: Wipe current listeners
+     * TODO: Wipe current listeners. Check current state e.g. dice, is finished
      */
     public void setGameState(GameState gameState) {
         gameState.onDiceRoll.connect((GameState gs, uint a, uint b) {
@@ -337,6 +337,9 @@ class BackgammonBoard : DrawingArea {
         gameState.onEndGame.connect((GameState gs, Player winner) {
             this.showEndGame = true;
             this.endGameTransition = Clock.currTime;
+        });
+        gameState.onStartGame.connect((GameState gs) {
+            this.showEndGame = false;
         });
 
         this._gameState = gameState;
