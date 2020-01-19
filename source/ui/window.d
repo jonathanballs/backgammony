@@ -24,7 +24,7 @@ import game;
 import networking;
 import player;
 import ui.boardWidget;
-import ui.networkWidget;
+import ui.networkwidget;
 import ui.newgamedialog;
 import utils.addtickcallback;
 import ai.gnubg;
