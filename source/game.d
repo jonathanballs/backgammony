@@ -152,10 +152,10 @@ class GameState {
     OneIndexedStaticArray!(Point, 24) points;
     EnumIndexStaticArray!(Player, uint) takenPieces;
     EnumIndexStaticArray!(Player, uint) borneOffPieces;
-    private Player _currentPlayer;
+    Player _currentPlayer;
     private TurnState _turnState;
     private uint[2] _diceValues;
-
+    Player winner = Player.NONE;
 
     /**
      * Fired at the start of each turn. Calls connected functions with the player
@@ -164,9 +164,9 @@ class GameState {
     Signal!(GameState, Player) onBeginTurn;
 
     /**
-     * Fired at the end of the game. NOT IMPLEMENTED
+     * Fired at the end of the game.
      */
-    Signal!(GameState) onEndGame;
+    Signal!(GameState, Player) onEndGame;
 
     /**
      * Fired on a dice roll. Calls connected functions with the value of the roll.
@@ -180,6 +180,7 @@ class GameState {
     this() {
         onBeginTurn = new Signal!(GameState, Player);
         onDiceRoll = new Signal!(GameState, uint, uint);
+        onEndGame = new Signal!(GameState, Player);
     }
 
     /**
@@ -449,6 +450,7 @@ class GameState {
     GameState applyTurn(Turn turn, bool partialTurn = false) {
         assert(turnState == TurnState.MoveSelection,
             "Tried to applyTurn() before dice are rolled");
+        assert(winner == Player.NONE, "Tried to applyTurn to finished game");
 
         if (!partialTurn) {
             validateTurn(turn);
@@ -458,7 +460,10 @@ class GameState {
             applyMovement(move);
         }
 
-        if (!partialTurn) {
+        winner = calculateWinner();
+        if (winner != Player.NONE) {
+            onEndGame.emit(this, winner);
+        } else if (!partialTurn) {
             _currentPlayer = currentPlayer.opposite();
             _turnState = TurnState.DiceRoll;
             _diceValues = [0, 0];
@@ -593,6 +598,22 @@ class GameState {
     }
 
     /**
+    * Calculate the winner of the game.
+    */
+    Player calculateWinner() {
+        outer: foreach (player; [Player.P1, Player.P2]) {
+            foreach (pointIndex; 1..25) {
+                if (points[pointIndex].owner == player) continue outer;
+            }
+            if (takenPieces[player]) continue outer;
+
+            return player;
+        }
+
+        return Player.NONE;
+    }
+
+    /**
      * Duplicate the current gamestate. Does not copy signals. Use for exploring
      * alternative game scenarios or saving the game at a certain point.
      */
@@ -636,6 +657,7 @@ class GameState {
         // assert (_currentPlayer == Player.P1 || _currentPlayer == Player.P2);
     }
 }
+
 
 unittest {
     writeln("Testing GameState");

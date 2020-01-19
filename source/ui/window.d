@@ -122,20 +122,25 @@ class BackgammonWindow : MainWindow {
 
 
         // AI example
-        // Variant aiConfig = gnubgDefaultEvalContexts[0];
-        // auto gs = new GameState(
-        //     PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig),
-        //     PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
-        // );
-        // setGameState(gs);
+        Variant aiConfig = gnubgDefaultEvalContexts[0];
+        auto gs = new GameState(
+            PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig),
+            PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
+        );
+        setGameState(gs);
+        gs._currentPlayer = Player.P1;
+        gs.points[1] = Point(Player.P1, 3);
+        gs.points[22] = Point(Player.P2, 2);
+        gs.onBeginTurn.emit(gs, Player.P1);
+        // gs.
         // gs.newGame();
 
         // Taking a piece and moving on
 
         // Entering the board
-        auto gs = new GameState();
-        setGameState(gs);
-        gs.newGame();
+        // auto gs = new GameState();
+        // setGameState(gs);
+        // gs.newGame();
         // foreach (i; 1..25) gs.points[i] = Point(Player.NONE, 0);
         // gs.points[6] = Point(Player.P1, 4);
         // gs.points[24] = Point(Player.P2, 1);
