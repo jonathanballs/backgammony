@@ -85,7 +85,7 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
 
     GnubgEvalResult[] pResults = [];
     foreach (pos; pGameStates) {
-        string gnubgCommand = format!"EVALUATION FIBSBOARD %s PLIES 1 CUBEFUL"(pos.toFibsString());
+        string gnubgCommand = format!"EVALUATION FIBSBOARD %s PLIES 1 CUBELESS"(pos.toFibsString());
         c.writeline(gnubgCommand);
         float[] r = c.readline().split().map!(n => n.to!float).array;
         if (r.length < 5) throw new Exception("couldnt parse output");
@@ -99,7 +99,7 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
     float bestProb = 0.0;
     PipMovement[] bestTurn;
     foreach (index, GnubgEvalResult result; pResults) {
-        if (result.chanceWin > bestProb) {
+        if (result.chanceWin >= bestProb) {
             bestProb = result.chanceWin;
             bestTurn = pMovements[index];
         }
