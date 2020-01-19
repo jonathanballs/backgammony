@@ -38,6 +38,8 @@ class BackgammonWindow : MainWindow {
     HeaderBar header;
     Button newGameBtn;
     Button inetGameBtn;
+    Button finishTurnBtn;
+    Button undoMoveBtn;
 
     BackgammonBoard backgammonBoard;
     NetworkWidget networkingWidget;
@@ -78,7 +80,7 @@ class BackgammonWindow : MainWindow {
         header.packStart(inetGameBtn);
 
         // // Move buttons
-        auto undoMoveBtn = new Button();
+        undoMoveBtn = new Button();
         icon = new ThemedIcon("edit-undo-symbolic");
         inetImg = new Image();
         inetImg.setFromGicon(icon, IconSize.BUTTON);
@@ -88,12 +90,12 @@ class BackgammonWindow : MainWindow {
         });
         undoMoveBtn.setSensitive(false);
 
-        auto finishMoveBtn = new Button("Finish");
-        finishMoveBtn.addOnClicked((Button b) {
+        finishTurnBtn = new Button("Finish");
+        finishTurnBtn.addOnClicked((Button b) {
             backgammonBoard.finishTurn();
         });
-        finishMoveBtn.setSensitive(false);
-        header.packEnd(finishMoveBtn);
+        finishTurnBtn.setSensitive(false);
+        header.packEnd(finishTurnBtn);
         header.packEnd(undoMoveBtn);
 
         // Keyboard shortcuts
@@ -104,13 +106,13 @@ class BackgammonWindow : MainWindow {
         backgammonBoard.onChangePotentialMovements.connect(() {
             undoMoveBtn.setSensitive(!!backgammonBoard.getSelectedMoves().length);
 
-            finishMoveBtn.setSensitive(false);
+            finishTurnBtn.setSensitive(false);
             if (gameState.turnState == TurnState.MoveSelection) {
                 try {
                     backgammonBoard.getGameState().validateTurn(backgammonBoard.getSelectedMoves());
-                    finishMoveBtn.setSensitive(true);
+                    finishTurnBtn.setSensitive(true);
                 } catch (Exception e) {
-                    finishMoveBtn.setSensitive(false);
+                    finishTurnBtn.setSensitive(false);
                 }
             }
         });
@@ -202,6 +204,15 @@ class BackgammonWindow : MainWindow {
                     *_gs.players[p].config.peek!GnubgEvalContext);
                 aiGetTurn.executeInNewThread();
             }
+        });
+        gs.onDiceRoll.connect((GameState gs, uint die1, uint die2) {
+            if (!gs.generatePossibleTurns.length) {
+                finishTurnBtn.setSensitive(true);
+            }
+        });
+        gs.onEndGame.connect((GameState gs, Player winner) {
+            finishTurnBtn.setSensitive(false);
+            undoMoveBtn.setSensitive(false);
         });
     }
 

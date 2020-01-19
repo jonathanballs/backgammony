@@ -168,26 +168,26 @@ class BackgammonBoard : DrawingArea {
             return false;
         }
 
-        /**
-         * Back and forward buttons
-         */
-        if (e.button.button == 8) {
-            this.undoSelectedMove();
-            return false;
-        } else if (e.button.button == 9) {
-            try {
-                getGameState().validateTurn(getSelectedMoves());
-                this.finishTurn();
-            } catch (Exception e) {
-                // Wasn't valid, won't fish turn
-            }
-            return false;
-        }
 
         // If we aren't animating and it's a user's turn
         if (animatedDice.length && animatedDice[0].finished
                 && this.getGameState().turnState == TurnState.MoveSelection
                 && this.getGameState().players[getGameState().currentPlayer].type == PlayerType.User) {
+
+            /**
+            * Back and forward buttons
+            */
+            if (e.button.button == 8) {
+                this.undoSelectedMove();
+                return false;
+            } else if (e.button.button == 9) {
+                try {
+                    getGameState().validateTurn(getSelectedMoves());
+                    this.finishTurn();
+                } catch (Exception e) { /* Wasn't valid, won't finsh turn */ }
+                return false;
+            }
+
             auto possibleTurns = getGameState().generatePossibleTurns();
             if (!possibleTurns.length) return false;
 
@@ -198,12 +198,10 @@ class BackgammonBoard : DrawingArea {
 
             // And check that player is user
             foreach (uint i, c; pointCoords) {
-                writeln(i, c);
                 if (e.button.y > min(c[0].y, c[1].y)
                         && e.button.y < max(c[0].y, c[1].y)
                         && e.button.x > c[0].x - style.pointWidth/2.5
                         && e.button.x < c[0].x + style.pointWidth/2.5) {
-                    writeln(i);
                     startPos = i + 1;
                     break;
                 }
