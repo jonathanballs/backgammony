@@ -24,8 +24,8 @@ import game;
 
 enum formPadding = 10;
 
-// Helper function for configuring widgets
-private void setMarginsExpand(Widget w,
+/// Helper function for configuring widgets
+void setMarginsExpand(Widget w,
         uint top, uint bottom, uint left, uint right,
         bool vExpand, bool hExpand) {
     w.setMarginTop(top);
@@ -187,7 +187,7 @@ class NewGameDialog : Dialog {
     }
 }
 
-private class AISelector : Box {
+class AISelector : Box {
     Label label;
     ComboBoxText aiSelector;
     Box aiSettings;
@@ -278,7 +278,7 @@ private class AISelector : Box {
     }
 }
 
-private class HumanSelector : Box {
+class HumanSelector : Box {
     Label label;
     Label nameLabel;
     Entry nameEntry;

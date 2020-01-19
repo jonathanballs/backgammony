@@ -74,7 +74,7 @@ class BackgammonWindow : MainWindow {
         inetImg.setFromGicon(icon, IconSize.BUTTON);
         inetGameBtn.add(inetImg);
         inetGameBtn.addOnClicked((Button b) {
-            netThread = new NetworkingThread().start();
+            // netThread = new NetworkingThread().start();
             networkingWidget = new NetworkWidget(this);
         });
         header.packStart(inetGameBtn);
@@ -236,14 +236,14 @@ class BackgammonWindow : MainWindow {
         if (netThread && netThread.isRunning) {
             receiveTimeout(5.msecs,
                 (NetworkThreadStatus status) {
-                    this.networkingWidget.statusMessage.setText(status.message);
+                    // this.networkingWidget.statusMessage.setText(status.message);
                 },
                 (NetworkThreadError error) {
-                    this.networkingWidget.statusMessage.setText(error.message);
-                    this.networkingWidget.spinner.stop();
+                    // this.networkingWidget.statusMessage.setText(error.message);
+                    // this.networkingWidget.spinner.stop();
                 },
                 (NetworkBeginGame game) {
-                    this.networkingWidget.destroy();
+                    // this.networkingWidget.destroy();
                 },
                 (NetworkNewDiceRoll diceRoll) {
                     this.backgammonBoard.getGameState.rollDice(diceRoll.dice1, diceRoll.dice2);

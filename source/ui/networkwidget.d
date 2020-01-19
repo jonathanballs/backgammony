@@ -7,41 +7,63 @@ import std.digest.sha;
 import requests;
 import bencode;
 
-import gdk.FrameClock;
+import gtk.Box;
 import gtk.Dialog;
+import gdk.FrameClock;
 import gtk.Label;
+import gtk.Notebook;
 import gtk.Spinner;
 import gtk.Widget;
 import gtk.Window;
 
 import utils.addtickcallback;
+import ui.newgamedialog : HumanSelector, setMarginsExpand;
+
+enum formPadding = 10;
 
 class NetworkWidget : Dialog {
-    Spinner spinner;
-    Label statusMessage;
+
+    // Signal!(GameState) onCreateNewGame;
+    Notebook tabs;
+
+    Box lanBox;
+    HumanSelector lanHuman;
+
+    Box inetBox;
+    HumanSelector inetHuman;
 
     this (Window parent) {
         super();
-        /**
-         * Set position
-         */
         this.setTransientFor(parent);
         this.setPosition(GtkWindowPosition.CENTER_ON_PARENT);
         this.setTypeHint(GdkWindowTypeHint.DIALOG);
         this.setModal(true);
-        this.setSizeRequest(400, 175);
+        this.setSizeRequest(400, 475);
         this.setTitle("Network Game");
 
+
         /**
-         * Add spinner and status message
+         * LAN
          */
-        this.spinner = new Spinner();
-        spinner.start();
-        spinner.setMarginTop(15);
-        spinner.setMarginBottom(15);
-        this.getContentArea().add(spinner);
-        statusMessage = new Label("Loading network...");
-        this.getContentArea().add(statusMessage);
+        
+        lanBox = new Box(GtkOrientation.VERTICAL, formPadding);
+        lanBox.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
+        lanHuman = new HumanSelector("Username", "jonathan");
+        lanBox.packStart(lanHuman, false, false, 0);
+
+        /**
+         * Internet
+         */
+        inetBox = new Box(GtkOrientation.VERTICAL, formPadding);
+        inetBox.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
+        inetHuman = new HumanSelector("Username", "jonathan");
+        inetBox.packStart(inetHuman, false, false, 0);
+
+        tabs = new Notebook();
+        tabs.appendPage(lanBox, new Label("LAN"));
+        tabs.appendPage(inetBox, new Label("Internet"));
+
+        this.getContentArea().add(tabs);
 
         this.showAll();
     }
