@@ -129,7 +129,7 @@ class BackgammonWindow : MainWindow {
         );
         setGameState(gs);
         gs._currentPlayer = Player.P1;
-        gs.points[1] = Point(Player.P1, 3);
+        gs.points[1] = Point(Player.P1, 1);
         gs.points[22] = Point(Player.P2, 2);
         gs.onBeginTurn.emit(gs, Player.P1);
         // gs.

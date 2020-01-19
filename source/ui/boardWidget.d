@@ -75,7 +75,7 @@ class BoardStyle {
     RGB p1Colour = RGB(0.0, 0.0, 0.0);  /// Colour of player 1's pips
     RGB p2Colour = RGB(1.0, 1.0, 1.0);  /// Colour of player 2's pips
 
-    long animationSpeed = 250;         /// Msecs to perform animation
+    long animationSpeed = 1000;         /// Msecs to perform animation
 }
 
 /// A corner of the board. Useful for describing where a user's home should be.
@@ -114,6 +114,9 @@ class BackgammonBoard : DrawingArea {
     SysTime frameTime;
     AnimatedDieWidget[] animatedDice;
     PipTransition[] transitionStack;
+
+    bool showEndGame;
+    SysTime endGameTransition;
 
     /// The coordinates of each point on the screen in device. Just store matrix?
     ScreenCoords[2][24] pointCoords;
@@ -331,6 +334,10 @@ class BackgammonBoard : DrawingArea {
             _selectedMoves = [];
             onChangePotentialMovements.emit();
         });
+        gameState.onEndGame.connect((GameState gs, Player winner) {
+            this.showEndGame = true;
+            this.endGameTransition = Clock.currTime;
+        });
 
         this._gameState = gameState;
         this.transitionStack = [];
@@ -398,6 +405,31 @@ class BackgammonBoard : DrawingArea {
         if (this.getGameState()) {
             drawPips(cr);
             drawDice(cr);
+        }
+
+        if (showEndGame) {
+            // End game animation takes style.animationSpeed number of msecs
+            float animProgress = (Clock.currTime - endGameTransition).total!"msecs"
+                / cast(float) style.animationSpeed;
+            if (animProgress > 1.0) animProgress = 1.0;
+
+            cr.setSourceRgba(0.0, 0.0, 0.0, 0.4 * animProgress);
+            cr.lineTo(0, 0);
+            cr.lineTo(style.boardWidth, 0);
+            cr.lineTo(style.boardWidth, style.boardHeight);
+            cr.lineTo(0, style.boardHeight);
+            cr.fill();
+
+            cr.setSourceRgba(1.0, 1.0, 1.0, animProgress);
+            string endGameText = getGameState.players[getGameState.winner].name ~ " wins";
+            cr.setFontSize(100);
+            cairo_text_extents_t extents;
+            cr.textExtents(endGameText, &extents);
+            cr.moveTo(
+                (style.boardWidth - extents.width) / 2,
+                (style.boardHeight- extents.height) / 2
+            );
+            cr.showText(endGameText);
         }
 
         return true;
