@@ -8,6 +8,7 @@ import requests;
 import bencode;
 
 import gtk.Box;
+import gtk.Button;
 import gtk.Dialog;
 import gdk.FrameClock;
 import gtk.Label;
@@ -31,7 +32,14 @@ class NetworkWidget : Dialog {
 
     Box inetBox;
     HumanSelector inetHuman;
+    Button inetStartSearch;
+    Box inetStartSearchBox;
+    Label inetStartSearchLabel;
+    Spinner inetStartSearchSpinner;
 
+    /**
+     * Create a new Network Widget
+     */
     this (Window parent) {
         super();
         this.setTransientFor(parent);
@@ -41,16 +49,6 @@ class NetworkWidget : Dialog {
         this.setSizeRequest(400, 475);
         this.setTitle("Network Game");
 
-
-        /**
-         * LAN
-         */
-        
-        lanBox = new Box(GtkOrientation.VERTICAL, formPadding);
-        lanBox.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
-        lanHuman = new HumanSelector("Username", "jonathan");
-        lanBox.packStart(lanHuman, false, false, 0);
-
         /**
          * Internet
          */
@@ -59,9 +57,36 @@ class NetworkWidget : Dialog {
         inetHuman = new HumanSelector("Username", "jonathan");
         inetBox.packStart(inetHuman, false, false, 0);
 
+        inetStartSearchLabel = new Label("Find Opponent");
+        inetStartSearchBox = new Box(GtkOrientation.HORIZONTAL, formPadding);
+        inetStartSearchBox.packStart(inetStartSearchLabel, false, false, 0);
+
+        inetStartSearch = new Button();
+        inetStartSearch.add(inetStartSearchBox);
+        inetStartSearch.getStyleContext().addClass("suggested-action");
+        inetBox.packEnd(inetStartSearch, false, false, 0);
+        inetStartSearch.addOnClicked((Button b) {
+            inetStartSearchSpinner = new Spinner();
+            inetStartSearchBox.packStart(inetStartSearchSpinner, false, false, 0);
+            inetStartSearchBox.reorderChild(inetStartSearchSpinner, 0);
+            inetStartSearchSpinner.start();
+            inetStartSearchSpinner.show();
+
+            inetStartSearchLabel.setText("Matchmaking...");
+        });
+        inetStartSearchBox.setHalign(GtkAlign.CENTER);
+
+        /**
+         * LAN
+         */
+        lanBox = new Box(GtkOrientation.VERTICAL, formPadding);
+        lanBox.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
+        lanHuman = new HumanSelector("Username", "jonathan");
+        lanBox.packStart(lanHuman, false, false, 0);
+
         tabs = new Notebook();
-        tabs.appendPage(lanBox, new Label("LAN"));
         tabs.appendPage(inetBox, new Label("Internet"));
+        tabs.appendPage(lanBox, new Label("LAN"));
 
         this.getContentArea().add(tabs);
 

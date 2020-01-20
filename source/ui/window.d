@@ -42,7 +42,7 @@ class BackgammonWindow : MainWindow {
     Button undoMoveBtn;
 
     BackgammonBoard backgammonBoard;
-    NetworkWidget networkingWidget;
+    NetworkWidget networkWidget;
     NewGameDialog newGameDialog;
     Thread netThread;
 
@@ -73,10 +73,7 @@ class BackgammonWindow : MainWindow {
         auto inetImg = new Image();
         inetImg.setFromGicon(icon, IconSize.BUTTON);
         inetGameBtn.add(inetImg);
-        inetGameBtn.addOnClicked((Button b) {
-            // netThread = new NetworkingThread().start();
-            networkingWidget = new NetworkWidget(this);
-        });
+        inetGameBtn.addOnClicked((Button b) => openNewNetworkGameDialog() );
         header.packStart(inetGameBtn);
 
         // // Move buttons
@@ -164,6 +161,9 @@ class BackgammonWindow : MainWindow {
             case Keysyms.GDK_n:
                 this.openNewGameDialog();
                 break;
+            case Keysyms.GDK_i:
+                this.openNewNetworkGameDialog();
+                break;
             default: break;
             }
         }
@@ -183,6 +183,13 @@ class BackgammonWindow : MainWindow {
             newGameDialog.destroy();
             newGameDialog = null;
         });
+    }
+
+    /**
+     * Open the new network game dialog
+     */
+    void openNewNetworkGameDialog() {
+        networkWidget = new NetworkWidget(this);
     }
 
     void setGameState(GameState gs) {
