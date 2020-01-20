@@ -41,6 +41,7 @@ class NetworkWidget : Dialog {
     Spinner inetStartSearchSpinner;
     Tid inetThreadTid;
     bool inetThreadRunning;
+    bool inetThreadPreserve; // Don't delete when closing
 
     /**
      * Create a new Network Widget
@@ -106,8 +107,16 @@ class NetworkWidget : Dialog {
         tabs.appendPage(lanBox, new Label("LAN"));
 
         this.getContentArea().add(tabs);
-
         this.showAll();
+
+        this.addOnDestroy(&onDestroy);
+    }
+
+    void onDestroy(Widget w) {
+        if (inetThreadRunning) {
+            send(inetThreadTid, NetworkThreadShutdown());
+            inetThreadRunning = false;
+        }
     }
 
     mixin AddTickCallback;
