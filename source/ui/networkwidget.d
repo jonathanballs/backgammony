@@ -32,7 +32,7 @@ class NetworkWidget : Dialog {
 
     Box inetBox;
     HumanSelector inetHuman;
-    Button inetStartSearch;
+    Button inetStartSearchButton;
     Box inetStartSearchBox;
     Label inetStartSearchLabel;
     Spinner inetStartSearchSpinner;
@@ -61,11 +61,11 @@ class NetworkWidget : Dialog {
         inetStartSearchBox = new Box(GtkOrientation.HORIZONTAL, formPadding);
         inetStartSearchBox.packStart(inetStartSearchLabel, false, false, 0);
 
-        inetStartSearch = new Button();
-        inetStartSearch.add(inetStartSearchBox);
-        inetStartSearch.getStyleContext().addClass("suggested-action");
-        inetBox.packEnd(inetStartSearch, false, false, 0);
-        inetStartSearch.addOnClicked((Button b) {
+        inetStartSearchButton = new Button();
+        inetStartSearchButton.add(inetStartSearchBox);
+        inetStartSearchButton.getStyleContext().addClass("suggested-action");
+        inetBox.packEnd(inetStartSearchButton, false, false, 0);
+        inetStartSearchButton.addOnClicked((Button b) {
             inetStartSearchSpinner = new Spinner();
             inetStartSearchBox.packStart(inetStartSearchSpinner, false, false, 0);
             inetStartSearchBox.reorderChild(inetStartSearchSpinner, 0);

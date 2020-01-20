@@ -12,7 +12,6 @@ import std.string;
 import std.digest.sha;
 
 import networking.messages;
-import networking.matchmaking;
 import networking.connection;
 
 // Networking is a core part of backgammon. This module provides an implementation
@@ -47,7 +46,7 @@ class NetworkingThread : Thread {
     void run() {
         try {
             send(parentTid, NetworkThreadStatus("Matchmaking..."));
-            this.conn = new MatchMaker().getConnection();
+            // this.conn = new MatchMaker().getConnection();
             beginBackgammonGame(conn.isHost);
         } catch (Exception e) {
             writeln("Network Thread Exception:", e);
