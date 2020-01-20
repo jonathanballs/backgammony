@@ -241,21 +241,21 @@ class BackgammonWindow : MainWindow {
         }
 
         if (netThread && netThread.isRunning) {
-            receiveTimeout(5.msecs,
-                (NetworkThreadStatus status) {
+            // receiveTimeout(5.msecs,
+                // (NetworkThreadStatus status) {
                     // this.networkingWidget.statusMessage.setText(status.message);
-                },
-                (NetworkThreadError error) {
+                // },
+                // (NetworkThreadError error) {
                     // this.networkingWidget.statusMessage.setText(error.message);
                     // this.networkingWidget.spinner.stop();
-                },
-                (NetworkBeginGame game) {
+                // },
+                // (NetworkBeginGame game) {
                     // this.networkingWidget.destroy();
-                },
-                (NetworkNewDiceRoll diceRoll) {
-                    this.backgammonBoard.getGameState.rollDice(diceRoll.dice1, diceRoll.dice2);
-                }
-            );
+                // },
+                // (NetworkNewDiceRoll diceRoll) {
+                    // this.backgammonBoard.getGameState.rollDice(diceRoll.dice1, diceRoll.dice2);
+                // }
+            // );
         }
         return true;
     }

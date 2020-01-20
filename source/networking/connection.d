@@ -83,7 +83,7 @@ class Connection {
             if (recBuffer.indexOf('\n') != -1) break;
 
             import core.thread;
-            Thread.sleep(50.msecs);
+            Thread.sleep(15.msecs);
         } while (timeout == Duration.zero || timer.peek < timeout);
 
         if (timeout != Duration.zero && timer.peek > timeout) {

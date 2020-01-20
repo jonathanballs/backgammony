@@ -1,6 +1,6 @@
 module ui.networkwidget;
 
-import std.parallelism;
+import std.concurrency;
 import std.typecons;
 import std.stdio;
 import std.digest.sha;
@@ -19,6 +19,9 @@ import gtk.Window;
 
 import utils.addtickcallback;
 import ui.newgamedialog : HumanSelector, setMarginsExpand;
+import networking;
+import networking.messages;
+import player;
 
 enum formPadding = 10;
 
@@ -36,6 +39,8 @@ class NetworkWidget : Dialog {
     Box inetStartSearchBox;
     Label inetStartSearchLabel;
     Spinner inetStartSearchSpinner;
+    Tid inetThreadTid;
+    bool inetThreadRunning;
 
     /**
      * Create a new Network Widget
@@ -66,13 +71,25 @@ class NetworkWidget : Dialog {
         inetStartSearchButton.getStyleContext().addClass("suggested-action");
         inetBox.packEnd(inetStartSearchButton, false, false, 0);
         inetStartSearchButton.addOnClicked((Button b) {
-            inetStartSearchSpinner = new Spinner();
-            inetStartSearchBox.packStart(inetStartSearchSpinner, false, false, 0);
-            inetStartSearchBox.reorderChild(inetStartSearchSpinner, 0);
-            inetStartSearchSpinner.start();
-            inetStartSearchSpinner.show();
-
-            inetStartSearchLabel.setText("Matchmaking...");
+            if (!inetThreadRunning) {
+                inetStartSearchSpinner = new Spinner();
+                inetStartSearchBox.packStart(inetStartSearchSpinner, false, false, 0);
+                inetStartSearchBox.reorderChild(inetStartSearchSpinner, 0);
+                inetStartSearchSpinner.start();
+                inetStartSearchSpinner.show();
+                inetStartSearchLabel.setText("Matchmaking...");
+                inetThreadTid = spawn((shared string playerName) {
+                    auto p = PlayerMeta(playerName, playerName);
+                    auto thread = new NetworkingThread(p);
+                    thread.run();
+                }, cast(immutable) inetHuman.getActiveSelection().id);
+                inetThreadRunning = true;
+            } else {
+                send(inetThreadTid, NetworkThreadShutdown());
+                inetThreadRunning = false;
+                inetStartSearchSpinner.destroy();
+                inetStartSearchLabel.setText("Find opponent");
+            }
         });
         inetStartSearchBox.setHalign(GtkAlign.CENTER);
 

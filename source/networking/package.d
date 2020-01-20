@@ -1,7 +1,7 @@
 module networking;
 
-import core.thread;
 import core.time;
+import std.algorithm : startsWith;
 import std.socket;
 import std.stdio;
 import std.concurrency;
@@ -11,47 +11,83 @@ import std.conv;
 import std.string;
 import std.digest.sha;
 
+import player;
 import networking.messages;
 import networking.connection;
+
+private enum serverHost = "backgammon.jnthn.uk";
+private enum serverPort = 420_69;
 
 // Networking is a core part of backgammon. This module provides an implementation
 // of the Secure Backgammon Protocol and provides the backbone of all networking
 // (p2p, client/server etc).
 
 // TODO list
-// - Close listening port once connected
-// - Close UpNp ports
 // - Exit when window closes - Notifying opponent.
-// - Use against proper tracker. And update list from API.
 // - Basically entire game logic
 // - Validate that strings are valid UTF-8
-// - Ensure that not connecting to self
 // - Reconnection.
 
-// - Game process - use gamestate??
-// - Agree who plays first (and thus is p1)
+private enum NetworkState {
+    AwaitingConnection,
+    AwaitingMove,
+    AwaitingDiceSeedHash,
+    AwaitingDiceSeedValue,
+    AwaitingDiceConfirmation,
+    AwaitingUserMove,
+}
 
-class NetworkingThread : Thread {
-    this() {
-        this.parentTid = thisTid();
-        super(&run);
-    }
-
+/**
+ * The network thread acts like a giant state machine
+ */
+class NetworkingThread {
     private:
     Tid parentTid;
-
+    PlayerMeta player;
+    NetworkState state;
     Connection conn; // Connection with the other computer
-    string peer_id; // My peer id
+    bool shouldClose;
 
-    void run() {
+    /**
+    * Create a new connection. Will attempt to 
+    */
+    public this(PlayerMeta player) {
+        this.player = player;
+        this.parentTid = thisTid();
+    }
+
+    public void run() {
         try {
-            send(parentTid, NetworkThreadStatus("Matchmaking..."));
-            // this.conn = new MatchMaker().getConnection();
-            beginBackgammonGame(conn.isHost);
+            this.state = NetworkState.AwaitingConnection;
+            conn = new Connection(getAddress(serverHost, serverPort)[0]);
+            conn.writeline("RequestGame " ~ player.name);
+            while(true) {
+                /**
+                 * Receive messages from the user
+                 */
+                receive(
+                    (NetworkThreadShutdown msg) {
+                        shouldClose = true;
+                    }
+                );
+
+                if (shouldClose) {
+                    writeln("Closing network thread");
+                    conn.close();
+                    return;
+                }
+                auto line = conn.readline(25.msecs);
+                auto kvSplit = line.indexOf(":");
+                if (kvSplit == -1) {
+                    writeln("ERROR: Received bad network command: " ~ line);
+                    continue;
+                }
+                if (line.startsWith("INFO: ")) {
+                    writeln("Received info: " ~ line);
+                }
+            }
         } catch (Exception e) {
-            writeln("Network Thread Exception:", e);
-            send(parentTid, NetworkThreadError(
-                "Network Thread Exception: " ~ cast(string) e.message));
+            writeln(e);
         }
     }
 

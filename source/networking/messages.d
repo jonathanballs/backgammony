@@ -1,5 +1,8 @@
 module networking.messages;
 
+struct NetworkThreadShutdown {
+}
+
 struct NetworkThreadStatus {
     string message;
 }
