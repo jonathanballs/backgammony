@@ -91,8 +91,10 @@ class NetworkingThread {
                     } else if (key == "MATCHED") {
                         if (value.strip.toLower == "server") {
                             send(ownerTid, NetworkBeginGame(Player.P1));
+                            this.state = NetworkState.AwaitingUserMove;
                         } else if (value.strip.toLower == "client") {
                             send(ownerTid, NetworkBeginGame(Player.P2));
+                            this.state = NetworkState.AwaitingMove;
                         } else {
                             writeln("ERROR: ", value.strip.toLower);
                         }
