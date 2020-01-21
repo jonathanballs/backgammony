@@ -120,36 +120,15 @@ class BackgammonWindow : MainWindow {
         this.addTickCallback(&handleThreadMessages);
 
 
-        // AI example
+        // By default, let's start a game between the player and the AI with
+        // the player going first
         Variant aiConfig = gnubgDefaultEvalContexts[0];
         auto gs = new GameState(
-            PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig),
+            PlayerMeta("Player", "gnubg", PlayerType.User, aiConfig),
             PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
         );
         setGameState(gs);
-        gs._currentPlayer = Player.P1;
-        gs.points[1] = Point(Player.P1, 1);
-        gs.points[22] = Point(Player.P2, 2);
-        gs.onBeginTurn.emit(gs, Player.P1);
-        backgammonBoard.setPlayerCorner(Player.P1, Corner.BR);
-        // gs.
-        // gs.newGame();
-
-        // Taking a piece and moving on
-
-        // Entering the board
-        // auto gs = new GameState();
-        // setGameState(gs);
-        // gs.newGame();
-        // foreach (i; 1..25) gs.points[i] = Point(Player.NONE, 0);
-        // gs.points[6] = Point(Player.P1, 4);
-        // gs.points[24] = Point(Player.P2, 1);
-
-        // backgammonBoard.selectMove(PipMovement(PipMoveType.Entering, 0, 23));
-        // backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 6, 5));
-        // backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 5, 4));
-        // backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 4, 3));
-        // backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 3, 2));
+        gs.newGame();
     }
 
     /**
@@ -195,23 +174,21 @@ class BackgammonWindow : MainWindow {
             networkWidget.destroy();
             networkWidget = null;
             setGameState(gs);
-            if (gs.players[Player.P1].type == PlayerType.User) {
-                backgammonBoard.setPlayerCorner(Player.P1, Corner.BR);
-            } else {
-                assert(gs.players[Player.P2].type == PlayerType.User);
-                backgammonBoard.setPlayerCorner(Player.P2, Corner.BR);
-            }
-
             gs.newGame();
         });
     }
 
     void setGameState(GameState gs) {
+        this.gameState = gs;
         this.aiGetTurn = null;
         this.isWaitingForAnimation = false;
 
         backgammonBoard.setGameState(gs);
-        this.gameState = gs;
+        if (gs.players[Player.P1].type == PlayerType.User) {
+            backgammonBoard.setPlayerCorner(Player.P1, Corner.BR);
+        } else {
+            backgammonBoard.setPlayerCorner(Player.P2, Corner.BR);
+        }
 
         // Link up gamestate to various things
         // How are dice rolls handled?
