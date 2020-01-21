@@ -9,6 +9,10 @@ import std.typecons : tuple;
 
 enum protocolHeader = "TBP/1.0";
 
+class TimeoutException : Exception {
+    this(string msg) { super(msg); }
+}
+
 struct ConnectionHeaders {
     string playerId;
     string userName;
@@ -87,7 +91,7 @@ class Connection {
         } while (timeout == Duration.zero || timer.peek < timeout);
 
         if (timeout != Duration.zero && timer.peek > timeout) {
-            throw new Exception("Connection readline timeout");
+            throw new TimeoutException("Connection readline timeout");
         }
 
         auto nlIndex = recBuffer.indexOf('\n');

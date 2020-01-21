@@ -1,4 +1,5 @@
 module networking.messages;
+import game : Player;
 
 struct NetworkThreadShutdown {
 }
@@ -13,6 +14,7 @@ struct NetworkThreadError {
 
 struct NetworkBeginGame {
     // Information about the game. Perhaps game layout idk
+    Player clientPlayer;
 }
 
 struct NetworkNewDiceRoll {

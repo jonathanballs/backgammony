@@ -12,6 +12,7 @@ import std.string;
 import std.digest.sha;
 
 import player;
+import game : Player;
 import networking.messages;
 import networking.connection;
 
@@ -63,9 +64,9 @@ class NetworkingThread {
             conn.writeline("RequestGame " ~ player.name);
             while(true) {
                 /**
-                 * Receive messages from the user
+                 * Receive messages from the user. E.g. dice rolls
                  */
-                receive(
+                receiveTimeout(25.msecs,
                     (NetworkThreadShutdown msg) {
                         shouldClose = true;
                     }
@@ -76,14 +77,29 @@ class NetworkingThread {
                     conn.close();
                     return;
                 }
-                auto line = conn.readline(25.msecs);
-                auto kvSplit = line.indexOf(":");
-                if (kvSplit == -1) {
-                    writeln("ERROR: Received bad network command: " ~ line);
-                    continue;
-                }
-                if (line.startsWith("INFO: ")) {
-                    writeln("Received info: " ~ line);
+
+                try {
+                    auto line = conn.readline(25.msecs);
+                    auto kvSplit = line.indexOf(":");
+                    if (kvSplit == -1) {
+                        writeln("ERROR: Received bad network command: " ~ line);
+                        continue;
+                    }
+                    string key = line[0..line.indexOf(":")];
+                    string value = line[line.indexOf(":")+1..$];
+
+                    if (key == "INFO") {
+                        writeln("Received info: " ~ line);
+                    }
+
+                    if (key == "MATCHED") {
+                        if (value.strip.toLower == "server") {
+                            send(parentTid, NetworkBeginGame(Player.P1));
+                        } else if (value.strip.toLower == "client") {
+                            send(parentTid, NetworkBeginGame(Player.P2));
+                        }
+                    }
+                } catch (Exception e) {
                 }
             }
         } catch (Exception e) {
