@@ -124,6 +124,7 @@ class BackgammonBoard : DrawingArea {
 
     /// Fired when the user selects or undoes a potential move
     public Signal!() onChangePotentialMovements;
+    private Corner p1Corner = Corner.TR;
 
     /**
      * Create a new Backgammon Board widget.
@@ -359,6 +360,23 @@ class BackgammonBoard : DrawingArea {
     }
 
     /**
+     * Set the corner of the board that a player should be at
+     */
+    public void setPlayerCorner(Player p, Corner c) {
+        if (p == Player.P1) {
+            this.p1Corner = c;
+        } else if (p == Player.P2) {
+            switch (c) {
+            case Corner.BR: p1Corner = Corner.TR; break;
+            case Corner.BL: p1Corner = Corner.TL; break;
+            case Corner.TR: p1Corner = Corner.BR; break;
+            case Corner.TL: p1Corner = Corner.BL; break;
+            default: assert(0);
+            }
+        }
+    }
+
+    /**
      * Finish a turn but submitting the current potential moves to the game state.
      * Maybe remove this... Don't like the idea of renderer managing gamestate
      */
@@ -515,6 +533,7 @@ class BackgammonBoard : DrawingArea {
      *      pointIndex = point number between 0 and 23
      */
     Tuple!(ScreenCoords, ScreenCoords) getPointPosition(uint pointIndex) {
+        // Calculate for TR and then modify at the end
         assert (1 <= pointIndex && pointIndex <= 24);
         pointIndex--;
 
@@ -547,6 +566,18 @@ class BackgammonBoard : DrawingArea {
             finish.x = start.x;
         }
 
+        if (p1Corner == Corner.BR || p1Corner == Corner.BL) {
+            // Invert the y axis
+            start.y = style.boardHeight - start.y;
+            finish.y = style.boardHeight - finish.y;
+        }
+
+        if (p1Corner == Corner.BL || p1Corner == Corner.TL) {
+            // Invert the x axis
+            start.x = style.boardWidth - start.x;
+            finish.x = style.boardWidth - finish.x;
+        }
+
         return tuple(start, finish);
     }
 
@@ -562,13 +593,13 @@ class BackgammonBoard : DrawingArea {
         }
         pointNum--;
         pipNum--;
-        auto pointPosition = getPointPosition(pointNum+1)[0];
+        auto pointPosition = getPointPosition(pointNum+1);
         double pointY = style.borderWidth + ((2 * pipNum + 1) * style.pipRadius);
-        if (pointNum >= 12) {
+        if (pointPosition[0].y > pointPosition[1].y) {
             pointY = style.boardHeight - pointY;
         }
 
-        return ScreenCoords(pointPosition.x, pointY);
+        return ScreenCoords(pointPosition[0].x, pointY);
     }
 
     ScreenCoords getTakenPipPosition(Player player, uint pipNum) {

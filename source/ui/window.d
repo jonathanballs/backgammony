@@ -131,6 +131,7 @@ class BackgammonWindow : MainWindow {
         gs.points[1] = Point(Player.P1, 1);
         gs.points[22] = Point(Player.P2, 2);
         gs.onBeginTurn.emit(gs, Player.P1);
+        backgammonBoard.setPlayerCorner(Player.P1, Corner.BR);
         // gs.
         // gs.newGame();
 
@@ -194,6 +195,13 @@ class BackgammonWindow : MainWindow {
             networkWidget.destroy();
             networkWidget = null;
             setGameState(gs);
+            if (gs.players[Player.P1].type == PlayerType.User) {
+                backgammonBoard.setPlayerCorner(Player.P1, Corner.BR);
+            } else {
+                assert(gs.players[Player.P2].type == PlayerType.User);
+                backgammonBoard.setPlayerCorner(Player.P2, Corner.BR);
+            }
+
             gs.newGame();
         });
     }
