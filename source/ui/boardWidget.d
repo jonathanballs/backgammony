@@ -344,6 +344,7 @@ class BackgammonBoard : DrawingArea {
         this._gameState = gameState;
         this.transitionStack = [];
         this._selectedMoves = [];
+        this.animatedDice = [];
     }
 
     /**

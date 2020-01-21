@@ -217,7 +217,12 @@ class BackgammonWindow : MainWindow {
         // How are dice rolls handled?
         gs.onBeginTurn.connect((GameState _gs, Player p) {
             header.setSubtitle(p == Player.P1 ? "Black to play" : "White to play");
-            _gs.rollDice();
+
+            // Local games we can just roll the dice automatically. Otherwise,
+            // we will wait for a dice roll from the network thread.
+            if (!gs.isNetworkGame) {
+                _gs.rollDice();
+            }
 
             // Who is handling this turn?
             if (_gs.players[p].type == PlayerType.AI) {
