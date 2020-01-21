@@ -190,6 +190,11 @@ class BackgammonWindow : MainWindow {
      */
     void openNewNetworkGameDialog() {
         networkWidget = new NetworkWidget(this);
+        networkWidget.onCreateNewGame.connect((GameState gs) {
+            writeln(gs);
+            networkWidget.destroy();
+            networkWidget = null;
+        });
     }
 
     void setGameState(GameState gs) {

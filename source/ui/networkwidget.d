@@ -1,5 +1,6 @@
 module ui.networkwidget;
 
+import core.time;
 import std.concurrency;
 import std.typecons;
 import std.stdio;
@@ -17,17 +18,18 @@ import gtk.Spinner;
 import gtk.Widget;
 import gtk.Window;
 
-import utils.addtickcallback;
-import ui.newgamedialog : HumanSelector, setMarginsExpand;
-import networking;
+import game;
 import networking.messages;
+import networking;
 import player;
+import ui.newgamedialog : HumanSelector, setMarginsExpand;
+import utils.addtickcallback;
+import utils.signals;
 
 enum formPadding = 10;
 
 class NetworkWidget : Dialog {
-
-    // Signal!(GameState) onCreateNewGame;
+    Signal!(GameState) onCreateNewGame;
     Notebook tabs;
 
     Box lanBox;
@@ -54,6 +56,7 @@ class NetworkWidget : Dialog {
         this.setModal(true);
         this.setSizeRequest(400, 475);
         this.setTitle("Network Game");
+        this.onCreateNewGame = new Signal!(GameState);
 
         /**
          * Internet
@@ -109,11 +112,34 @@ class NetworkWidget : Dialog {
         this.getContentArea().add(tabs);
         this.showAll();
 
+        this.addTickCallback(&onTick);
         this.addOnDestroy(&onDestroy);
     }
 
+    /**
+     * Handle connection events
+     */
+    bool onTick(Widget w, FrameClock f) {
+        if (!inetThreadRunning) return true;
+
+        receiveTimeout(0.msecs,
+            (NetworkBeginGame ng) {
+                Variant conn = this.inetThreadTid;
+                PlayerMeta player = inetHuman.getActiveSelection();
+                PlayerMeta opponent = PlayerMeta("Opponent", "oponnent", PlayerType.Network, conn);
+                if (ng.clientPlayer == Player.P1) {
+                    this.onCreateNewGame.emit(new GameState(player, opponent));
+                } else {
+                    assert(ng.clientPlayer == Player.P2);
+                    this.onCreateNewGame.emit(new GameState(opponent, player));
+                }
+            }
+        );
+        return true;
+    }
+
     void onDestroy(Widget w) {
-        if (inetThreadRunning) {
+        if (inetThreadRunning && !inetThreadPreserve) {
             send(inetThreadTid, NetworkThreadShutdown());
             inetThreadRunning = false;
         }

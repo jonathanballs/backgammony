@@ -43,7 +43,6 @@ private enum NetworkState {
  */
 class NetworkingThread {
     private:
-    Tid parentTid;
     PlayerMeta player;
     NetworkState state;
     Connection conn; // Connection with the other computer
@@ -54,7 +53,6 @@ class NetworkingThread {
     */
     public this(PlayerMeta player) {
         this.player = player;
-        this.parentTid = thisTid();
     }
 
     public void run() {
@@ -90,13 +88,13 @@ class NetworkingThread {
 
                     if (key == "INFO") {
                         writeln("Received info: " ~ line);
-                    }
-
-                    if (key == "MATCHED") {
+                    } else if (key == "MATCHED") {
                         if (value.strip.toLower == "server") {
-                            send(parentTid, NetworkBeginGame(Player.P1));
+                            send(ownerTid, NetworkBeginGame(Player.P1));
                         } else if (value.strip.toLower == "client") {
-                            send(parentTid, NetworkBeginGame(Player.P2));
+                            send(ownerTid, NetworkBeginGame(Player.P2));
+                        } else {
+                            writeln("ERROR: ", value.strip.toLower);
                         }
                     }
                 } catch (Exception e) {
@@ -115,7 +113,7 @@ class NetworkingThread {
     void beginBackgammonGame(bool isHost) {
         writeln("Beginning Game " ~ (isHost ? "as host" : "as client"));
         // The client performs the first move
-        send(parentTid, NetworkBeginGame());
+        // send(ownerTid, NetworkBeginGame());
 
         // Fuck it, generate a dice roll
         performDiceRoll(isHost);
@@ -156,7 +154,7 @@ class NetworkingThread {
         auto die1 = uniform(1, 6, rng);
         auto die2 = uniform(1, 6, rng);
 
-        send(parentTid, NetworkNewDiceRoll(die1, die2));
+        // send(parentTid, NetworkNewDiceRoll(die1, die2));
 
         writeln([die1, die2]);
         conn.readline();
