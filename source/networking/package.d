@@ -28,10 +28,9 @@ private enum serverPort = 420_69;
 // - Basically entire game logic
 // - Validate that strings are valid UTF-8
 // - Reconnection.
-// - Remove asserts - want to handle incorrect data gracefully
-
 
 // Handles gamestate for a dice roll
+// Document and clean this up please!
 class DiceRoll {
     bool goFirst;
     bool done;
@@ -44,7 +43,7 @@ class DiceRoll {
         this.conn = conn;
         this.goFirst = goFirst;
 
-        ulong mySeed = uniform!ulong();
+        mySeed = uniform!ulong();
         
         if (goFirst) {
             conn.writeline("STARTTURN: DICEROLL");
@@ -173,7 +172,6 @@ class NetworkingThread {
                         this.newDiceRoll.setOppSeed(value);
                         break;
                     case "SEEDHASH":
-                        writeln(value, " ", value.length);
                         this.newDiceRoll.setOppSeedHash(value);
                         break;
                     default:
@@ -182,7 +180,9 @@ class NetworkingThread {
                     }
 
                     if (this.newDiceRoll && this.newDiceRoll.done) {
-                        writeln(newDiceRoll.calculateDiceValues);
+                        // We have the dice roll.
+                        auto diceResult = newDiceRoll.calculateDiceValues();
+                        send(ownerTid, NetworkNewDiceRoll(diceResult[0], diceResult[1]));
                     }
                 } catch (TimeoutException e) {
                 }

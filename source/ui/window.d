@@ -236,8 +236,8 @@ class BackgammonWindow : MainWindow {
             isWaitingForAnimation = true;
         }
 
-        if (netThread && netThread.isRunning) {
-            // receiveTimeout(5.msecs,
+        if (gameState.isNetworkGame) {
+            receiveTimeout(1.msecs,
                 // (NetworkThreadStatus status) {
                     // this.networkingWidget.statusMessage.setText(status.message);
                 // },
@@ -248,10 +248,11 @@ class BackgammonWindow : MainWindow {
                 // (NetworkBeginGame game) {
                     // this.networkingWidget.destroy();
                 // },
-                // (NetworkNewDiceRoll diceRoll) {
-                    // this.backgammonBoard.getGameState.rollDice(diceRoll.dice1, diceRoll.dice2);
-                // }
-            // );
+                (NetworkNewDiceRoll diceRoll) {
+                    writeln("Received dice roll: ", diceRoll);
+                    this.backgammonBoard.getGameState.rollDice(diceRoll.dice1, diceRoll.dice2);
+                }
+            );
         }
         return true;
     }
