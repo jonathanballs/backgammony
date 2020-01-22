@@ -22,6 +22,7 @@ import gtk.Widget;
 
 import game;
 import networking;
+import networking.messages;
 import player;
 import ui.boardWidget;
 import ui.networkwidget;
@@ -44,7 +45,6 @@ class BackgammonWindow : MainWindow {
     BackgammonBoard backgammonBoard;
     NetworkWidget networkWidget;
     NewGameDialog newGameDialog;
-    Thread netThread;
 
     GameState gameState;
 
@@ -89,6 +89,18 @@ class BackgammonWindow : MainWindow {
 
         finishTurnBtn = new Button("Finish");
         finishTurnBtn.addOnClicked((Button b) {
+            /**
+             * Is this a network game? Should this be on a signal listener?
+             */
+            if (gameState.isNetworkGame) {
+                auto netThread = gameState.players[gameState.currentPlayer.opposite].config.peek!Tid;
+                auto moves = backgammonBoard.getSelectedMoves();
+                auto msg = NetworkThreadNewMove(cast(uint) moves.length);
+                foreach (i, PipMovement m; moves) {
+                    msg.moves[i] = m;
+                }
+                send(*netThread, msg);
+            }
             backgammonBoard.finishTurn();
         });
         finishTurnBtn.setSensitive(false);
@@ -116,9 +128,7 @@ class BackgammonWindow : MainWindow {
 
         this.add(backgammonBoard);
         this.setDefaultSize(800, 600);
-
         this.addTickCallback(&handleThreadMessages);
-
 
         // By default, let's start a game between the player and the AI with
         // the player going first
@@ -220,8 +230,6 @@ class BackgammonWindow : MainWindow {
     }
 
     bool handleThreadMessages(Widget w, FrameClock f) {
-        import networking.messages;
-
         if (isWaitingForAnimation && !backgammonBoard.isAnimating) {
             backgammonBoard.finishTurn();
             isWaitingForAnimation = false;
@@ -244,9 +252,6 @@ class BackgammonWindow : MainWindow {
                 // (NetworkThreadError error) {
                     // this.networkingWidget.statusMessage.setText(error.message);
                     // this.networkingWidget.spinner.stop();
-                // },
-                // (NetworkBeginGame game) {
-                    // this.networkingWidget.destroy();
                 // },
                 (NetworkNewDiceRoll diceRoll) {
                     writeln("Received dice roll: ", diceRoll);

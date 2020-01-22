@@ -12,7 +12,7 @@ import std.string;
 import std.digest.sha;
 
 import player;
-import game : Player;
+import game;
 import networking.messages;
 import networking.connection;
 
@@ -28,6 +28,7 @@ private enum serverPort = 420_69;
 // - Basically entire game logic
 // - Validate that strings are valid UTF-8
 // - Reconnection.
+// - Could this be cleaner with fibers?
 
 // Handles gamestate for a dice roll
 // Document and clean this up please!
@@ -112,6 +113,12 @@ class NetworkingThread {
     DiceRoll newDiceRoll;
 
     /**
+     * Store a copy of the gamestate. TODO: Need a way to hash this to compare
+     * with opponents copy and client copy.
+     */
+    GameState gs;
+
+    /**
     * Create a new connection. Will attempt to 
     */
     public this(PlayerMeta player) {
@@ -131,6 +138,17 @@ class NetworkingThread {
                     receiveTimeout(25.msecs,
                         (NetworkThreadShutdown msg) {
                             shouldClose = true;
+                        },
+                        (NetworkThreadNewMove nm) {
+                            writeln("received new move");
+                            writeln(nm.toString);
+                            try {
+                                // gs.applyTurn(nm.moves[])
+                                conn.writeline(nm.toString());
+                            } catch (Exception e) {
+                                writeln(e);
+                                shouldClose = true;
+                            }
                         }
                     );
                 } catch (OwnerTerminated e) {
@@ -161,9 +179,17 @@ class NetworkingThread {
                         if (value.strip.toLower == "server") {
                             send(ownerTid, NetworkBeginGame(Player.P1));
                             this.newDiceRoll = new DiceRoll(this.conn, true);
+                            gs = new GameState(this.player, PlayerMeta(
+                                "network",
+                                "network",
+                                PlayerType.Network));
                         } else if (value.strip.toLower == "client") {
                             send(ownerTid, NetworkBeginGame(Player.P2));
                             this.newDiceRoll = new DiceRoll(this.conn, false);
+                            gs = new GameState(this.player, PlayerMeta(
+                                "network",
+                                "network",
+                                PlayerType.Network));
                         } else {
                             throw new Exception("Invalid MATCHED TYPE: ", line);
                         }
@@ -182,7 +208,9 @@ class NetworkingThread {
                     if (this.newDiceRoll && this.newDiceRoll.done) {
                         // We have the dice roll.
                         auto diceResult = newDiceRoll.calculateDiceValues();
+                        gs.rollDice(diceResult[0], diceResult[1]);
                         send(ownerTid, NetworkNewDiceRoll(diceResult[0], diceResult[1]));
+                        this.newDiceRoll = null;
                     }
                 } catch (TimeoutException e) {
                 }
@@ -191,58 +219,5 @@ class NetworkingThread {
             writeln(e);
             send(ownerTid, NetworkThreadUnhandledException(e.msg, e.info.to!string));
         }
-    }
-
-
-    // It is assumed that the headers have been swapped
-    void beginBackgammonGame(bool isHost) {
-        writeln("Beginning Game " ~ (isHost ? "as host" : "as client"));
-        // The client performs the first move
-        // send(ownerTid, NetworkBeginGame());
-
-        // Fuck it, generate a dice roll
-        performDiceRoll(isHost);
-    }
-
-    uint[] performDiceRoll(bool goFirst) {
-        ulong mySeed = uniform!ulong();
-        string oppSeedHash;
-        string oppSeed;
-
-        if (goFirst) {
-            conn.writeline("DICEROLL");
-
-            // conn.writeline(networkHash(mySeed.to!string));
-            oppSeedHash = conn.readline();
-            conn.writeline(mySeed.to!string);
-            oppSeed = conn.readline();
-        } else {
-            conn.readline(); // Reads diceroll
-
-            oppSeedHash = conn.readline();
-            // conn.writeline(networkHash(mySeed.to!string));
-            oppSeed = conn.readline();
-            conn.writeline(mySeed.to!string);
-        }
-
-        // Validate the seeds
-        // if (networkHash(oppSeed) != oppSeedHash) {
-        //     writeln("INVALID: HASH DOES NOT MATCH SEED!!!");
-        //     throw new Exception("Invalid seed hash received in dice roll");
-        // }
-
-        // Calculate dice roll
-        ulong oppSeedNum = oppSeed.to!ulong;
-        ulong rSeed = mySeed ^ oppSeedNum;
-        auto rng = Mt19937_64(rSeed);
-
-        auto die1 = uniform(1, 6, rng);
-        auto die2 = uniform(1, 6, rng);
-
-        // send(parentTid, NetworkNewDiceRoll(die1, die2));
-
-        writeln([die1, die2]);
-        conn.readline();
-        return [die1, die2];
     }
 }
