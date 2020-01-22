@@ -251,6 +251,18 @@ class BackgammonWindow : MainWindow {
                 (NetworkNewDiceRoll diceRoll) {
                     writeln("Received dice roll: ", diceRoll);
                     this.backgammonBoard.getGameState.rollDice(diceRoll.dice1, diceRoll.dice2);
+                },
+                (NetworkThreadUnhandledException e) {
+                    import gtk.MessageDialog;
+                    import gtk.Dialog;
+                    auto dialog = new MessageDialog(this,
+                        GtkDialogFlags.DESTROY_WITH_PARENT | GtkDialogFlags.MODAL,
+                        GtkMessageType.ERROR,
+                        GtkButtonsType.OK,
+                        "%s",
+                        e.message);
+                    dialog.showAll();
+                    dialog.addOnResponse((int i, Dialog d) => dialog.destroy());
                 }
             );
         }

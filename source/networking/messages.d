@@ -21,3 +21,8 @@ struct NetworkNewDiceRoll {
     uint dice1;
     uint dice2;
 }
+
+struct NetworkThreadUnhandledException {
+    string message;
+    string info;
+}

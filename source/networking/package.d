@@ -189,6 +189,7 @@ class NetworkingThread {
             }
         } catch (Exception e) {
             writeln(e);
+            send(ownerTid, NetworkThreadUnhandledException(e.msg, e.info.to!string));
         }
     }
 
