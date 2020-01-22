@@ -98,7 +98,7 @@ class Connection {
         if (nlIndex != -1) {
             string ret = recBuffer[0..nlIndex];
             recBuffer = recBuffer[nlIndex+1..$];
-            // writeln("NETGET: ", ret);
+            writeln("NETGET: ", ret);
             return ret;
         } else {
             throw new Exception("No newline is available");
@@ -107,7 +107,7 @@ class Connection {
 
     /// Write line to the connection.
     void writeline(string s = "") {
-        // writeln("NETSND: ", s);
+        writeln("NETSND: ", s);
         conn.send(s ~ "\n");
     }
 }

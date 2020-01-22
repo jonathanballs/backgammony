@@ -28,14 +28,77 @@ private enum serverPort = 420_69;
 // - Basically entire game logic
 // - Validate that strings are valid UTF-8
 // - Reconnection.
+// - Remove asserts - want to handle incorrect data gracefully
 
-private enum NetworkState {
+
+// Handles gamestate for a dice roll
+class DiceRoll {
+    bool goFirst;
+    bool done;
+    Connection conn;
+    ulong mySeed;
+    string oppSeed;
+    string oppSeedHash;
+
+    this(Connection conn, bool goFirst) {
+        this.conn = conn;
+        this.goFirst = goFirst;
+
+        ulong mySeed = uniform!ulong();
+        
+        if (goFirst) {
+            conn.writeline("STARTTURN: DICEROLL");
+            conn.writeline("SEEDHASH: " ~ networkHash(mySeed.to!string));
+        }
+    }
+
+    void setOppSeedHash(string opHash) {
+        if (opHash.length != 20) {
+            throw new Exception("Invalid dice hash");
+        }
+
+        if (oppSeedHash.length) {
+            throw new Exception("Already have oppSeedHash");
+        }
+
+        this.oppSeedHash = opHash;
+
+        if (goFirst) {
+            // Now send real seed
+            conn.writeline("SEED: " ~ mySeed.to!string);
+        } else {
+            // Now send my seed hash
+            conn.writeline("SEEDHASH: " ~ networkHash(mySeed.to!string));
+        }
+    }
+
+    void setOppSeed(string opSeed) {
+        this.oppSeed = opSeed;
+        if (!goFirst) {
+            conn.writeline("SEED: " ~ mySeed.to!string);
+        }
+        done = true;
+    }
+
+    uint[2] calculateDiceValues() {
+        ulong oppSeedNum = oppSeed.to!ulong;
+        ulong rSeed = mySeed ^ oppSeedNum;
+        auto rng = Mt19937_64(rSeed);
+
+        auto die1 = uniform(1, 6, rng);
+        auto die2 = uniform(1, 6, rng);
+        return [die1, die2];
+    }
+
+    private string networkHash(string s) {
+        return sha1Of(s).toHexString().dup[0..20];
+    }
+}
+
+enum NetworkState {
     AwaitingConnection,
-    AwaitingMove,
-    AwaitingDiceSeedHash,
-    AwaitingDiceSeedValue,
-    AwaitingDiceConfirmation,
-    AwaitingUserMove,
+    Reconnecting,
+    Connected
 }
 
 /**
@@ -47,6 +110,7 @@ class NetworkingThread {
     NetworkState state;
     Connection conn; // Connection with the other computer
     bool shouldClose;
+    DiceRoll newDiceRoll;
 
     /**
     * Create a new connection. Will attempt to 
@@ -64,11 +128,15 @@ class NetworkingThread {
                 /**
                  * Receive messages from the user. E.g. dice rolls
                  */
-                receiveTimeout(25.msecs,
-                    (NetworkThreadShutdown msg) {
-                        shouldClose = true;
-                    }
-                );
+                try {
+                    receiveTimeout(25.msecs,
+                        (NetworkThreadShutdown msg) {
+                            shouldClose = true;
+                        }
+                    );
+                } catch (OwnerTerminated e) {
+                    shouldClose = true;
+                }
 
                 if (shouldClose) {
                     writeln("Closing network thread");
@@ -84,22 +152,39 @@ class NetworkingThread {
                         continue;
                     }
                     string key = line[0..line.indexOf(":")];
-                    string value = line[line.indexOf(":")+1..$];
+                    string value = line[line.indexOf(":")+1..$].strip();
 
-                    if (key == "INFO") {
+                    switch (key) {
+                    case "INFO":
                         writeln("Received info: " ~ line);
-                    } else if (key == "MATCHED") {
+                        break;
+                    case "MATCHED":
                         if (value.strip.toLower == "server") {
                             send(ownerTid, NetworkBeginGame(Player.P1));
-                            this.state = NetworkState.AwaitingUserMove;
+                            this.newDiceRoll = new DiceRoll(this.conn, true);
                         } else if (value.strip.toLower == "client") {
                             send(ownerTid, NetworkBeginGame(Player.P2));
-                            this.state = NetworkState.AwaitingMove;
+                            this.newDiceRoll = new DiceRoll(this.conn, false);
                         } else {
-                            writeln("ERROR: ", value.strip.toLower);
+                            throw new Exception("Invalid MATCHED TYPE: ", line);
                         }
+                        break;
+                    case "SEED":
+                        this.newDiceRoll.setOppSeed(value);
+                        break;
+                    case "SEEDHASH":
+                        writeln(value, " ", value.length);
+                        this.newDiceRoll.setOppSeedHash(value);
+                        break;
+                    default:
+                        writeln("ERROR unexpected line: ", line);
+                        break;
                     }
-                } catch (Exception e) {
+
+                    if (this.newDiceRoll && this.newDiceRoll.done) {
+                        writeln(newDiceRoll.calculateDiceValues);
+                    }
+                } catch (TimeoutException e) {
                 }
             }
         } catch (Exception e) {
@@ -107,9 +192,6 @@ class NetworkingThread {
         }
     }
 
-    string networkHash(string s) {
-        return sha1Of(s).toHexString().dup[0..20];
-    }
 
     // It is assumed that the headers have been swapped
     void beginBackgammonGame(bool isHost) {
@@ -129,7 +211,7 @@ class NetworkingThread {
         if (goFirst) {
             conn.writeline("DICEROLL");
 
-            conn.writeline(networkHash(mySeed.to!string));
+            // conn.writeline(networkHash(mySeed.to!string));
             oppSeedHash = conn.readline();
             conn.writeline(mySeed.to!string);
             oppSeed = conn.readline();
@@ -137,16 +219,16 @@ class NetworkingThread {
             conn.readline(); // Reads diceroll
 
             oppSeedHash = conn.readline();
-            conn.writeline(networkHash(mySeed.to!string));
+            // conn.writeline(networkHash(mySeed.to!string));
             oppSeed = conn.readline();
             conn.writeline(mySeed.to!string);
         }
 
         // Validate the seeds
-        if (networkHash(oppSeed) != oppSeedHash) {
-            writeln("INVALID: HASH DOES NOT MATCH SEED!!!");
-            throw new Exception("Invalid seed hash received in dice roll");
-        }
+        // if (networkHash(oppSeed) != oppSeedHash) {
+        //     writeln("INVALID: HASH DOES NOT MATCH SEED!!!");
+        //     throw new Exception("Invalid seed hash received in dice roll");
+        // }
 
         // Calculate dice roll
         ulong oppSeedNum = oppSeed.to!ulong;

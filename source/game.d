@@ -624,7 +624,6 @@ class GameState {
      * Is this a network game?
      */
     bool isNetworkGame() {
-        writeln(players[Player.P1], players[Player.P2]);
         return players[Player.P1].type == PlayerType.Network
             || players[Player.P2].type == PlayerType.Network;
     }

@@ -127,6 +127,7 @@ class NetworkWidget : Dialog {
                 Variant conn = this.inetThreadTid;
                 PlayerMeta player = inetHuman.getActiveSelection();
                 PlayerMeta opponent = PlayerMeta("Opponent", "oponnent", PlayerType.Network, conn);
+                this.inetThreadPreserve = true;
                 if (ng.clientPlayer == Player.P1) {
                     this.onCreateNewGame.emit(new GameState(player, opponent));
                 } else {
