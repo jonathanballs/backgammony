@@ -15,6 +15,7 @@ import player;
 import game;
 import networking.messages;
 import networking.connection;
+import formats.fibs;
 
 private enum serverHost = "backgammon.jnthn.uk";
 private enum serverPort = 420_69;
@@ -28,7 +29,7 @@ private enum serverPort = 420_69;
 // - Basically entire game logic
 // - Validate that strings are valid UTF-8
 // - Reconnection.
-// - Could this be cleaner with fibers?
+// - Could this be cleaner with fibers? The layout is not smooth
 
 // Handles gamestate for a dice roll
 // Document and clean this up please!
@@ -183,6 +184,7 @@ class NetworkingThread {
                                 "network",
                                 "network",
                                 PlayerType.Network));
+                            gs.newGame();
                         } else if (value.strip.toLower == "client") {
                             send(ownerTid, NetworkBeginGame(Player.P2));
                             this.newDiceRoll = new DiceRoll(this.conn, false);
@@ -190,6 +192,7 @@ class NetworkingThread {
                                 "network",
                                 "network",
                                 PlayerType.Network));
+                            gs.newGame();
                         } else {
                             throw new Exception("Invalid MATCHED TYPE: ", line);
                         }
@@ -199,6 +202,30 @@ class NetworkingThread {
                         break;
                     case "SEEDHASH":
                         this.newDiceRoll.setOppSeedHash(value);
+                        break;
+                    case "MOVE":
+                        // Parse a move
+                        PipMovement[] moves;
+                        string[] moveStrings = value.split();
+                        assert(moveStrings.length % 3 == 0);
+                        foreach (i; 0..moveStrings.length / 3) {
+                            auto moveString = format!"%s %s %s"(
+                                moveStrings[i*3 + 0],
+                                moveStrings[i*3 + 1],
+                                moveStrings[i*3 + 2]
+                            );
+                            moves ~= moveString.parseFibsString;
+                        }
+                        writeln(moves);
+                        writeln(gs.currentPlayer);
+                        writeln(gs.diceValues);
+                        writeln(gs.turnState);
+                        gs.applyTurn(moves);
+                        auto msg = NetworkThreadNewMove(cast(uint) moves.length);
+                        foreach (i, PipMovement m; moves) {
+                            msg.moves[i] = m;
+                        }
+                        send(ownerTid, msg);
                         break;
                     default:
                         writeln("ERROR unexpected line: ", line);

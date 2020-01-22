@@ -249,10 +249,13 @@ class BackgammonWindow : MainWindow {
                 // (NetworkThreadStatus status) {
                     // this.networkingWidget.statusMessage.setText(status.message);
                 // },
-                // (NetworkThreadError error) {
-                    // this.networkingWidget.statusMessage.setText(error.message);
-                    // this.networkingWidget.spinner.stop();
-                // },
+                (NetworkThreadNewMove moves) {
+                    assert(gameState.turnState == TurnState.MoveSelection);
+                    foreach(move; moves.moves[0..moves.numMoves]) {
+                        backgammonBoard.selectMove(move);
+                    }
+                    isWaitingForAnimation = true;
+                },
                 (NetworkNewDiceRoll diceRoll) {
                     writeln("Received dice roll: ", diceRoll);
                     this.backgammonBoard.getGameState.rollDice(diceRoll.dice1, diceRoll.dice2);
