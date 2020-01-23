@@ -209,6 +209,11 @@ class BackgammonWindow : MainWindow {
             // we will wait for a dice roll from the network thread.
             if (!gs.isNetworkGame) {
                 _gs.rollDice();
+            } else {
+                if (_gs.players[p].type == PlayerType.User) {
+                    auto netThread = gameState.players[gameState.currentPlayer.opposite].config.peek!Tid;
+                    send(*netThread, NetworkTurnDiceRoll());
+                }
             }
 
             // Who is handling this turn?
@@ -246,9 +251,6 @@ class BackgammonWindow : MainWindow {
 
         if (gameState.isNetworkGame) {
             receiveTimeout(1.msecs,
-                // (NetworkThreadStatus status) {
-                    // this.networkingWidget.statusMessage.setText(status.message);
-                // },
                 (NetworkThreadNewMove moves) {
                     assert(gameState.turnState == TurnState.MoveSelection);
                     foreach(move; moves.moves[0..moves.numMoves]) {

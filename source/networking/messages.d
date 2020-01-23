@@ -47,3 +47,9 @@ struct NetworkThreadNewMove {
             .fold!((a, b) => a ~ b);
     }
 }
+
+/**
+ * Inform the network that the user would like to roll the dice
+ */
+struct NetworkTurnDiceRoll {
+}

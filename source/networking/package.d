@@ -111,7 +111,7 @@ class NetworkingThread {
     NetworkState state;
     Connection conn; // Connection with the other computer
     bool shouldClose;
-    DiceRoll newDiceRoll;
+    DiceRoll networkDiceRoll;
 
     /**
      * Store a copy of the gamestate. TODO: Need a way to hash this to compare
@@ -144,12 +144,15 @@ class NetworkingThread {
                             writeln("received new move");
                             writeln(nm.toString);
                             try {
-                                // gs.applyTurn(nm.moves[])
+                                gs.applyTurn(nm.moves[0..nm.numMoves]);
                                 conn.writeline(nm.toString());
                             } catch (Exception e) {
                                 writeln(e);
                                 shouldClose = true;
                             }
+                        },
+                        (NetworkTurnDiceRoll dr) {
+                            this.networkDiceRoll = new DiceRoll(this.conn, true);
                         }
                     );
                 } catch (OwnerTerminated e) {
@@ -179,29 +182,31 @@ class NetworkingThread {
                     case "MATCHED":
                         if (value.strip.toLower == "server") {
                             send(ownerTid, NetworkBeginGame(Player.P1));
-                            this.newDiceRoll = new DiceRoll(this.conn, true);
                             gs = new GameState(this.player, PlayerMeta(
-                                "network",
-                                "network",
-                                PlayerType.Network));
+                                    "network",
+                                    "network",
+                                    PlayerType.Network));
                             gs.newGame();
                         } else if (value.strip.toLower == "client") {
                             send(ownerTid, NetworkBeginGame(Player.P2));
-                            this.newDiceRoll = new DiceRoll(this.conn, false);
-                            gs = new GameState(this.player, PlayerMeta(
-                                "network",
-                                "network",
-                                PlayerType.Network));
+                            gs = new GameState(PlayerMeta(
+                                    "network",
+                                    "network",
+                                    PlayerType.Network),
+                                this.player);
                             gs.newGame();
                         } else {
                             throw new Exception("Invalid MATCHED TYPE: ", line);
                         }
                         break;
                     case "SEED":
-                        this.newDiceRoll.setOppSeed(value);
+                        this.networkDiceRoll.setOppSeed(value);
                         break;
                     case "SEEDHASH":
-                        this.newDiceRoll.setOppSeedHash(value);
+                        this.networkDiceRoll.setOppSeedHash(value);
+                        break;
+                    case "STARTTURN":
+                        this.networkDiceRoll = new DiceRoll(this.conn, false);
                         break;
                     case "MOVE":
                         // Parse a move
@@ -216,10 +221,6 @@ class NetworkingThread {
                             );
                             moves ~= moveString.parseFibsString;
                         }
-                        writeln(moves);
-                        writeln(gs.currentPlayer);
-                        writeln(gs.diceValues);
-                        writeln(gs.turnState);
                         gs.applyTurn(moves);
                         auto msg = NetworkThreadNewMove(cast(uint) moves.length);
                         foreach (i, PipMovement m; moves) {
@@ -232,12 +233,12 @@ class NetworkingThread {
                         break;
                     }
 
-                    if (this.newDiceRoll && this.newDiceRoll.done) {
+                    if (this.networkDiceRoll && this.networkDiceRoll.done) {
                         // We have the dice roll.
-                        auto diceResult = newDiceRoll.calculateDiceValues();
+                        auto diceResult = networkDiceRoll.calculateDiceValues();
                         gs.rollDice(diceResult[0], diceResult[1]);
                         send(ownerTid, NetworkNewDiceRoll(diceResult[0], diceResult[1]));
-                        this.newDiceRoll = null;
+                        this.networkDiceRoll = null;
                     }
                 } catch (TimeoutException e) {
                 }
