@@ -113,5 +113,5 @@ unittest {
     auto gs = new GameState();
     gs.newGame();
     gs.rollDice(3, 3);
-    gnubgGetTurn(gs, gnubgDefaultEvalContexts[2]);
+    // gnubgGetTurn(gs, gnubgDefaultEvalContexts[2]);
 }
