@@ -407,7 +407,7 @@ class BackgammonBoard : DrawingArea {
         lastAnimation = currTime;
     }
 
-    bool onDraw(Context cr, Widget widget) {
+    bool onDraw(Scoped!Context cr, Widget widget) {
         // Centering and scaling the board
         auto scaleFactor = min(
             getAllocatedWidth() / style.boardWidth,
