@@ -37,6 +37,7 @@ class NetworkWidget : Dialog {
 
     Box inetBox;
     HumanSelector inetHuman;
+    Label inetErrorMessage;
     Button inetStartSearchButton;
     Box inetStartSearchBox;
     Label inetStartSearchLabel;
@@ -97,6 +98,11 @@ class NetworkWidget : Dialog {
         });
         inetStartSearchBox.setHalign(GtkAlign.CENTER);
 
+        // In case of any errors we'll put them here
+        inetErrorMessage = new Label("");
+        inetErrorMessage.setMarkup("<span foreground='red'>%s<\\span>");
+        inetBox.packEnd(inetErrorMessage, false, false, 0);
+
         /**
          * LAN
          */
@@ -134,6 +140,9 @@ class NetworkWidget : Dialog {
                     assert(ng.clientPlayer == Player.P2);
                     this.onCreateNewGame.emit(new GameState(opponent, player));
                 }
+            },
+            (NetworkThreadUnhandledException e) {
+                inetErrorMessage.setText(e.message);
             }
         );
         return true;

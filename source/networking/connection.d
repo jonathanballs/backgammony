@@ -76,10 +76,19 @@ class Connection {
             }
 
             if (amountRead == Socket.ERROR) {
-                if (conn.getErrorText() == "Success") {
-                    amountRead = 0;
-                } else {
-                    throw new Exception("Socket Error: ", conn.getErrorText());
+                version(linux) {
+                    if (conn.getErrorText() == "Success") {
+                        amountRead = 0;
+                    } else {
+                        throw new Exception("Socket Error: ", conn.getErrorText());
+                    }
+                }
+                version(OSX) {
+                    if (conn.getErrorText() == "Undefined error: 0") {
+                        amountRead = 0;
+                    } else {
+                        throw new Exception("Socket Error: ", conn.getErrorText());
+                    }
                 }
             }
             recBuffer ~= cast(string) buffer[0..amountRead];

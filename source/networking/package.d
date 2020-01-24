@@ -25,21 +25,19 @@ private enum serverPort = 420_69;
 // (p2p, client/server etc).
 
 // TODO list
-// - Exit when window closes - Notifying opponent.
-// - Basically entire game logic
 // - Validate that strings are valid UTF-8
 // - Reconnection.
-// - Could this be cleaner with fibers? The layout is not smooth
+// - Could this be cleaner with fibers? The layout is not very clean and wont scale very well.
 
 // Handles gamestate for a dice roll
 // Document and clean this up please!
 class DiceRoll {
-    bool goFirst;
+    private bool goFirst;
     bool done;
-    Connection conn;
-    ulong mySeed;
-    string oppSeed;
-    string oppSeedHash;
+    private Connection conn;
+    private ulong mySeed;
+    private string oppSeed;
+    private string oppSeedHash;
 
     this(Connection conn, bool goFirst) {
         this.conn = conn;
@@ -244,6 +242,7 @@ class NetworkingThread {
                 }
             }
         } catch (Exception e) {
+            writeln("NETWORK THREAD EXCEPTION");
             writeln(e);
             send(ownerTid, NetworkThreadUnhandledException(e.msg, e.info.to!string));
         }
