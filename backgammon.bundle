@@ -4,7 +4,9 @@
   <meta>
     <!-- Where to find installed libraries -->
     <prefix name="default">/usr/local/Cellar/gtk+3/3.24.12_1</prefix>
-    <prefix name="pixbuf">/usr/local</prefix>
+    <prefix name="pixbuf">${pkg:gdk-pixbuf-2.0:libdir}</prefix>
+    <prefix name="adwaita">/usr/local/Cellar/adwaita-icon-theme/3.34.3</prefix>
+    <!-- <prefix name="opt">/usr/local/lib/gdk-pixbuf-2.0</prefix> -->
 
     <!-- The project directory is the default location of the created
          app. If you leave out the path, the current directory is
@@ -24,9 +26,7 @@
        identifier are taken from the plist file.
   -->
   <plist>${project}/resources/macos.plist</plist>
-
-   <launcher-script>${project}/launcher.sh</launcher-script>
-
+  <launcher-script>${project}/resources/launcher.sh</launcher-script>
   <main-binary>${prefix}/bin/gtk3-demo</main-binary>
 
   <!-- Copy in the input methods. Dunno if they actually work with
@@ -42,28 +42,14 @@
   </binary>
 
 <!-- Starting with 2.24, gdk-pixbuf installs into its own directory. -->
-  <binary>
-    ${prefix:pixbuf}/lib/gdk-pixbuf-2.0/2.10.0/loaders/*.so
+  <binary dest="${bundle}/Contents/Resources/lib/gdk-pixbuf-2.0/2.10.0/loaders">
+    ${prefix:pixbuf}/gdk-pixbuf-2.0/2.10.0/loaders/*.so
   </binary>
-
-  <data>
-    ${prefix:pixbuf}/lib/gdk-pixbuf-2.0
-  </data>
-
-<!-- No longer needed for pango >= 1.38
-  <binary>
-    ${prefix}/lib/pango/${pkg:pango:pango_module_version}/modules/
-  </binary>
--->
-
-  <!-- data>
-    ${prefix}/share/gtk3-demo
-  </data -->
 
   <!-- Copy in the themes data. You may want to trim this to save space
        in your bundle. -->
   <data>${prefix}/share/themes</data>
-  <data>${prefix}/share/icons</data>
+  <data>${prefix:adwaita}/share/icons</data>
 
   <!-- Copy icons. Note that the .icns file is an Apple format which
        contains up to 4 sizes of icon. You can use
