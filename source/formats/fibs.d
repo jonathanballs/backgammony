@@ -102,7 +102,9 @@ unittest {
     gs.toFibsString;
 
     const auto testMovements = [
-        "move 5 7": PipMovement(PipMoveType.Movement, 5, 7)
+        "move 5 7": PipMovement(PipMoveType.Movement, 5, 7),
+        "move bar 3": PipMovement(PipMoveType.Entering, 0, 3),
+        "move 22 off": PipMovement(PipMoveType.BearingOff, 22, 0),
     ];
 
     foreach(ms; testMovements.byKey()) {

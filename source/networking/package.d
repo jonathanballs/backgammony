@@ -139,8 +139,6 @@ class NetworkingThread {
                             shouldClose = true;
                         },
                         (NetworkThreadNewMove nm) {
-                            writeln("received new move");
-                            writeln(nm.toString);
                             try {
                                 gs.applyTurn(nm.moves[0..nm.numMoves]);
                                 conn.writeline(nm.toString());

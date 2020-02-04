@@ -44,7 +44,7 @@ struct NetworkThreadNewMove {
         import formats.fibs;
         return "MOVE: " ~ moves[0..numMoves]
             .map!(m => m.toFibsString ~ " ")
-            .fold!((a, b) => a ~ b);
+            .fold!((a, b) => a ~ b)("");
     }
 }
 
@@ -52,4 +52,11 @@ struct NetworkThreadNewMove {
  * Inform the network that the user would like to roll the dice
  */
 struct NetworkTurnDiceRoll {
+}
+
+unittest {
+    import std.stdio;
+    // Network moves
+    auto n = NetworkThreadNewMove(0);
+    assert(n.toString == "MOVE: ");
 }
