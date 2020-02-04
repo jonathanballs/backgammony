@@ -23,10 +23,7 @@ import ui.dicewidget;
 
 // TODO:
 // - Animation for starting new game. Flashes are bad!
-// - Organise this - perhaps the worst organised module rn
-// - Respect which corner / side of board P1 is
 // - Testing & benchmarking animations (separate thread)
-// - Animation curves
 // - Use GDK frameclock for animations
 // - Unstarted games?
 
