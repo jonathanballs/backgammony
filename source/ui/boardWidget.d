@@ -72,7 +72,7 @@ class BoardStyle {
     RGB p1Colour = RGB(0.0, 0.0, 0.0);  /// Colour of player 1's pips
     RGB p2Colour = RGB(1.0, 1.0, 1.0);  /// Colour of player 2's pips
 
-    long animationSpeed = 1000;         /// Msecs to perform animation
+    long animationSpeed = 750;         /// Msecs to perform animation
 }
 
 /// A corner of the board. Useful for describing where a user's home should be.
@@ -392,14 +392,13 @@ class BackgammonBoard : DrawingArea {
         foreach (i, die; animatedDice) {
             cr.save();
 
-            die.update(dt.total!"usecs" / 1_000_000.0);
+            die.update(dt.total!"msecs" / 1_000.0);
             cr.translate(65*i + style.boardWidth * 0.65, style.boardHeight / 2 + 25*i);
             cr.scale(style.boardWidth / 24, style.boardWidth / 24);
             die.draw(cr);
 
             cr.restore();
         }
-
 
         lastAnimation = currTime;
     }

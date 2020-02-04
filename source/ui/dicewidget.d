@@ -10,6 +10,8 @@ import std.math : PI, PI_2;
 import gl3n.linalg;
 import std.format;
 
+// Each die face contains the x,y coordinates of the dots and it's matrix
+// rotation
 private alias DieFace = Tuple!(vec2[], "dots", mat3, "rot");
 private DieFace[] dieFaces = [
     // 1
@@ -32,6 +34,10 @@ private DieFace[] dieFaces = [
  * will roll in from the right (positive x axis).
  */
 class AnimatedDieWidget {
+    bool finished = false;
+
+    private:
+
     bool _enableAnimation;
 
     vec3 pos;
@@ -43,16 +49,21 @@ class AnimatedDieWidget {
     vec3 rotAxis;
     float angVel; // Angular velocity
 
-    bool finished = false;
-
-    this(int diceValue, long animationTime) {
+    /**
+     * Create a new dice widget
+     * Params:
+     *  diceValue       = The value that the die should display
+     *  animationTime   = How long the animation should last
+     */
+    public this(int diceValue, long animationTime) {
         assert (1 <= diceValue && diceValue <= 6,
             "Can't create dice widget with value " ~ diceValue.to!string);
+
         // Calculate the end position and go back from there.
-        pos = vec3(0.0, 0.0, 0.0);
+        pos.clear(0.0);
         finalRot = rot = dieFaces[diceValue-1].rot.inverse();
 
-        vel = (1000.0 / animationTime) * vec3(-4.0, 0.3, 0.0);
+        vel = (1000.0 / animationTime) * vec3(-8.0, 0.6, 0.0);
         rotAxis = vec3(0.11, -1.0, 0.0);
         angVel = PI * 3;
 
@@ -62,14 +73,19 @@ class AnimatedDieWidget {
         }
 
         // Assume 1 second animation.
-        pos -= vel;
+        pos -= (animationTime / 1000.0) * vel;
 
         Quaternion!float rotationQuat;
         auto rota = rotationQuat.axis_rotation(2 * angVel, rotAxis).to_matrix!(3, 3);
         rot = rota.inverse() * rot;
     }
 
-    void update(float dt) {
+    /**
+     * Update the dice roll aniamtion.
+     * Params:
+     *  dt = Number of seconds that have transpired since the last update
+     */
+    public void update(float dt) {
         if (finished) return;
 
         if (pos.x <= 0) {
@@ -86,7 +102,7 @@ class AnimatedDieWidget {
     }
 
     // Draw the dice in its current position
-    void draw(Context cr) {
+    public void draw(Context cr) {
         foreach (face; dieFaces) {
             mat3 faceRot = rot*face.rot;
 
@@ -145,9 +161,4 @@ class AnimatedDieWidget {
 
         if (cr) return;
     }
-
-    override string toString() {
-        return format!"Pos: %s, Vel: %s, Rot: %s"(pos, vel, rot);
-    }
 }
-
