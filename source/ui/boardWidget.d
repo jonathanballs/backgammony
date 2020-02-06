@@ -59,6 +59,7 @@ class BoardStyle {
     RGB boardColor = RGB(0.18, 0.204, 0.212); /// Board background colour 
 
     float borderWidth = 15.0;           /// Width of the border enclosing the board
+    float borderFontHeight = 10.0;      /// Height of the font of the board numbers
     float barWidth = 70.0;              /// Width of bar in the centre of the board
     RGB borderColor = RGB(0.14969, 0.15141, 0.15141); /// Colour of the border
 
@@ -513,10 +514,14 @@ class BackgammonBoard : DrawingArea {
             cr.stroke();
 
             // Draw numbers
+            bool isTop = pointCoords[i][0].y < pointCoords[i][1].y;
             cairo_text_extents_t extents;
+            cr.setFontSize(style.borderFontHeight);
             cr.textExtents((i+1).to!string, &extents);
-
-            cr.moveTo(c[0].x - extents.width/2, c[0].y + (i < 12 ? 20 : -10));
+            cr.moveTo(c[0].x - extents.width/2, c[0].y
+                - (style.borderWidth - extents.height) / 2
+                + (isTop ? 0 : style.borderWidth)
+                );
             cr.setSourceRgb(1.0, 1.0, 1.0);
             cr.showText((i+1).to!string);
             cr.newPath();
