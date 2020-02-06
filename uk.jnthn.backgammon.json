@@ -1,0 +1,29 @@
+{
+    "app-id": "uk.jnthn.backgammon",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.34",
+    "sdk": "org.gnome.Sdk",
+    "command": "backgammon",
+    "modules": [
+        {
+            "name": "hello",
+            "buildsystem": "simple",
+            "build-commands": [
+                "install -D backgammon /app/bin/backgammon"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "backgammon"
+                }
+            ]
+        }
+    ],
+    "finish-args": [
+        "--socket=x11",
+        "--socket=wayland",
+        "--share=ipc",
+        "--device=dri"
+    ]
+}
+

@@ -1,3 +1,4 @@
+# Dlang
 .dub
 docs.json
 __dummy.html
@@ -8,7 +9,13 @@ __dummy.html
 *#
 *.db
 
+# Compiled
 backgammon
 dub.selections.json
 backgammon-test-library
+
+# Flatpak
+.flatpak-builder/
+build-dir/
+
 
