@@ -73,7 +73,10 @@ class BoardStyle {
     RGB p1Colour = RGB(0.0, 0.0, 0.0);  /// Colour of player 1's pips
     RGB p2Colour = RGB(1.0, 1.0, 1.0);  /// Colour of player 2's pips
 
-    long animationSpeed = 750;         /// Msecs to perform animation
+    double messageRadius = 15.0;
+    double messagePadding = 30.0;
+    double messageFontSize = 30.0;
+    long animationSpeed = 750;          /// Msecs to perform animation
 }
 
 /// A corner of the board. Useful for describing where a user's home should be.
@@ -122,7 +125,7 @@ class BackgammonBoard : DrawingArea {
 
     /// Fired when the user selects or undoes a potential move
     public Signal!() onChangePotentialMovements;
-    private Corner p1Corner = Corner.TR;
+    Corner p1Corner = Corner.TR;
 
     /**
      * Create a new Backgammon Board widget.
@@ -298,6 +301,17 @@ class BackgammonBoard : DrawingArea {
     }
 
     /**
+     * Finish a turn but submitting the current potential moves to the game state.
+     * Maybe remove this... Don't like the idea of renderer managing gamestate
+     */
+    public void finishTurn() {
+        auto pMoves = getSelectedMoves();
+        _selectedMoves = [];
+        transitionStack = [];
+        getGameState().applyTurn(pMoves);
+    }
+
+    /**
      * Remove the most recent potential move
      */
     public void undoSelectedMove() {
@@ -376,15 +390,11 @@ class BackgammonBoard : DrawingArea {
     }
 
     /**
-     * Finish a turn but submitting the current potential moves to the game state.
-     * Maybe remove this... Don't like the idea of renderer managing gamestate
+     * =========================================================================
+     * DRAWING
+     * The following functions relate to drawing the board.
+     * =========================================================================
      */
-    public void finishTurn() {
-        auto pMoves = getSelectedMoves();
-        _selectedMoves = [];
-        transitionStack = [];
-        getGameState().applyTurn(pMoves);
-    }
 
     void drawDice(Context cr) {
         auto currTime = Clock.currTime();
@@ -796,6 +806,44 @@ class BackgammonBoard : DrawingArea {
         short_edge -= 2 * border_width;
         setSizeRequest(short_edge, short_edge);
         return true;
+    }
+
+    /**
+     * Draw a message on the screen
+     */
+    void drawMessage(Context cr, string s) {
+        // Find size of displayed message
+        cr.setFontSize(style.messageFontSize);
+        cr.selectFontFace("Calibri",
+            cairo_font_slant_t.NORMAL,
+            cairo_font_weight_t.BOLD);
+        cairo_text_extents_t extents;
+        cr.textExtents(s, &extents);
+
+        // Draw the rounded rectangle
+        double x = (style.boardWidth - extents.width) / 2.0 - style.messageRadius - style.messagePadding/2;
+        double y = (style.boardHeight - extents.height) / 2.0 - style.messageRadius - style.messagePadding/2;
+        double width = extents.width + 2*style.messageRadius + style.messagePadding;
+        double height = extents.height + 2*style.messageRadius + style.messagePadding;
+        double radius = style.messageRadius;
+        double degrees = 0.01745329251;
+
+        cr.newSubPath();
+        cr.arc(x + width - radius, y + radius, radius, -90 * degrees, 0 * degrees);
+        cr.arc(x + width - radius, y + height - radius, radius, 0 * degrees, 90 * degrees);
+        cr.arc(x + radius, y + height - radius, radius, 90 * degrees, 180 * degrees);
+        cr.arc(x + radius, y + radius, radius, 180 * degrees, 270 * degrees);
+        cr.closePath();
+
+        cr.setSourceRgba(0.0, 0.0, 0.0, 0.5);
+        cr.fill();
+
+        // Draw the message
+        cr.moveTo((style.boardWidth - extents.width) / 2.0,
+                    (style.boardHeight + extents.height) / 2.0),
+        cr.setSourceRgba(1.0, 1.0, 1.0, 0.5);
+        cr.showText(s);
+        cr.fill();
     }
 
     unittest {
