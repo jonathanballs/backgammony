@@ -100,7 +100,6 @@ class NetworkWidget : Dialog {
 
         // In case of any errors we'll put them here
         inetErrorMessage = new Label("");
-        inetErrorMessage.setMarkup("<span foreground='red'>%s<\\span>");
         inetBox.packEnd(inetErrorMessage, false, false, 0);
 
         /**
@@ -142,7 +141,8 @@ class NetworkWidget : Dialog {
                 }
             },
             (NetworkThreadUnhandledException e) {
-                inetErrorMessage.setText(e.message);
+                import std.format : format;
+                inetErrorMessage.setMarkup(format!"<span foreground='red'>%s</span>"(e.message));
             }
         );
         return true;
