@@ -92,7 +92,9 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
         pResults ~= GnubgEvalResult(r[0], r[1], r[2], r[3], r[4]);
     }
 
-    kill(process.pid);
+    import core.sys.posix.signal : SIGKILL;
+    kill(process.pid, SIGKILL);
+    assert(wait(process.pid) == -SIGKILL);
     remove(tmpFileName);
 
     // Find best
