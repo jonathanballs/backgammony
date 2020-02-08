@@ -20,7 +20,7 @@ void main(string[] args)
 
     if (uiTests) {
         import ui.boardtests;
-        auto boardTests = new BoardUITestWindow();
+        auto boardTests = new BoardUITestWindow(window);
         boardTests.showAll();
     }
 

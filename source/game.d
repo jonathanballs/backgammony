@@ -187,6 +187,9 @@ class GameState {
         onDiceRoll = new Signal!(GameState, uint, uint);
         onEndGame = new Signal!(GameState, Player);
         onStartGame = new Signal!(GameState);
+
+        players[Player.P1] = PlayerMeta("Player 1");
+        players[Player.P2] = PlayerMeta("Player 2");
     }
 
     /**

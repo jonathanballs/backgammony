@@ -207,7 +207,7 @@ class BackgammonWindow : MainWindow {
         });
     }
 
-    void setGameState(GameState gs) {
+    public void setGameState(GameState gs) {
         this.gameState = gs;
         this.aiGetTurn = null;
         this.isWaitingForAnimation = false;
