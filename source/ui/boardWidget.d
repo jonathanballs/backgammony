@@ -476,7 +476,8 @@ class BackgammonBoard : DrawingArea {
         cr.lineTo(style.boardWidth, 0);
         cr.lineTo(style.boardWidth, style.boardHeight);
         cr.lineTo(0, style.boardHeight);
-        cr.fill();
+        cr.fillPreserve();
+        cr.clip();
 
         // Draw board background over it
         cr.setSourceRgbStruct(style.boardColor);
