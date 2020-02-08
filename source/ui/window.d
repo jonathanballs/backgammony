@@ -125,6 +125,9 @@ class BackgammonWindow : MainWindow {
                 }
             }
         });
+        backgammonBoard.onCompleteDiceAnimation.connect(() {
+            writeln("dice animation complete");
+        });
 
         this.add(backgammonBoard);
         this.setDefaultSize(800, 600);

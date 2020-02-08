@@ -126,6 +126,8 @@ class BackgammonBoard : DrawingArea {
 
     /// Fired when the user selects or undoes a potential move
     public Signal!() onChangePotentialMovements;
+    public Signal!() onCompleteDiceAnimation;
+    public Signal!() onCompleteTransitionAnimation;
     Corner p1Corner = Corner.TR;
 
     /**
@@ -134,6 +136,8 @@ class BackgammonBoard : DrawingArea {
     public this() {
         super();
         this.onChangePotentialMovements = new Signal!();
+        this.onCompleteDiceAnimation = new Signal!();
+        this.onCompleteTransitionAnimation = new Signal!();
 
         setHalign(GtkAlign.FILL);
         setValign(GtkAlign.FILL);
@@ -401,15 +405,22 @@ class BackgammonBoard : DrawingArea {
         auto currTime = Clock.currTime();
         auto dt = currTime - lastAnimation;
 
-        foreach (i, die; animatedDice) {
-            cr.save();
+        if (animatedDice.length) {
+            bool startFinished = animatedDice[0].finished;
+            foreach (i, die; animatedDice) {
+                cr.save();
 
-            die.update(dt.total!"msecs" / 1_000.0);
-            cr.translate(65*i + style.boardWidth * 0.65, style.boardHeight / 2 + 25*i);
-            cr.scale(style.boardWidth / 24, style.boardWidth / 24);
-            die.draw(cr);
 
-            cr.restore();
+                die.update(dt.total!"msecs" / 1_000.0);
+                cr.translate(65*i + style.boardWidth * 0.65, style.boardHeight / 2 + 25*i);
+                cr.scale(style.boardWidth / 24, style.boardWidth / 24);
+                die.draw(cr);
+
+                cr.restore();
+            }
+            if (startFinished != animatedDice[1].finished) {
+                onCompleteDiceAnimation.emit();
+            }
         }
 
         lastAnimation = currTime;
