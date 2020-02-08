@@ -149,9 +149,8 @@ class BackgammonWindow : MainWindow {
             // Timeout
             import glib.Timeout;
             Timeout t;
+            // Wait 100msecs and start a game
             t = new Timeout(100, () {
-                // Wait 50msecs then start a game.
-                writeln("starting new game");
                 gs.newGame();
                 t.stop();
                 return false;
