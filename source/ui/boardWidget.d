@@ -335,7 +335,7 @@ class BackgammonBoard : DrawingArea {
      * TODO: Wipe current listeners. Check current state e.g. dice, is finished
      */
     public void setGameState(GameState gameState) {
-        gameState.onDiceRoll.connect((GameState gs, uint a, uint b) {
+        gameState.onDiceRolled.connect((GameState gs, uint a, uint b) {
             animatedDice = [
                 new AnimatedDieWidget(a, 2 * style.animationSpeed),
                 new AnimatedDieWidget(b, 2 * style.animationSpeed),
@@ -823,7 +823,7 @@ class BackgammonBoard : DrawingArea {
     public void displayMessage(string s, void delegate() dlg) {
         import std.uni : toUpper;
         _displayMessage = s.toUpper;
-        _startDisplayMessage = Clock.currTime + 500.msecs;
+        _startDisplayMessage = Clock.currTime + 250.msecs;
         _displayMessageCallbackCalled = false;
         _displayMessageCallback = dlg;
     }

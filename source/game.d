@@ -176,7 +176,7 @@ class GameState {
     /**
      * Fired on a dice roll. Calls connected functions with the value of the roll.
      */
-    Signal!(GameState, uint , uint) onDiceRoll;
+    Signal!(GameState, uint , uint) onDiceRolled;
 
     /**
      * Create a new gamestate. The game will be initalized to the start of P1's
@@ -184,7 +184,7 @@ class GameState {
      */
     this() {
         onBeginTurn = new Signal!(GameState, Player);
-        onDiceRoll = new Signal!(GameState, uint, uint);
+        onDiceRolled = new Signal!(GameState, uint, uint);
         onEndGame = new Signal!(GameState, Player);
         onStartGame = new Signal!(GameState);
 
@@ -263,7 +263,7 @@ class GameState {
 
         turnState = TurnState.MoveSelection;
 
-        onDiceRoll.emit(this, diceValues[0], diceValues[1]);
+        onDiceRolled.emit(this, diceValues[0], diceValues[1]);
     }
 
     /**
@@ -282,7 +282,7 @@ class GameState {
         assert(turnState == TurnState.DiceRoll);
         turnState = TurnState.MoveSelection;
 
-        onDiceRoll.emit(this, diceValues[0], diceValues[1]);
+        onDiceRolled.emit(this, diceValues[0], diceValues[1]);
     }
 
     /// Generate a list of possible game moves based off current dice

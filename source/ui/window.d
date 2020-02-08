@@ -242,7 +242,7 @@ class BackgammonWindow : MainWindow {
             }
 
         });
-        gs.onDiceRoll.connect((GameState gs, uint die1, uint die2) {
+        gs.onDiceRolled.connect((GameState gs, uint die1, uint die2) {
             if (!gs.generatePossibleTurns.length) {
                 finishTurnBtn.setSensitive(true);
             }
