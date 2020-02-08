@@ -55,5 +55,16 @@ private class UITests {
     }
 
     @uitest static void noMovesMessage(BackgammonWindow w) {
+        auto gs = new GameState();
+        w.setGameState(gs);
+        gs.newGame();
+        gs.points[19] = Point(Player.P2, 2);
+        gs.points[20] = Point(Player.P2, 2);
+        gs.points[21] = Point(Player.P2, 2);
+        gs.points[22] = Point(Player.P2, 2);
+        gs.points[23] = Point(Player.P2, 2);
+        gs.points[24] = Point(Player.P2, 2);
+
+        gs.takenPieces[Player.P1] = 1;
     }
 }
