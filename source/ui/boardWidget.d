@@ -23,9 +23,10 @@ import ui.dicewidget;
 
 // TODO:
 // - Animation for starting new game. Flashes are bad!
-// - Testing & benchmarking animations (separate thread)
+// - Testing & benchmarking animations (potentially use separate thread?)
 // - Use GDK frameclock for animations
-// - Unstarted games?
+// - Unstarted games
+// - Split this up for god's sake
 
 struct RGB {
     double r, g, b;
@@ -434,6 +435,8 @@ class BackgammonBoard : DrawingArea {
             drawDice(cr);
         }
 
+        drawMessages(cr);
+
         if (showEndGame) {
             // End game animation takes style.animationSpeed number of msecs
             float animProgress = (Clock.currTime - endGameTransition).total!"msecs"
@@ -808,17 +811,42 @@ class BackgammonBoard : DrawingArea {
         return true;
     }
 
+    string _displayMessage;
+    SysTime _startDisplayMessage;
+
+    /**
+     * Display a message to the user in a friendly way
+     */
+    public void displayMessage(string s) {
+        import std.uni : toUpper;
+        _displayMessage = s.toUpper;
+        _startDisplayMessage = Clock.currTime;
+    }
+
     /**
      * Draw a message on the screen
      */
-    void drawMessage(Context cr, string s) {
+    void drawMessages(Context cr) {
+        // Fade in/out time is 0.25 anim. Display is 1.5 anim
+        double animProgress = cast(double) (Clock.currTime - _startDisplayMessage).total!"msecs"
+                                                    / (2*style.animationSpeed);
+        if (animProgress > 1.0) return;
+        double alpha; // Transparency of message
+        if (animProgress < 0.125) {
+            alpha = (animProgress / 0.125) * 0.5;
+        } else if (animProgress > 0.875) {
+            alpha = ((1.0 - animProgress) / 0.125) * 0.5;
+        } else {
+            alpha = 0.5;
+        }
+
         // Find size of displayed message
         cr.setFontSize(style.messageFontSize);
         cr.selectFontFace("Calibri",
             cairo_font_slant_t.NORMAL,
             cairo_font_weight_t.BOLD);
         cairo_text_extents_t extents;
-        cr.textExtents(s, &extents);
+        cr.textExtents(_displayMessage, &extents);
 
         // Draw the rounded rectangle
         double x = (style.boardWidth - extents.width) / 2.0 - style.messageRadius - style.messagePadding/2;
@@ -835,14 +863,14 @@ class BackgammonBoard : DrawingArea {
         cr.arc(x + radius, y + radius, radius, 180 * degrees, 270 * degrees);
         cr.closePath();
 
-        cr.setSourceRgba(0.0, 0.0, 0.0, 0.5);
+        cr.setSourceRgba(0.0, 0.0, 0.0, alpha);
         cr.fill();
 
         // Draw the message
         cr.moveTo((style.boardWidth - extents.width) / 2.0,
                     (style.boardHeight + extents.height) / 2.0),
-        cr.setSourceRgba(1.0, 1.0, 1.0, 0.5);
-        cr.showText(s);
+        cr.setSourceRgba(1.0, 1.0, 1.0, alpha);
+        cr.showText(_displayMessage);
         cr.fill();
     }
 
