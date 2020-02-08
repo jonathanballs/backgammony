@@ -138,7 +138,27 @@ class BackgammonWindow : MainWindow {
             PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
         );
         setGameState(gs);
-        gs.newGame();
+
+        // Start game 50msecs after first draw
+        import cairo.Context : Context;
+        import gobject.Signals;
+        gulong sigId;
+        sigId = backgammonBoard.addOnDraw((Scoped!Context c, Widget w) {
+            Signals.handlerDisconnect(backgammonBoard, sigId);
+
+            // Timeout
+            import glib.Timeout;
+            Timeout t;
+            t = new Timeout(100, () {
+                // Wait 50msecs then start a game.
+                writeln("starting new game");
+                gs.newGame();
+                t.stop();
+                return false;
+            }, false);
+
+            return false;
+        });
     }
 
     /**
@@ -208,7 +228,13 @@ class BackgammonWindow : MainWindow {
             // Local games we can just roll the dice automatically. Otherwise,
             // we will wait for a dice roll from the network thread.
             if (!gs.isNetworkGame) {
-                _gs.rollDice();
+                if (gs.equals(gs.dup.newGame())) {
+                    backgammonBoard.displayMessage(_gs.players[p].name ~ " starts", () {
+                        _gs.rollDice();
+                    });
+                } else {
+                    _gs.rollDice();
+                }
             } else {
                 if (_gs.players[p].type == PlayerType.User) {
                     auto netThread = gameState.players[gameState.currentPlayer.opposite].config.peek!Tid;
@@ -216,16 +242,17 @@ class BackgammonWindow : MainWindow {
                 }
             }
 
-            // Who is handling this turn?
-            if (_gs.players[p].type == PlayerType.AI) {
-                aiGetTurn = task!gnubgGetTurn(_gs,
-                    *_gs.players[p].config.peek!GnubgEvalContext);
-                aiGetTurn.executeInNewThread();
-            }
         });
         gs.onDiceRoll.connect((GameState gs, uint die1, uint die2) {
             if (!gs.generatePossibleTurns.length) {
                 finishTurnBtn.setSensitive(true);
+            }
+
+            // Who is handling this turn?
+            if (gs.players[gs.currentPlayer].type == PlayerType.AI) {
+                aiGetTurn = task!gnubgGetTurn(gs,
+                    *gs.players[gs.currentPlayer].config.peek!GnubgEvalContext);
+                aiGetTurn.executeInNewThread();
             }
         });
         gs.onEndGame.connect((GameState gs, Player winner) {

@@ -202,7 +202,7 @@ class GameState {
     /**
      * Reset board and begin game.
      */
-    void newGame() {
+    GameState newGame() {
         _currentPlayer = Player.P1;
         _turnState = TurnState.DiceRoll;
         _diceValues = [0, 0];
@@ -222,6 +222,8 @@ class GameState {
 
         onStartGame.emit(this);
         onBeginTurn.emit(this, _currentPlayer);
+
+        return this;
     }
 
     /**

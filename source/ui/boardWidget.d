@@ -430,7 +430,7 @@ class BackgammonBoard : DrawingArea {
         drawBoard(cr);
 
         frameTime = Clock.currTime(); // for animations
-        if (this.getGameState()) {
+        if (this.getGameState() && this.getGameState._currentPlayer != Player.NONE) {
             drawPips(cr);
             drawDice(cr);
         }
@@ -462,7 +462,7 @@ class BackgammonBoard : DrawingArea {
             cr.showText(endGameText);
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -814,14 +814,18 @@ class BackgammonBoard : DrawingArea {
 
     string _displayMessage;
     SysTime _startDisplayMessage;
+    bool _displayMessageCallbackCalled = true;
+    void delegate() _displayMessageCallback;
 
     /**
      * Display a message to the user in a friendly way
      */
-    public void displayMessage(string s) {
+    public void displayMessage(string s, void delegate() dlg) {
         import std.uni : toUpper;
         _displayMessage = s.toUpper;
-        _startDisplayMessage = Clock.currTime;
+        _startDisplayMessage = Clock.currTime + 500.msecs;
+        _displayMessageCallbackCalled = false;
+        _displayMessageCallback = dlg;
     }
 
     /**
@@ -831,7 +835,11 @@ class BackgammonBoard : DrawingArea {
         // Fade in/out time is 0.25 anim. Display is 1.5 anim
         double animProgress = cast(double) (Clock.currTime - _startDisplayMessage).total!"msecs"
                                                     / (2*style.animationSpeed);
-        if (animProgress > 1.0) return;
+        if (animProgress > 1.0) {
+            if (!_displayMessageCallbackCalled) _displayMessageCallback();
+            _displayMessageCallbackCalled = true;
+            return;
+        }
         double alpha; // Transparency of message
         if (animProgress < 0.125) {
             alpha = (animProgress / 0.125) * 0.5;
