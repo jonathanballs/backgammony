@@ -1,4 +1,4 @@
-module ui.boardtests;
+module ui.board.tests;
 
 import std.stdio;
 import std.typecons;
@@ -7,7 +7,7 @@ import gtk.Button;
 import gtk.Box;
 
 import ui.window;
-import ui.boardWidget;
+import ui.board.boardwidget;
 import game;
 import player;
 

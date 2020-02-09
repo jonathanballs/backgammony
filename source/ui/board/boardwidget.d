@@ -1,4 +1,4 @@
-module ui.boardWidget;
+module ui.board.boardwidget;
 
 import std.array;
 import std.algorithm;
@@ -19,7 +19,7 @@ import gobject.Signals;
 import game;
 import player;
 import utils.signals;
-import ui.dicewidget;
+import ui.board.dicewidget;
 
 // TODO:
 // - Animation for starting new game. Flashes are bad!
@@ -27,10 +27,6 @@ import ui.dicewidget;
 // - Use GDK frameclock for animations
 // - Unstarted games
 // - Split this up for god's sake
-
-struct RGB {
-    double r, g, b;
-}
 
 // Moving off the board? Moving to bar and back...
 private struct PipTransition {
@@ -48,6 +44,10 @@ private struct ScreenCoords {
 
 static void setSourceRgbStruct(Context cr, RGB color) {
     cr.setSourceRgb(color.r, color.g, color.b);
+}
+
+struct RGB {
+    double r, g, b;
 }
 
 /**

@@ -19,7 +19,7 @@ void main(string[] args)
     window.showAll();
 
     if (uiTests) {
-        import ui.boardtests;
+        import ui.board.tests;
         auto boardTests = new BoardUITestWindow(window);
         boardTests.showAll();
     }

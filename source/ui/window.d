@@ -24,7 +24,7 @@ import game;
 import networking;
 import networking.messages;
 import player;
-import ui.boardWidget;
+import ui.board.boardwidget;
 import ui.networkwidget;
 import ui.newgamedialog;
 import utils.addtickcallback;

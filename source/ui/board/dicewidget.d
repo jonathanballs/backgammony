@@ -1,4 +1,4 @@
-module ui.dicewidget;
+module ui.board.dicewidget;
 
 import std.conv;
 import std.datetime;
