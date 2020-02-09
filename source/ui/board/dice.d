@@ -1,4 +1,4 @@
-module ui.board.dicewidget;
+module ui.board.dice;
 
 import std.conv;
 import std.datetime;
@@ -34,7 +34,7 @@ private DieFace[] dieFaces = [
  * spinning cube against a flat surface (the ground). The dice is size 1.0 and
  * will roll in from the right (positive x axis).
  */
-class AnimatedDieWidget {
+class AnimatedDie {
     bool finished = false;
 
     private:

@@ -19,7 +19,7 @@ import gobject.Signals;
 import game;
 import player;
 import utils.signals;
-import ui.board.dicewidget;
+import ui.board.dice;
 
 // TODO:
 // - Animation for starting new game. Flashes are bad!
@@ -114,7 +114,7 @@ class BackgammonBoard : DrawingArea {
     /// Animation
     SysTime lastAnimation;
     SysTime frameTime;
-    AnimatedDieWidget[] animatedDice;
+    AnimatedDie[] animatedDice;
     PipTransition[] transitionStack;
 
     bool showEndGame;
@@ -356,8 +356,8 @@ class BackgammonBoard : DrawingArea {
     public void setGameState(GameState gameState) {
         gameState.onDiceRolled.connect((GameState gs, uint a, uint b) {
             animatedDice = [
-                new AnimatedDieWidget(a, 2 * style.animationSpeed),
-                new AnimatedDieWidget(b, 2 * style.animationSpeed),
+                new AnimatedDie(a, 2 * style.animationSpeed),
+                new AnimatedDie(b, 2 * style.animationSpeed),
             ];
             lastAnimation = Clock.currTime;
         });
