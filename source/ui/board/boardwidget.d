@@ -197,10 +197,20 @@ class BackgammonBoard : DrawingArea {
                 return false;
             }
 
-            auto possibleTurns = getGameState().generatePossibleTurns();
+            auto possibleTurns = getGameState().generatePossibleTurns().filter!((t) {
+                foreach (j; 0..getSelectedMoves.length) {
+                    if (getSelectedMoves[j] != t[j]) return false;
+                }
+                return true;
+            }).array;
+
             if (!possibleTurns.length) return false;
 
             if (getSelectedMoves().length == possibleTurns[0].length) return false;
+
+            possibleTurns = possibleTurns.sort!((a, b) {
+                return a[getSelectedMoves.length].diceValue > b[getSelectedMoves.length].diceValue;
+            }).array;
 
             // Where have we clicked?
             uint startPos;
@@ -224,17 +234,13 @@ class BackgammonBoard : DrawingArea {
                 }
             }
 
-            // TODO: Potential move might not be first avaiable dice
             uint[] moveValues = getGameState().diceValues;
             moveValues = moveValues[0] == moveValues[1]
                 ? moveValues ~ moveValues
                 : moveValues;
+
             try {
-                outer: foreach (t; possibleTurns) {
-                    // If it starts with the moves we've already done
-                    foreach (j; 0..getSelectedMoves.length) {
-                        if (getSelectedMoves[j] != t[j]) continue outer;
-                    }
+                foreach (t; possibleTurns) {
                     if (t[getSelectedMoves.length].startPoint == startPos) {
                         selectMove(t[getSelectedMoves.length]);
                         break;
