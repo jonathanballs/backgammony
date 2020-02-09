@@ -126,7 +126,16 @@ class BackgammonWindow : MainWindow {
             }
         });
         backgammonBoard.onCompleteDiceAnimation.connect(() {
-            writeln("dice animation complete");
+            // If it's a network player then we await their movement
+            // TODO: Perhaps this should be triggered when a user finishes and
+            // can't move...
+            if (gameState.players[gameState.currentPlayer].type != PlayerType.Network) {
+                if (gameState.generatePossibleTurns().length == 0) {
+                    backgammonBoard.displayMessage("No movement available", () {
+                        backgammonBoard.finishTurn();
+                    });
+                }
+            }
         });
 
         this.add(backgammonBoard);
