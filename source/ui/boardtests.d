@@ -105,4 +105,19 @@ private class UITests {
         gs.takenPieces[Player.P1] = 1;
         gs.takenPieces[Player.P2] = 1;
     }
+
+    /**
+     * Simply selects a random move and selects finish turn immediately
+     */
+    @uitest static void finishTurnWaits(BackgammonWindow w) {
+        auto gs = new GameState();
+        w.setGameState(gs);
+        gs.newGame();
+        gs.onDiceRolled.connect((GameState _gs, uint die1, uint die2) {
+            auto turns = gs.generatePossibleTurns();
+            auto t = turns.length ? turns[0] : [];
+            foreach (m; t) w.backgammonBoard.selectMove(m);
+            w.backgammonBoard.finishTurn();
+        });
+    }
 }

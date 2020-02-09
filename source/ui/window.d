@@ -42,7 +42,7 @@ class BackgammonWindow : MainWindow {
     Button finishTurnBtn;
     Button undoMoveBtn;
 
-    BackgammonBoard backgammonBoard;
+    public BackgammonBoard backgammonBoard;
     NetworkWidget networkWidget;
     NewGameDialog newGameDialog;
 
@@ -130,7 +130,8 @@ class BackgammonWindow : MainWindow {
             // TODO: Perhaps this should be triggered when a user finishes and
             // can't move...
             if (gameState.players[gameState.currentPlayer].type != PlayerType.Network) {
-                if (gameState.generatePossibleTurns().length == 0) {
+                if (gameState.turnState == TurnState.MoveSelection
+                        && gameState.generatePossibleTurns().length == 0) {
                     backgammonBoard.displayMessage("No movement available", () {
                         backgammonBoard.finishTurn();
                     });

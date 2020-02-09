@@ -120,6 +120,8 @@ class BackgammonBoard : DrawingArea {
     bool showEndGame;
     SysTime endGameTransition;
 
+    bool applyTurnAtEndOfAnimation = false;
+
     /// The coordinates of each point on the screen in device. Just store matrix?
     ScreenCoords[2][24] pointCoords;
     double[2] barXCoordinates;
@@ -294,15 +296,15 @@ class BackgammonBoard : DrawingArea {
     /// The current gamestate with selected moves applied. Transitions are
     /// Transitioning towards this
     public GameState selectedGameState() {
-        if (getGameState().turnState == TurnState.DiceRoll) {
+        if (getGameState().turnState == TurnState.MoveSelection) {
+            GameState r = getGameState().dup;
+
+            r.applyTurn(getSelectedMoves(), true);
+            return r;
+        } else {
             assert(getSelectedMoves().length == 0);
             return getGameState();
         }
-
-        GameState r = getGameState().dup;
-
-        r.applyTurn(getSelectedMoves(), true);
-        return r;
     }
 
     /**
@@ -310,10 +312,7 @@ class BackgammonBoard : DrawingArea {
      * Maybe remove this... Don't like the idea of renderer managing gamestate
      */
     public void finishTurn() {
-        auto pMoves = getSelectedMoves();
-        _selectedMoves = [];
-        transitionStack = [];
-        getGameState().applyTurn(pMoves);
+        applyTurnAtEndOfAnimation = true;
     }
 
     /**
@@ -347,6 +346,7 @@ class BackgammonBoard : DrawingArea {
             lastAnimation = Clock.currTime;
         });
         gameState.onBeginTurn.connect((GameState gs, Player p) {
+            animatedDice = [];
             _selectedMoves = [];
             onChangePotentialMovements.emit();
         });
@@ -362,6 +362,7 @@ class BackgammonBoard : DrawingArea {
         this.transitionStack = [];
         this._selectedMoves = [];
         this.animatedDice = [];
+        this.applyTurnAtEndOfAnimation = false;
     }
 
     /**
@@ -471,6 +472,14 @@ class BackgammonBoard : DrawingArea {
                 (style.boardHeight- extents.height) / 2
             );
             cr.showText(endGameText);
+        }
+
+        if (applyTurnAtEndOfAnimation && !isAnimating()) {
+            applyTurnAtEndOfAnimation = false;
+            auto pMoves = getSelectedMoves();
+            _selectedMoves = [];
+            transitionStack = [];
+            getGameState().applyTurn(pMoves);
         }
 
         return false;

@@ -96,7 +96,12 @@ alias Turn = PipMovement[];
 enum PipMoveType { Movement, BearingOff, Entering }
 
 /// Current stage of a users turn, must they roll the dice, or perform their moves.
-enum TurnState { DiceRoll, MoveSelection }
+enum TurnState {
+    Unstarted,
+    DiceRoll,
+    MoveSelection,
+    Finished
+}
 
 /// Player
 enum Player { NONE, P1, P2 }
@@ -474,6 +479,7 @@ class GameState {
 
         winner = calculateWinner();
         if (winner != Player.NONE) {
+            _turnState = TurnState.Finished;
             onEndGame.emit(this, winner);
         } else if (!partialTurn) {
             _currentPlayer = currentPlayer.opposite();
