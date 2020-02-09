@@ -718,6 +718,7 @@ unittest {
     gs.points[1] = Point(Player.P1, 1);
     gs.points[24] = Point(Player.P2, 1);
     gs._currentPlayer = Player.P1;
+    gs._turnState = TurnState.DiceRoll;
     gs.rollDice(3, 6);
     assert(gs.generatePossibleTurns[0].length == 1);
     assert(gs.generatePossibleTurns[0][0] == PipMovement(PipMoveType.BearingOff, 1, 0));
