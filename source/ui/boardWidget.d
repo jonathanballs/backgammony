@@ -375,7 +375,8 @@ class BackgammonBoard : DrawingArea {
                 .filter!(t => (t.startTime + style.animationSpeed.msecs > frameTime)
                     || (t.takesPiece && t.startTime + 2*style.animationSpeed.msecs > frameTime))
                 .array.length
-            || isDiceRolling;
+            || isDiceRolling
+            || Clock.currTime - _startDisplayMessage < 2 * style.animationSpeed.msecs;
     }
 
     /**
