@@ -25,7 +25,7 @@ import networking;
 import networking.messages;
 import player;
 import ui.board.boardwidget;
-import ui.networkwidget;
+import ui.networkgamedialog;
 import ui.newgamedialog;
 import utils.addtickcallback;
 import ai.gnubg;
@@ -43,7 +43,7 @@ class BackgammonWindow : MainWindow {
     Button undoMoveBtn;
 
     public BackgammonBoard backgammonBoard;
-    NetworkWidget networkWidget;
+    NetworkGameDialog networkWidget;
     NewGameDialog newGameDialog;
 
     GameState gameState;
@@ -208,7 +208,7 @@ class BackgammonWindow : MainWindow {
      * Open the new network game dialog
      */
     void openNewNetworkGameDialog() {
-        networkWidget = new NetworkWidget(this);
+        networkWidget = new NetworkGameDialog(this);
         networkWidget.onCreateNewGame.connect((GameState gs) {
             networkWidget.destroy();
             networkWidget = null;

@@ -1,4 +1,4 @@
-module ui.networkwidget;
+module ui.networkgamedialog;
 
 import core.time;
 import std.concurrency;
@@ -28,7 +28,7 @@ import utils.signals;
 
 enum formPadding = 10;
 
-class NetworkWidget : Dialog {
+class NetworkGameDialog : Dialog {
     Signal!(GameState) onCreateNewGame;
     Notebook tabs;
 
