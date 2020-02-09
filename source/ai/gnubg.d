@@ -60,6 +60,10 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
     import std.socket;
     import networking.connection;
 
+    /**
+     * Generate moves and possible gamestates. This can become slow with large
+     * numbers of possible turns. Largely due to the applyTurn()s
+     */
     Turn[] pMovements;
     GameState[] pGameStates;
 
@@ -72,6 +76,9 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
         pGameStates ~= d;
     }
 
+    /**
+     * Run gnubg
+     */
     string tmpFileName = "/tmp/gnubg-" ~ Clock.currTime().toISOString();
     string tmpSock = tmpFileName ~ ".sock";
     auto f = File(tmpFileName, "w");
@@ -115,5 +122,14 @@ unittest {
     auto gs = new GameState();
     gs.newGame();
     gs.rollDice(3, 3);
+    // gnubgGetTurn(gs, gnubgDefaultEvalContexts[2]);
+
+    // Testing a long move
+    // gs.newGame();
+    // gs.rollDice(2, 2);
+    // gs.points[5] = Point(Player.P1, 2);
+    // gs.points[4] = Point(Player.P1, 2);
+    // gs.points[3] = Point(Player.P1, 2);
+    // gs.points[2] = Point(Player.P1, 2);
     // gnubgGetTurn(gs, gnubgDefaultEvalContexts[2]);
 }
