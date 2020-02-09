@@ -264,8 +264,14 @@ class BackgammonBoard : DrawingArea {
     public void selectMove(PipMovement move) {
         // Assert that its a valid move... Contract programming?
 
-        // Do we need to wait for another point?
         SysTime startTime = Clock.currTime;
+
+        // Do we need to wait for animations?
+        if (animatedDice.length && !animatedDice[0].finished) {
+            startTime = animatedDice[0].startTime + 2*style.animationSpeed.msecs
+                + getSelectedMoves.length.msecs; // Just to offset after eachother
+        }
+
         if (move.startPoint) {
             const auto pointAtStart = calculatePointAtTime(move.startPoint, startTime);
             if (pointAtStart.numPieces == 0

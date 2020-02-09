@@ -1,14 +1,15 @@
 module ui.dicewidget;
 
 import std.conv;
+import std.datetime;
+import std.format;
+import std.math : PI, PI_2;
+import std.math : atan2;
 import std.stdio;
 import std.typecons;
-import std.math : atan2;
-import cairo.Context;
-import std.math : PI, PI_2;
 
+import cairo.Context;
 import gl3n.linalg;
-import std.format;
 
 // Each die face contains the x,y coordinates of the dots and it's matrix
 // rotation
@@ -49,6 +50,8 @@ class AnimatedDieWidget {
     vec3 rotAxis;
     float angVel; // Angular velocity
 
+    public SysTime startTime;
+
     /**
      * Create a new dice widget
      * Params:
@@ -78,6 +81,7 @@ class AnimatedDieWidget {
         Quaternion!float rotationQuat;
         auto rota = rotationQuat.axis_rotation(2 * angVel, rotAxis).to_matrix!(3, 3);
         rot = rota.inverse() * rot;
+        startTime = Clock.currTime();
     }
 
     /**

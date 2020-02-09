@@ -49,7 +49,6 @@ class BackgammonWindow : MainWindow {
     GameState gameState;
 
     Task!(gnubgGetTurn, GameState, GnubgEvalContext) *aiGetTurn;
-    bool isWaitingForAnimation = false;
     Turn remoteResult;
 
     /**
@@ -221,7 +220,6 @@ class BackgammonWindow : MainWindow {
     public void setGameState(GameState gs) {
         this.gameState = gs;
         this.aiGetTurn = null;
-        this.isWaitingForAnimation = false;
 
         backgammonBoard.setGameState(gs);
         if (gs.players[Player.P1].type == PlayerType.User) {
@@ -275,18 +273,14 @@ class BackgammonWindow : MainWindow {
     }
 
     bool handleThreadMessages(Widget w, FrameClock f) {
-        if (isWaitingForAnimation && !backgammonBoard.isAnimating) {
-            backgammonBoard.finishTurn();
-            isWaitingForAnimation = false;
-        }
 
-        if (aiGetTurn && aiGetTurn.done && !backgammonBoard.isAnimating) {
+        if (aiGetTurn && aiGetTurn.done) {
             remoteResult = aiGetTurn.yieldForce;
             aiGetTurn = null;
             foreach (move; remoteResult) {
                 backgammonBoard.selectMove(move);
             }
-            isWaitingForAnimation = true;
+            backgammonBoard.finishTurn();
         }
 
         if (gameState.isNetworkGame) {
@@ -296,7 +290,6 @@ class BackgammonWindow : MainWindow {
                     foreach(move; moves.moves[0..moves.numMoves]) {
                         backgammonBoard.selectMove(move);
                     }
-                    isWaitingForAnimation = true;
                 },
                 (NetworkNewDiceRoll diceRoll) {
                     writeln("Received dice roll: ", diceRoll);
