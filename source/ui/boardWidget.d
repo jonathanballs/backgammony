@@ -312,6 +312,10 @@ class BackgammonBoard : DrawingArea {
      * Maybe remove this... Don't like the idea of renderer managing gamestate
      */
     public void finishTurn() {
+        if (!_selectedMoves.length) {
+            this.displayMessage("No movement available", () {});
+        }
+
         applyTurnAtEndOfAnimation = true;
     }
 

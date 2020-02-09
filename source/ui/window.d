@@ -129,12 +129,10 @@ class BackgammonWindow : MainWindow {
             // If it's a network player then we await their movement
             // TODO: Perhaps this should be triggered when a user finishes and
             // can't move...
-            if (gameState.players[gameState.currentPlayer].type != PlayerType.Network) {
+            if (gameState.players[gameState.currentPlayer].type == PlayerType.User) {
                 if (gameState.turnState == TurnState.MoveSelection
                         && gameState.generatePossibleTurns().length == 0) {
-                    backgammonBoard.displayMessage("No movement available", () {
-                        backgammonBoard.finishTurn();
-                    });
+                    backgammonBoard.finishTurn();
                 }
             }
         });
