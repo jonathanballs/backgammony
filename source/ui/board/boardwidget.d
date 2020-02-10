@@ -21,6 +21,7 @@ import player;
 import utils.signals;
 import ui.board.dice;
 import ui.board.layout;
+public import ui.board.layout : Corner;
 import ui.board.selection;
 import ui.board.style;
 
@@ -42,15 +43,6 @@ static void setSourceRgbStruct(Context cr, RGB color) {
     cr.setSourceRgb(color.r, color.g, color.b);
 }
 
-/// A corner of the board. Useful for describing where a user's home should be.
-/// In the future, this will be changeable in the settings.
-enum Corner {
-    BL,
-    BR,
-    TL,
-    TR
-}
-
 /**
  * Widget for rendering a backgammon game state
  */
@@ -65,6 +57,7 @@ class BackgammonBoard : DrawingArea {
      * The current styling. Will be modifiable in the future.
      */
     BoardStyle style;
+    BoardLayout layout;
 
     /// Animation
     SysTime lastAnimation;
@@ -85,7 +78,6 @@ class BackgammonBoard : DrawingArea {
     public Signal!() onChangePotentialMovements;
     public Signal!() onCompleteDiceAnimation;
     public Signal!() onCompleteTransitionAnimation;
-    Corner p1Corner = Corner.TR;
 
     /**
      * Create a new Backgammon Board widget.
@@ -102,6 +94,7 @@ class BackgammonBoard : DrawingArea {
         setVexpand(true);
 
         style = new BoardStyle;
+        layout = new BoardLayout(style);
 
         addOnDraw(&this.onDraw);
         addOnConfigure(&this.onConfigureEvent);
@@ -269,13 +262,13 @@ class BackgammonBoard : DrawingArea {
      */
     public void setPlayerCorner(Player p, Corner c) {
         if (p == Player.P1) {
-            this.p1Corner = c;
+            this.layout.p1Corner = c;
         } else if (p == Player.P2) {
             switch (c) {
-            case Corner.BR: p1Corner = Corner.TR; break;
-            case Corner.BL: p1Corner = Corner.TL; break;
-            case Corner.TR: p1Corner = Corner.BR; break;
-            case Corner.TL: p1Corner = Corner.BL; break;
+            case Corner.BR: layout.p1Corner = Corner.TR; break;
+            case Corner.BL: layout.p1Corner = Corner.TL; break;
+            case Corner.TR: layout.p1Corner = Corner.BR; break;
+            case Corner.TL: layout.p1Corner = Corner.BL; break;
             default: assert(0);
             }
         }
@@ -288,6 +281,7 @@ class BackgammonBoard : DrawingArea {
      * =========================================================================
      */
 
+    // Could more of this code simply be inside the dicewidget module?
     void drawDice(Context cr) {
         auto currTime = Clock.currTime();
         auto dt = currTime - lastAnimation;
@@ -335,6 +329,7 @@ class BackgammonBoard : DrawingArea {
 
         drawMessages(cr);
 
+        // TODO: should be it's own method
         if (showEndGame) {
             // End game animation takes style.animationSpeed number of msecs
             float animProgress = (Clock.currTime - endGameTransition).total!"msecs"
@@ -410,7 +405,7 @@ class BackgammonBoard : DrawingArea {
         barXCoordinates[1]-=25;
 
         foreach (uint i; 0..24) {
-            auto c = getPointPosition(i+1);
+            auto c = layout.getPointPosition(i+1);
 
             // Record the point poisitoin
             ScreenCoords toDevice(ScreenCoords sc) {
@@ -530,18 +525,5 @@ class BackgammonBoard : DrawingArea {
         cr.fill();
     }
 
-    unittest {
-        /**
-        * Test point calculation
-        */
-        // auto gs = new GameState();
-        // auto b = new BackgammonBoard(gs);
-        // gs.rollDice(3, 3);
-        // b.selectMove(PipMovement(PipMoveType.Movement, 13, 10));
-        // should be animating now
-        // assert(b.calculatePointAtTime(10, Clock.currTime).numPieces == 4);
-    }
-
-    public mixin BoardLayout;
     public mixin TurnSelection;
 }

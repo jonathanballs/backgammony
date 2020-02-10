@@ -147,7 +147,7 @@ public template TurnSelection() {
             const auto calculatedPoint = calculatePointAtTime(pointNum+1, frameTime);
 
             foreach(n; 0..calculatedPoint.numPieces) {
-                auto pipPosition = getPipPosition(pointNum + 1, n + 1);
+                auto pipPosition = layout.getPipPosition(pointNum + 1, n + 1);
                 drawPip(cast(uint) pipPosition.x, cast(uint) pipPosition.y,
                     calculatedPoint.owner == Player.P1 ? style.p1Colour : style.p2Colour);
             }
@@ -157,7 +157,7 @@ public template TurnSelection() {
         // Player 1 at the top. Pips start in the middle and work their way out
         foreach (player; [Player.P1, Player.P2]) {
             foreach (uint i; 0..calculateTakenPiecesAtTime(player, frameTime)) {
-                auto point = getTakenPipPosition(player, i+1);
+                auto point = layout.getTakenPipPosition(player, i+1);
                 drawPip(point.x, point.y, player == Player.P1 ? style.p1Colour : style.p2Colour);
             }
         }
@@ -168,8 +168,8 @@ public template TurnSelection() {
                 .filter!(t => t.startTime + 2*style.animationSpeed.msecs > frameTime)
                 .filter!(t => t.startTime + style.animationSpeed.msecs < frameTime)
                 .array) {
-            auto startPos = getPipPosition(takenTransition.endPoint, 1);
-            auto endPos = getTakenPipPosition(getGameState().currentPlayer.opposite,
+            auto startPos = layout.getPipPosition(takenTransition.endPoint, 1);
+            auto endPos = layout.getTakenPipPosition(getGameState().currentPlayer.opposite,
                 calculateTakenPiecesAtTime(getGameState().currentPlayer.opposite,
                 takenTransition.startTime + 2*style.animationSpeed.msecs));
             float progress = (frameTime -
@@ -188,10 +188,10 @@ public template TurnSelection() {
                 auto startingPip = calculateTakenPiecesAtTime(
                     getGameState().currentPlayer, transition.startTime
                 );
-                startPos = getTakenPipPosition(getGameState().currentPlayer, startingPip);
+                startPos = layout.getTakenPipPosition(getGameState().currentPlayer, startingPip);
             } else {
                 auto startPoint = calculatePointAtTime(transition.startPoint, transition.startTime);
-                startPos = getPipPosition(transition.startPoint, startPoint.numPieces);
+                startPos = layout.getPipPosition(transition.startPoint, startPoint.numPieces);
             }
 
             // If it's being borne off
@@ -200,7 +200,7 @@ public template TurnSelection() {
             } else {
                 auto endPoint = calculatePointAtTime(transition.endPoint,
                                     transition.startTime + style.animationSpeed.msecs);
-                endPos = getPipPosition(transition.endPoint, endPoint.numPieces);
+                endPos = layout.getPipPosition(transition.endPoint, endPoint.numPieces);
             }
 
             float progress = (frameTime - transition.startTime).total!"msecs" / cast(float) style.animationSpeed;

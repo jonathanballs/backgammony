@@ -1,16 +1,34 @@
 module ui.board.layout;
 
+import std.stdio;
 import std.typecons;
 
 import ui.board.style;
 import game : Player;
+
+/// A corner of the board. Useful for describing where a user's home should be.
+/// In the future, this will be changeable in the settings.
+enum Corner {
+    BL,
+    BR,
+    TL,
+    TR
+}
 
 struct ScreenCoords {
     float x;
     float y;
 }
 
-mixin template BoardLayout() {
+class BoardLayout {
+
+    BoardStyle style;
+    Corner p1Corner = Corner.TR;
+
+    this(BoardStyle style) {
+        this.style = style;
+    }
+
     /**
      * Returns a tuple containing the bottom (centre) and top of the points
      * position. By default we will be starting at top right.
@@ -68,12 +86,7 @@ mixin template BoardLayout() {
 
     ScreenCoords getPipPosition(uint pointNum, uint pipNum) {
         assert (1 <= pointNum && pointNum <= 24);
-        // assert (pipNum);
         if (!pipNum) {
-            writeln(getGameState.currentPlayer());
-            writeln(pointNum, " ", getGameState.points[pointNum]);
-            writeln(transitionStack);
-            writeln("frameTime: ", frameTime);
             throw new Exception("errrr");
         }
         pointNum--;
