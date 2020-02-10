@@ -120,4 +120,18 @@ private class UITests {
             w.backgammonBoard.finishTurn();
         });
     }
+
+    /**
+     * Piece taking animation
+     */
+    @uitest static void takePiece(BackgammonWindow w) {
+        auto gs = new GameState();
+        gs.newGame();
+        gs.points[5] = Point(Player.P2, 1);
+        w.setGameState(gs);
+        gs.rollDice(1, 2);
+        w.backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 6, 5));
+        w.backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 6, 4));
+        w.backgammonBoard.finishTurn();
+    }
 }

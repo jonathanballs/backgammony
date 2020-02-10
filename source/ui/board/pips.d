@@ -12,7 +12,7 @@ import ui.board.layout;
 
 
 // Moving off the board? Moving to bar and back...
-struct PipTransition {
+private struct PipTransition {
     uint startPoint;
     uint endPoint;
     bool undone;
@@ -49,6 +49,18 @@ class PipRenderer {
      * animation is enabled.
      */
     PipTransition[] transitionStack;
+    PipMovement[] selectedMoves;
+
+    /// The current gamestate with selected moves applied. Transitions are
+    /// Transitioning towards this
+    public GameState selectedGameState() {
+        if (gameState.turnState == TurnState.MoveSelection) {
+            return gameState.dup.applyTurn(selectedMoves, true);
+        } else {
+            return gameState;
+        }
+    }
+
 
     /**
      * Draw gamestate pips onto the context
@@ -94,8 +106,7 @@ class PipRenderer {
 
         // Draw pips on each point
         uint pointNum = 0;
-        // WAS: foreach(point; this.selectedGameState.points) {
-        foreach(point; this.gameState.points) {
+        foreach(point; this.selectedGameState.points) {
             const auto calculatedPoint = calculatePointAtTime(pointNum+1, frameTime);
 
             foreach(n; 0..calculatedPoint.numPieces) {
@@ -250,9 +261,9 @@ class PipRenderer {
 
         // Is this going to take a piece?
         bool takesPiece = false;
-        // if (move.endPoint && selectedGameState.points[move.endPoint].owner == gameState.currentPlayer.opposite) {
-        //     takesPiece = true;
-        // }
+        if (move.endPoint && selectedGameState.points[move.endPoint].owner == gameState.currentPlayer.opposite) {
+            takesPiece = true;
+        }
 
         transitionStack ~= PipTransition(
             move.startPoint,
@@ -260,13 +271,16 @@ class PipRenderer {
             false,
             takesPiece,
             startTime);
+        selectedMoves ~= move;
     }
 
     void clearTransitions() {
         transitionStack = [];
+        selectedMoves = [];
     }
 
     void undoTransition() {
         transitionStack = transitionStack[0..$-1]; // Might want to undo more
+        selectedMoves = selectedMoves[0..$-1]; // Might want to undo more
     }
 }
