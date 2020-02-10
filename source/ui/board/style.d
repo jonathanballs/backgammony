@@ -1,9 +1,14 @@
 module ui.board.style;
 
+import cairo.Context;
+
 struct RGB {
     double r, g, b;
 }
 
+static void setSourceRgbStruct(Context cr, RGB color) {
+    cr.setSourceRgb(color.r, color.g, color.b);
+}
 
 /**
  * The layout of the board. Measurements are all relative as the board will

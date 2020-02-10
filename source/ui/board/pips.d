@@ -1,6 +1,15 @@
-module ui.board.selection;
+module ui.board.pips;
 
+import std.algorithm;
 import std.datetime;
+import std.stdio;
+import std.array;
+import cairo.Context;
+import game;
+
+import ui.board.style;
+import ui.board.layout;
+
 
 // Moving off the board? Moving to bar and back...
 struct PipTransition {
@@ -18,106 +27,35 @@ struct PipTransition {
  *    time will need to be spent unwinding it.
  * 2. Move it over
  */
-public template TurnSelection() {
+class PipRenderer {
+    BoardStyle style;
+    BoardLayout layout;
+    GameState gameState;
+    SysTime frameTime;
+
+    // This gamestate is not known...
+    this(BoardLayout layout, BoardStyle style) {
+        this.style = style;
+        this.layout = layout;
+    }
+
+    void setGameState(GameState gs) {
+        gameState = gs;
+    }
+
     /**
      * Moves that are not part of the gamestate, but have been selected by the
      * user as potential moves. The board will animate these movements if
      * animation is enabled.
      */
-    PipMovement[] _selectedMoves;
     PipTransition[] transitionStack;
-
-    /**
-     * Return moves currently selected
-     */
-    public PipMovement[] getSelectedMoves() {
-        return _selectedMoves.dup;
-    }
-
-    /**
-     * Select a move. This will not be applied to the gamestate but will be
-     * layered on top of it for the user to see.
-     * TODO: Move signal firing to here
-     */
-    public void selectMove(PipMovement move) {
-        // Assert that its a valid move... Contract programming?
-
-        SysTime startTime = Clock.currTime;
-
-        // Do we need to wait for animations?
-        if (animatedDice.length && !animatedDice[0].finished) {
-            startTime = animatedDice[0].startTime + 2*style.animationSpeed.msecs
-                + getSelectedMoves.length.msecs; // Just to offset after eachother
-        }
-
-        if (move.startPoint) {
-            const auto pointAtStart = calculatePointAtTime(move.startPoint, startTime);
-            if (pointAtStart.numPieces == 0
-                    || pointAtStart.owner == getGameState.currentPlayer.opposite) {
-                // Find the last time that someone landed there
-                auto landed = transitionStack.filter!(t => t.endPoint == move.startPoint).array;
-                assert(landed.length);
-                startTime = landed[$-1].startTime + style.animationSpeed.msecs;
-            }
-        }
-
-        // Is this going to take a piece?
-        bool takesPiece = false;
-        if (move.endPoint && selectedGameState.points[move.endPoint].owner == getGameState().currentPlayer.opposite) {
-            takesPiece = true;
-        }
-
-        _selectedMoves ~= move;
-        transitionStack ~= PipTransition(
-            move.startPoint,
-            move.endPoint,
-            false,
-            takesPiece,
-            startTime);
-
-    }
-
-    /// The current gamestate with selected moves applied. Transitions are
-    /// Transitioning towards this
-    public GameState selectedGameState() {
-        if (getGameState().turnState == TurnState.MoveSelection) {
-            GameState r = getGameState().dup;
-
-            r.applyTurn(getSelectedMoves(), true);
-            return r;
-        } else {
-            assert(getSelectedMoves().length == 0);
-            return getGameState();
-        }
-    }
-
-    /**
-     * Finish a turn but submitting the current potential moves to the game state.
-     * Maybe remove this... Don't like the idea of renderer managing gamestate
-     */
-    public void finishTurn() {
-        if (!_selectedMoves.length) {
-            this.displayMessage("No movement available", () {});
-        }
-
-        applyTurnAtEndOfAnimation = true;
-    }
-
-    /**
-     * Remove the most recent potential move
-     */
-    public void undoSelectedMove() {
-        if (_selectedMoves.length > 0) {
-            _selectedMoves = _selectedMoves[0..$-1];
-            transitionStack = transitionStack[0..$-1]; // Might want to undo more
-            onChangePotentialMovements.emit();
-        }
-    }
 
     /**
      * Draw gamestate pips onto the context
      */
-    void drawPips(Context cr) {
+    void drawPips(Context cr, SysTime frameTime) {
+        this.frameTime = frameTime;
+
         // General function for drawing a pip at a certain point
         void drawPip(float pointX, float pointY, RGB color) {
             import std.math : PI;
@@ -156,7 +94,8 @@ public template TurnSelection() {
 
         // Draw pips on each point
         uint pointNum = 0;
-        foreach(point; this.selectedGameState.points) {
+        // WAS: foreach(point; this.selectedGameState.points) {
+        foreach(point; this.gameState.points) {
             const auto calculatedPoint = calculatePointAtTime(pointNum+1, frameTime);
 
             foreach(n; 0..calculatedPoint.numPieces) {
@@ -182,13 +121,13 @@ public template TurnSelection() {
                 .filter!(t => t.startTime + style.animationSpeed.msecs < frameTime)
                 .array) {
             auto startPos = layout.getPipPosition(takenTransition.endPoint, 1);
-            auto endPos = layout.getTakenPipPosition(getGameState().currentPlayer.opposite,
-                calculateTakenPiecesAtTime(getGameState().currentPlayer.opposite,
+            auto endPos = layout.getTakenPipPosition(gameState.currentPlayer.opposite,
+                calculateTakenPiecesAtTime(gameState.currentPlayer.opposite,
                 takenTransition.startTime + 2*style.animationSpeed.msecs));
             float progress = (frameTime -
                 (takenTransition.startTime +style.animationSpeed.msecs)
                 ).total!"msecs" / cast(float) style.animationSpeed;
-            tweenPip(startPos, endPos, progress, getGameState().currentPlayer.opposite);
+            tweenPip(startPos, endPos, progress, gameState.currentPlayer.opposite);
         }
 
         // Draw pip movement animations
@@ -199,9 +138,9 @@ public template TurnSelection() {
             // If it's coming from the bar
             if (!transition.startPoint) {
                 auto startingPip = calculateTakenPiecesAtTime(
-                    getGameState().currentPlayer, transition.startTime
+                    gameState.currentPlayer, transition.startTime
                 );
-                startPos = layout.getTakenPipPosition(getGameState().currentPlayer, startingPip);
+                startPos = layout.getTakenPipPosition(gameState.currentPlayer, startingPip);
             } else {
                 auto startPoint = calculatePointAtTime(transition.startPoint, transition.startTime);
                 startPos = layout.getPipPosition(transition.startPoint, startPoint.numPieces);
@@ -218,7 +157,7 @@ public template TurnSelection() {
 
             float progress = (frameTime - transition.startTime).total!"msecs" / cast(float) style.animationSpeed;
             progress = progress > 1.0 ? 1.0 : progress;
-            tweenPip(startPos, endPos, progress, getGameState.currentPlayer);
+            tweenPip(startPos, endPos, progress, gameState.currentPlayer);
         }
 
     }
@@ -236,7 +175,7 @@ public template TurnSelection() {
     Point calculatePointAtTime(uint pointNum, SysTime time) {
         assert(1 <= pointNum && pointNum <= 24);
 
-        auto numPips = getGameState().points[pointNum].numPieces;
+        auto numPips = gameState.points[pointNum].numPieces;
 
         // Add the ones that arrived
         numPips += transitionStack
@@ -253,33 +192,32 @@ public template TurnSelection() {
         if (transitionStack.filter!(t => t.endPoint == pointNum)
                 .filter!(t => t.startTime + style.animationSpeed.msecs <= time).array.length) {
 
-            if (getGameState().points[pointNum].owner == getGameState().currentPlayer.opposite) {
-                return Point(getGameState().currentPlayer, --numPips);
+            if (gameState.points[pointNum].owner == gameState.currentPlayer.opposite) {
+                return Point(gameState.currentPlayer, --numPips);
             } else  {
-                return Point(getGameState().currentPlayer, numPips);
+                return Point(gameState.currentPlayer, numPips);
             }
         }
         
         // Should change this to an assert tbqh
         if (numPips > 100) {
-            writeln(getGameState.currentPlayer);
-            writeln(pointNum, " ", getGameState.points[pointNum]);
+            writeln(gameState.currentPlayer);
+            writeln(pointNum, " ", gameState.points[pointNum]);
             writeln(time);
             writeln(transitionStack);
-            writeln(getSelectedMoves);
             assert(0);
         }
 
-        return Point(getGameState.points[pointNum].owner, numPips);
+        return Point(gameState.points[pointNum].owner, numPips);
     }
 
     /**
      * Calculates what's been taken
      */
     uint calculateTakenPiecesAtTime(Player player, SysTime time) {
-        uint numPips = getGameState().takenPieces[player];
+        uint numPips = gameState.takenPieces[player];
         // Add points that have arrived
-        if (player == getGameState().currentPlayer().opposite) {
+        if (player == gameState.currentPlayer().opposite) {
             numPips += transitionStack.filter!(t => t.takesPiece
                 && t.startTime + 2*style.animationSpeed.msecs <= time).array.length;
         } else {
@@ -287,5 +225,48 @@ public template TurnSelection() {
         }
         // Minus points that have left
         return numPips;
+    }
+
+    bool isAnimating() {
+        return !!transitionStack
+                .filter!(t => (t.startTime + style.animationSpeed.msecs > frameTime)
+                    || (t.takesPiece && t.startTime + 2*style.animationSpeed.msecs > frameTime))
+                .array.length;
+    }
+
+    void animateMove(PipMovement move) {
+        SysTime startTime = Clock.currTime;
+
+        if (move.startPoint) {
+            const auto pointAtStart = calculatePointAtTime(move.startPoint, startTime);
+            if (pointAtStart.numPieces == 0
+                    || pointAtStart.owner == gameState.currentPlayer.opposite) {
+                // Find the last time that someone landed there
+                auto landed = transitionStack.filter!(t => t.endPoint == move.startPoint).array;
+                assert(landed.length);
+                startTime = landed[$-1].startTime + style.animationSpeed.msecs;
+            }
+        }
+
+        // Is this going to take a piece?
+        bool takesPiece = false;
+        // if (move.endPoint && selectedGameState.points[move.endPoint].owner == gameState.currentPlayer.opposite) {
+        //     takesPiece = true;
+        // }
+
+        transitionStack ~= PipTransition(
+            move.startPoint,
+            move.endPoint,
+            false,
+            takesPiece,
+            startTime);
+    }
+
+    void clearTransitions() {
+        transitionStack = [];
+    }
+
+    void undoTransition() {
+        transitionStack = transitionStack[0..$-1]; // Might want to undo more
     }
 }

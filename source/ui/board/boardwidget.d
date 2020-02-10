@@ -22,16 +22,12 @@ import utils.signals;
 import ui.board.dice;
 import ui.board.layout;
 public import ui.board.layout : Corner;
-import ui.board.selection;
+import ui.board.pips;
 import ui.board.style;
 
 // TODO:
 // - Testing & benchmarking animations (potentially use separate thread?)
 // - Use GDK frameclock for animations
-
-static void setSourceRgbStruct(Context cr, RGB color) {
-    cr.setSourceRgb(color.r, color.g, color.b);
-}
 
 /**
  * Widget for rendering a backgammon game state
@@ -48,11 +44,14 @@ class BackgammonBoardWidget : DrawingArea {
      */
     BoardStyle style;
     BoardLayout layout;
+    PipRenderer pipRenderer;
 
     /// Animation
     SysTime lastAnimation;
     SysTime frameTime;
     AnimatedDie[] animatedDice;
+
+    PipMovement[] _selectedMoves;
 
     bool showEndGame;
     SysTime endGameTransition;
@@ -84,6 +83,7 @@ class BackgammonBoardWidget : DrawingArea {
 
         style = new BoardStyle;
         layout = new BoardLayout(style);
+        pipRenderer = new PipRenderer(layout, style);
 
         addOnDraw(&this.onDraw);
         addOnConfigure(&this.onConfigureEvent);
@@ -226,22 +226,81 @@ class BackgammonBoardWidget : DrawingArea {
         });
 
         this._gameState = gameState;
-        this.transitionStack = [];
+        this.pipRenderer.setGameState(gameState);
         this._selectedMoves = [];
         this.animatedDice = [];
         this.applyTurnAtEndOfAnimation = false;
     }
 
     /**
+     * Return moves currently selected
+     */
+    public PipMovement[] getSelectedMoves() {
+        return _selectedMoves.dup;
+    }
+
+    /**
+     * Select a move. This will not be applied to the gamestate but will be
+     * layered on top of it for the user to see.
+     * TODO: Move signal firing to here
+     */
+    public void selectMove(PipMovement move) {
+        // Assert that its a valid move... Contract programming?
+
+
+        // Do we need to wait for animations?
+        // if (animatedDice.length && !animatedDice[0].finished) {
+        //     startTime = animatedDice[0].startTime + 2*style.animationSpeed.msecs
+        //         + getSelectedMoves.length.msecs; // Just to offset after eachother
+        // }
+
+        _selectedMoves ~= move;
+        pipRenderer.animateMove(move);
+    }
+
+    /// The current gamestate with selected moves applied. Transitions are
+    /// Transitioning towards this
+    public GameState selectedGameState() {
+        if (getGameState().turnState == TurnState.MoveSelection) {
+            GameState r = getGameState().dup;
+
+            r.applyTurn(getSelectedMoves(), true);
+            return r;
+        } else {
+            assert(getSelectedMoves().length == 0);
+            return getGameState();
+        }
+    }
+
+    /**
+     * Finish a turn but submitting the current potential moves to the game state.
+     * Maybe remove this... Don't like the idea of renderer managing gamestate
+     */
+    public void finishTurn() {
+        if (!_selectedMoves.length) {
+            this.displayMessage("No movement available", () {});
+        }
+
+        applyTurnAtEndOfAnimation = true;
+    }
+
+    /**
+     * Remove the most recent potential move
+     */
+    public void undoSelectedMove() {
+        if (_selectedMoves.length > 0) {
+            _selectedMoves = _selectedMoves[0..$-1];
+            pipRenderer.undoTransition();
+            onChangePotentialMovements.emit();
+        }
+    }
+    /**
      * Returns whether the board has unfinished animations either from selection
      * or from dice roll
      */
     public bool isAnimating() {
         const bool isDiceRolling = !!animatedDice.length ? !animatedDice[0].finished : false;
-        return !!transitionStack
-                .filter!(t => (t.startTime + style.animationSpeed.msecs > frameTime)
-                    || (t.takesPiece && t.startTime + 2*style.animationSpeed.msecs > frameTime))
-                .array.length
+        return pipRenderer.isAnimating()
             || isDiceRolling
             || Clock.currTime - _startDisplayMessage < 2 * style.animationSpeed.msecs;
     }
@@ -312,7 +371,7 @@ class BackgammonBoardWidget : DrawingArea {
 
         frameTime = Clock.currTime(); // for animations
         if (this.getGameState() && this.getGameState._currentPlayer != Player.NONE) {
-            drawPips(cr);
+            pipRenderer.drawPips(cr, frameTime);
             drawDice(cr);
         }
 
@@ -348,7 +407,7 @@ class BackgammonBoardWidget : DrawingArea {
             applyTurnAtEndOfAnimation = false;
             auto pMoves = getSelectedMoves();
             _selectedMoves = [];
-            transitionStack = [];
+            pipRenderer.clearTransitions();
             getGameState().applyTurn(pMoves);
         }
 
@@ -513,6 +572,4 @@ class BackgammonBoardWidget : DrawingArea {
         cr.showText(_displayMessage);
         cr.fill();
     }
-
-    public mixin TurnSelection;
 }
