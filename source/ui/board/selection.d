@@ -1,5 +1,17 @@
 module ui.board.selection;
 
+import std.datetime;
+
+// Moving off the board? Moving to bar and back...
+struct PipTransition {
+    uint startPoint;
+    uint endPoint;
+    bool undone;
+    bool takesPiece;
+    SysTime startTime;
+}
+
+
 /**
  * Functionality for the user selecting moves
  * 1. find methods that may be related. Right now the code is very tangled up so
@@ -13,6 +25,7 @@ public template TurnSelection() {
      * animation is enabled.
      */
     PipMovement[] _selectedMoves;
+    PipTransition[] transitionStack;
 
     /**
      * Return moves currently selected

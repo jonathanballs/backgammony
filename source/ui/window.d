@@ -42,7 +42,7 @@ class BackgammonWindow : MainWindow {
     Button finishTurnBtn;
     Button undoMoveBtn;
 
-    public BackgammonBoard backgammonBoard;
+    public BackgammonBoardWidget backgammonBoard;
     NetworkGameDialog networkWidget;
     NewGameDialog newGameDialog;
 
@@ -110,7 +110,7 @@ class BackgammonWindow : MainWindow {
         this.addOnKeyPress(&onKeyPress);
 
         // Game board
-        backgammonBoard = new BackgammonBoard();
+        backgammonBoard = new BackgammonBoardWidget();
         backgammonBoard.onChangePotentialMovements.connect(() {
             undoMoveBtn.setSensitive(!!backgammonBoard.getSelectedMoves().length);
 

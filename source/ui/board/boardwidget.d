@@ -28,16 +28,6 @@ import ui.board.style;
 // TODO:
 // - Testing & benchmarking animations (potentially use separate thread?)
 // - Use GDK frameclock for animations
-// - Split this up for god's sake
-
-// Moving off the board? Moving to bar and back...
-private struct PipTransition {
-    uint startPoint;
-    uint endPoint;
-    bool undone;
-    bool takesPiece;
-    SysTime startTime;
-}
 
 static void setSourceRgbStruct(Context cr, RGB color) {
     cr.setSourceRgb(color.r, color.g, color.b);
@@ -46,7 +36,7 @@ static void setSourceRgbStruct(Context cr, RGB color) {
 /**
  * Widget for rendering a backgammon game state
  */
-class BackgammonBoard : DrawingArea {
+class BackgammonBoardWidget : DrawingArea {
     private:
     /**
      * The gameState gamestate that is being rendered
@@ -63,7 +53,6 @@ class BackgammonBoard : DrawingArea {
     SysTime lastAnimation;
     SysTime frameTime;
     AnimatedDie[] animatedDice;
-    PipTransition[] transitionStack;
 
     bool showEndGame;
     SysTime endGameTransition;
@@ -108,7 +97,7 @@ class BackgammonBoard : DrawingArea {
     }
 
     /**
-     * Create a new BackgammonBoard widget and set the gamestate
+     * Create a new BackgammonBoardWidget widget and set the gamestate
      */
     public this(GameState gs) {
         this();
