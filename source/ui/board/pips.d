@@ -40,6 +40,8 @@ class PipRenderer {
     }
 
     void setGameState(GameState gs) {
+        transitionStack = [];
+        selectedMoves = [];
         gameState = gs;
     }
 

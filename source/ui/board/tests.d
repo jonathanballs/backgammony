@@ -52,7 +52,10 @@ private class UITests {
     }
 
     @uitest static void rollDice(BackgammonWindow w) {
-        writeln("rolling diicee");
+        auto gs = new GameState();
+        gs.newGame();
+        w.setGameState(gs);
+        gs.rollDice();
     }
 
     @uitest static void noMovesMessage(BackgammonWindow w) {

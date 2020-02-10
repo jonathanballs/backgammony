@@ -227,6 +227,7 @@ class BackgammonBoardWidget : DrawingArea {
 
         this._gameState = gameState;
         this.pipRenderer.setGameState(gameState);
+        this._startDisplayMessage = SysTime.init;
         this._selectedMoves = [];
         this.animatedDice = [];
         this.applyTurnAtEndOfAnimation = false;
