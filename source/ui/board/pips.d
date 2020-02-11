@@ -48,8 +48,7 @@ class PipRenderer {
     }
 
     void setGameState(GameState gs) {
-        transitionStack = [];
-        selectedMoves = [];
+        clearTransitions();
         gameState = gs;
     }
 
@@ -66,8 +65,9 @@ class PipRenderer {
     public GameState selectedGameState() {
         if (gameState.turnState == TurnState.MoveSelection) {
             return gameState.dup.applyTurn(selectedMoves
-                .filter!(m => m[1])
-                .map!(m => m[0]).array, true);
+                    .filter!(m => m[1])
+                    .map!(m => m[0]).array,
+                true);
         } else {
             return gameState;
         }
@@ -315,8 +315,8 @@ class PipRenderer {
         if (prevMode == PipRendererMode.AwaitingAnimation
                 && mode == PipRendererMode.PipSelection) {
             foreach (ref m; selectedMoves) {
-                m[1] = true;
                 animateMove(m[0]);
+                m[1] = true;
             }
         }
     }

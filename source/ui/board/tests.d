@@ -119,8 +119,10 @@ private class UITests {
         gs.onDiceRolled.connect((GameState _gs, uint die1, uint die2) {
             auto turns = gs.generatePossibleTurns();
             auto t = turns.length ? turns[0] : [];
-            foreach (m; t) w.backgammonBoard.selectMove(m);
-            w.backgammonBoard.finishTurn();
+            if (w.backgammonBoard.getGameState == gs) {
+                foreach (m; t) w.backgammonBoard.selectMove(m);
+                w.backgammonBoard.finishTurn();
+            }
         });
     }
 

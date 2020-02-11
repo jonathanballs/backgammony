@@ -216,6 +216,7 @@ class BackgammonBoardWidget : DrawingArea {
             animatedDice = [];
             _selectedMoves = [];
             onChangePotentialMovements.emit();
+            pipRenderer.setMode(PipRendererMode.AwaitingAnimation);
         });
         gameState.onEndGame.connect((GameState gs, Player winner) {
             this.showEndGame = true;
