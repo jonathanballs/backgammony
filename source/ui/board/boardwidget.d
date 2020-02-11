@@ -373,28 +373,7 @@ class BackgammonBoardWidget : DrawingArea {
 
         // TODO: should be it's own method
         if (showEndGame) {
-            // End game animation takes style.animationSpeed number of msecs
-            float animProgress = (Clock.currTime - endGameTransition).total!"msecs"
-                / cast(float) style.animationSpeed;
-            if (animProgress > 1.0) animProgress = 1.0;
-
-            cr.setSourceRgba(0.0, 0.0, 0.0, 0.4 * animProgress);
-            cr.lineTo(0, 0);
-            cr.lineTo(style.boardWidth, 0);
-            cr.lineTo(style.boardWidth, style.boardHeight);
-            cr.lineTo(0, style.boardHeight);
-            cr.fill();
-
-            cr.setSourceRgba(1.0, 1.0, 1.0, animProgress);
-            string endGameText = getGameState.players[getGameState.winner].name ~ " wins";
-            cr.setFontSize(100);
-            cairo_text_extents_t extents;
-            cr.textExtents(endGameText, &extents);
-            cr.moveTo(
-                (style.boardWidth - extents.width) / 2,
-                (style.boardHeight- extents.height) / 2
-            );
-            cr.showText(endGameText);
+            displayEndGameMessage(cr);
         }
 
         if (applyTurnAtEndOfAnimation && !isAnimating()) {
@@ -406,6 +385,34 @@ class BackgammonBoardWidget : DrawingArea {
         }
 
         return false;
+    }
+
+    /**
+     * Display end game message
+     */
+    void displayEndGameMessage(Context cr) {
+        // End game animation takes style.animationSpeed number of msecs
+        float animProgress = (Clock.currTime - endGameTransition).total!"msecs"
+            / cast(float) style.animationSpeed;
+        if (animProgress > 1.0) animProgress = 1.0;
+
+        cr.setSourceRgba(0.0, 0.0, 0.0, 0.4 * animProgress);
+        cr.lineTo(0, 0);
+        cr.lineTo(style.boardWidth, 0);
+        cr.lineTo(style.boardWidth, style.boardHeight);
+        cr.lineTo(0, style.boardHeight);
+        cr.fill();
+
+        cr.setSourceRgba(1.0, 1.0, 1.0, animProgress);
+        string endGameText = getGameState.players[getGameState.winner].name ~ " wins";
+        cr.setFontSize(100);
+        cairo_text_extents_t extents;
+        cr.textExtents(endGameText, &extents);
+        cr.moveTo(
+            (style.boardWidth - extents.width) / 2,
+            (style.boardHeight- extents.height) / 2
+        );
+        cr.showText(endGameText);
     }
 
     /**
