@@ -24,6 +24,7 @@ import ui.board.layout;
 public import ui.board.layout : Corner;
 import ui.board.pips;
 import ui.board.style;
+import utils.cairowrappers;
 
 // TODO:
 // - Testing & benchmarking animations (potentially use separate thread?)
@@ -58,9 +59,9 @@ class BackgammonBoardWidget : DrawingArea {
 
     bool applyTurnAtEndOfAnimation = false;
 
-    /// The coordinates of each point on the screen in device. Just store matrix?
-    ScreenCoords[2][24] pointCoords;
     double[2] barXCoordinates;
+    /// Transformation matrix of the board
+    Matrix boardTMatrix;
 
     /// Fired when the user selects or undoes a potential move
     public Signal!() onChangePotentialMovements;
@@ -106,7 +107,8 @@ class BackgammonBoardWidget : DrawingArea {
 
     /**
      * Handles GTK moust click events. This currently includes piece movement
-     * as well as forward/backward buttons for undo/complete move.
+     * as well as forward/backward buttons for undo/complete move. This is a
+     * complete mess at the moment.
      */
     bool handleMouseClick(Event e) {
         // Only accept left clicks - ignore right clicks and double click events
@@ -152,13 +154,15 @@ class BackgammonBoardWidget : DrawingArea {
             // Where have we clicked?
             uint startPos;
 
-            // And check that player is user
-            foreach (uint i, c; pointCoords) {
+            foreach (uint i; 1..cast(uint)getGameState.points[].length+1) {
+                auto c = layout.getPointPosition(i)[]
+                    .map!(p => transformCoordinates(boardTMatrix, p))
+                    .array;
                 if (e.button.y > min(c[0].y, c[1].y)
                         && e.button.y < max(c[0].y, c[1].y)
                         && e.button.x > c[0].x - style.pointWidth/2.5
                         && e.button.x < c[0].x + style.pointWidth/2.5) {
-                    startPos = i + 1;
+                    startPos = i;
                     break;
                 }
             }
@@ -170,6 +174,9 @@ class BackgammonBoardWidget : DrawingArea {
                     return false;
                 }
             }
+
+            // Okay we have a startPos here. Check if we can calculate it from 
+            // the matrix alone
 
             uint[] moveValues = getGameState().diceValues;
             moveValues = moveValues[0] == moveValues[1]
@@ -350,6 +357,10 @@ class BackgammonBoardWidget : DrawingArea {
     }
 
     bool onDraw(Scoped!Context cr, Widget widget) {
+        // The default translation matrix comes with a default offset and I am
+        // not sure why. This translation needs to be undone in order to 
+        auto defaultMatrix = getMatrix(cr);
+
         // Centering and scaling the board
         auto scaleFactor = min(
             getAllocatedWidth() / style.boardWidth,
@@ -360,6 +371,11 @@ class BackgammonBoardWidget : DrawingArea {
             (getAllocatedHeight() - scaleFactor*style.boardHeight) / 2
         );
         cr.scale(scaleFactor, scaleFactor);
+
+        // Undo the default matrix.
+        boardTMatrix = getMatrix(cr);
+        boardTMatrix.getMatrixStruct().x0 -= defaultMatrix.getMatrixStruct().x0;
+        boardTMatrix.getMatrixStruct().y0 -= defaultMatrix.getMatrixStruct().y0;
 
         drawBoard(cr);
 
@@ -456,18 +472,6 @@ class BackgammonBoardWidget : DrawingArea {
         foreach (uint i; 0..24) {
             auto c = layout.getPointPosition(i+1);
 
-            // Record the point poisitoin
-            ScreenCoords toDevice(ScreenCoords sc) {
-                double x = sc.x;
-                double y = sc.y;
-                cr.userToDevice(x, y);
-                // TODO: Remove these magic numbers, where do they come from?
-                return ScreenCoords(x - 25, y - 70);
-            }
-
-            pointCoords[i][0] = toDevice(c[0]);
-            pointCoords[i][1] = toDevice(c[1]);
-
             // Draw the point
             cr.moveTo(c[0].x - style.pointWidth/2, c[0].y);
             cr.lineTo(c[1].x, c[1].y);
@@ -478,7 +482,7 @@ class BackgammonBoardWidget : DrawingArea {
             cr.stroke();
 
             // Draw numbers
-            bool isTop = pointCoords[i][0].y < pointCoords[i][1].y;
+            bool isTop = c[0].y < c[1].y;
             cairo_text_extents_t extents;
             cr.setFontSize(style.borderFontHeight);
             cr.textExtents((i+1).to!string, &extents);

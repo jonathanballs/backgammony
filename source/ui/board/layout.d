@@ -35,7 +35,7 @@ class BoardLayout {
      * Params:
      *      pointIndex = point number between 0 and 23
      */
-    Tuple!(ScreenCoords, ScreenCoords) getPointPosition(uint pointIndex) {
+    ScreenCoords[2] getPointPosition(uint pointIndex) {
         // Calculate for TR and then modify at the end
         assert (1 <= pointIndex && pointIndex <= 24);
         pointIndex--;
@@ -81,7 +81,7 @@ class BoardLayout {
             finish.x = style.boardWidth - finish.x;
         }
 
-        return tuple(start, finish);
+        return [start, finish];
     }
 
     ScreenCoords getPipPosition(uint pointNum, uint pipNum) {
