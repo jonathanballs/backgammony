@@ -59,7 +59,6 @@ class BackgammonBoardWidget : DrawingArea {
 
     bool applyTurnAtEndOfAnimation = false;
 
-    double[2] barXCoordinates;
     /// Transformation matrix of the board
     Matrix boardTMatrix;
 
@@ -168,7 +167,9 @@ class BackgammonBoardWidget : DrawingArea {
             }
 
             if (!startPos) {
-                if (barXCoordinates[0] < e.button.x && e.button.x < barXCoordinates[1]) {
+                auto barCoords = layout.getBarBoundaries();
+                if (transformDistance(boardTMatrix, barCoords[0]) < e.button.x
+                        && e.button.x < transformDistance(boardTMatrix, barCoords[1])) {
                     startPos = 0;
                 } else {
                     return false;
@@ -462,12 +463,6 @@ class BackgammonBoardWidget : DrawingArea {
         cr.fill;
         // And save it for clicks
         double yCoord = 0.0;
-        barXCoordinates[0] = (style.boardWidth - style.barWidth) / 2;
-        barXCoordinates[1] = (style.boardWidth + style.barWidth) / 2;
-        cr.userToDevice(barXCoordinates[0], yCoord);
-        cr.userToDevice(barXCoordinates[1], yCoord);
-        barXCoordinates[0]-=25;
-        barXCoordinates[1]-=25;
 
         foreach (uint i; 0..24) {
             auto c = layout.getPointPosition(i+1);

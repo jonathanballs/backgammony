@@ -107,4 +107,14 @@ class BoardLayout {
         if (player == Player.P2) pointY = style.boardHeight - pointY;
         return ScreenCoords(pointX, pointY);
     }
+
+    /**
+     * Return the x-coordinate boundaries of the bar
+     */
+    double[2] getBarBoundaries() {
+        return [
+            (style.boardWidth - style.barWidth) / 2.0,
+            (style.boardWidth + style.barWidth) / 2.0
+        ];
+    }
 }
