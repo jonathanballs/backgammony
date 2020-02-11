@@ -114,14 +114,13 @@ class BackgammonBoardWidget : DrawingArea {
             return false;
         }
 
-
         // If we aren't animating the dice and it's a user's turn
         if (animatedDice.length && animatedDice[0].finished
                 && this.getGameState().turnState == TurnState.MoveSelection
                 && this.getGameState().players[getGameState().currentPlayer].type == PlayerType.User) {
 
             /**
-            * Back and forward buttons
+            * Mouse forward and back buttons
             */
             if (e.button.button == 8) {
                 this.undoSelectedMove();
@@ -184,8 +183,6 @@ class BackgammonBoardWidget : DrawingArea {
                         break;
                     }
                 }
-
-                onChangePotentialMovements.emit();
             } catch (Exception e) {
                 writeln("Invalid move: ", e.message);
             }
@@ -247,17 +244,9 @@ class BackgammonBoardWidget : DrawingArea {
      * TODO: Move signal firing to here
      */
     public void selectMove(PipMovement move) {
-        // Assert that its a valid move... Contract programming?
-
-
-        // Do we need to wait for animations?
-        // if (animatedDice.length && !animatedDice[0].finished) {
-        //     startTime = animatedDice[0].startTime + 2*style.animationSpeed.msecs
-        //         + getSelectedMoves.length.msecs; // Just to offset after eachother
-        // }
-
         _selectedMoves ~= move;
         pipRenderer.selectMove(move);
+        onChangePotentialMovements.emit();
     }
 
     /// The current gamestate with selected moves applied. Transitions are
@@ -350,7 +339,9 @@ class BackgammonBoardWidget : DrawingArea {
                 cr.restore();
             }
             if (startFinished != animatedDice[1].finished) {
-                pipRenderer.setMode(PipRendererMode.PipSelection);
+                if (getGameState.players[getGameState.currentPlayer].type == PlayerType.User) {
+                    pipRenderer.setMode(PipRendererMode.PipSelection);
+                }
                 onCompleteDiceAnimation.emit();
             }
         }

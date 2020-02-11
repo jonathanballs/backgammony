@@ -12,7 +12,9 @@ import ui.board.style;
 import ui.board.layout;
 
 
-// Moving off the board? Moving to bar and back...
+/**
+ * A single pip transition animation
+ */
 private struct PipTransition {
     uint startPoint;
     uint endPoint;
@@ -24,6 +26,7 @@ private struct PipTransition {
 /**
  * The renderer mode. Defines how the renderer responds to events.
  */
+// Perhaps just bool isWaiting or something
 enum PipRendererMode {
     AwaitingAnimation,
     PipSelection,
@@ -41,7 +44,6 @@ class PipRenderer {
     GameState gameState;
     SysTime frameTime;
 
-    // This gamestate is not known...
     this(BoardLayout layout, BoardStyle style) {
         this.style = style;
         this.layout = layout;
