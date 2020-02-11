@@ -256,7 +256,7 @@ class BackgammonBoardWidget : DrawingArea {
         // }
 
         _selectedMoves ~= move;
-        pipRenderer.animateMove(move);
+        pipRenderer.selectMove(move);
     }
 
     /// The current gamestate with selected moves applied. Transitions are
@@ -349,6 +349,7 @@ class BackgammonBoardWidget : DrawingArea {
                 cr.restore();
             }
             if (startFinished != animatedDice[1].finished) {
+                pipRenderer.setMode(PipRendererMode.PipSelection);
                 onCompleteDiceAnimation.emit();
             }
         }

@@ -1,9 +1,10 @@
 module ui.board.pips;
 
 import std.algorithm;
+import std.array;
 import std.datetime;
 import std.stdio;
-import std.array;
+import std.typecons;
 import cairo.Context;
 import game;
 
@@ -20,14 +21,21 @@ private struct PipTransition {
     SysTime startTime;
 }
 
+/**
+ * The renderer mode. Defines how the renderer responds to events.
+ */
+enum PipRendererMode {
+    AwaitingAnimation,
+    PipSelection,
+    BoardEditing,
+}
+
 
 /**
- * Functionality for the user selecting moves
- * 1. find methods that may be related. Right now the code is very tangled up so
- *    time will need to be spent unwinding it.
- * 2. Move it over
+ * Pip rendering and interaction code
  */
 class PipRenderer {
+    PipRendererMode mode;
     BoardStyle style;
     BoardLayout layout;
     GameState gameState;
@@ -48,16 +56,18 @@ class PipRenderer {
     /**
      * Moves that are not part of the gamestate, but have been selected by the
      * user as potential moves. The board will animate these movements if
-     * animation is enabled.
+     * animation is enabled. The boolean is whether the selected move is 
      */
     PipTransition[] transitionStack;
-    PipMovement[] selectedMoves;
+    Tuple!(PipMovement, bool)[] selectedMoves;
 
     /// The current gamestate with selected moves applied. Transitions are
     /// Transitioning towards this
     public GameState selectedGameState() {
         if (gameState.turnState == TurnState.MoveSelection) {
-            return gameState.dup.applyTurn(selectedMoves, true);
+            return gameState.dup.applyTurn(selectedMoves
+                .filter!(m => m[1])
+                .map!(m => m[0]).array, true);
         } else {
             return gameState;
         }
@@ -247,7 +257,16 @@ class PipRenderer {
                 .array.length;
     }
 
-    void animateMove(PipMovement move) {
+    void selectMove(PipMovement move) {
+        if (mode == PipRendererMode.PipSelection) {
+            animateMove(move);
+            selectedMoves ~= tuple(move, true);
+        } else {
+            selectedMoves ~= tuple(move, false);
+        }
+    }
+
+    private void animateMove(PipMovement move) {
         SysTime startTime = Clock.currTime;
 
         if (move.startPoint) {
@@ -267,22 +286,38 @@ class PipRenderer {
             takesPiece = true;
         }
 
-        transitionStack ~= PipTransition(
+        auto pt = PipTransition(
             move.startPoint,
             move.endPoint,
             false,
             takesPiece,
             startTime);
-        selectedMoves ~= move;
+
+        if (mode == PipRendererMode.PipSelection) transitionStack ~= pt;
     }
 
     void clearTransitions() {
-        transitionStack = [];
         selectedMoves = [];
+        transitionStack = [];
     }
 
     void undoTransition() {
-        transitionStack = transitionStack[0..$-1]; // Might want to undo more
-        selectedMoves = selectedMoves[0..$-1]; // Might want to undo more
+        if (selectedMoves[$-1][1]) {
+            transitionStack = transitionStack[0..$-1];
+        }
+        selectedMoves = selectedMoves[0..$-1];
+    }
+
+    void setMode(PipRendererMode mode) {
+        auto prevMode = this.mode;
+        this.mode = mode;
+
+        if (prevMode == PipRendererMode.AwaitingAnimation
+                && mode == PipRendererMode.PipSelection) {
+            foreach (ref m; selectedMoves) {
+                m[1] = true;
+                animateMove(m[0]);
+            }
+        }
     }
 }
