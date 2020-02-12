@@ -347,9 +347,7 @@ class BackgammonBoardWidget : DrawingArea {
                 cr.restore();
             }
             if (startFinished != animatedDice[1].finished) {
-                if (getGameState.players[getGameState.currentPlayer].type == PlayerType.User) {
-                    pipRenderer.setMode(PipRendererMode.PipSelection);
-                }
+                pipRenderer.setMode(PipRendererMode.PipSelection);
                 onCompleteDiceAnimation.emit();
             }
         }
