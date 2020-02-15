@@ -29,6 +29,15 @@ struct ScreenPoint {
     float distance(ScreenPoint p) {
         return sqrt(pow(p.x - x, 2) + pow(p.y - y, 2));
     }
+
+    ScreenPoint opBinary(string op)(ScreenPoint rhs) {
+        static if (op == "+") {
+            return ScreenPoint(x+rhs.x, y+rhs.y);
+        } else static if (op == "-") {
+            return ScreenPoint(x-rhs.x, y-rhs.y);
+        }
+        else static assert(0, "Operator "~op~" not implemented");
+    }
 }
 
 /**

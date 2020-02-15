@@ -108,6 +108,14 @@ class BackgammonBoardWidget : DrawingArea {
         this.addOnMotionNotify((Event e, Widget w) {
             // Change motion
             if (isMouseDown) {
+                /**
+                * We're dragging...
+                */
+                auto dMatrix = duplicateMatrix(boardTMatrix);
+                dMatrix.invert();
+                auto dragEnd = dMatrix.transformCoordinates(ScreenPoint(e.button.x, e.button.y));
+                ScreenPoint diff = dragStart - dragEnd;
+                writeln(diff);
                 isDragging = true;
             }
             return true;

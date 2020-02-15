@@ -43,11 +43,21 @@ class PipRenderer {
     GameState gameState;
     SysTime frameTime;
 
+    bool isDragging;
+    uint dragPointIndex;
+    ScreenPoint dragOffset;
+
+    /**
+     * Create a new PipRenderer
+     */
     this(BoardLayout layout, BoardStyle style) {
         this.style = style;
         this.layout = layout;
     }
 
+    /**
+     * Set the gamestate.
+     */
     void setGameState(GameState gs) {
         clearTransitions();
         gameState = gs;
@@ -232,6 +242,11 @@ class PipRenderer {
             assert(0);
         }
 
+        // In case a pip is being dragged
+        if (isDragging && dragPointIndex == pointNum && numPips) {
+            numPips--;
+        }
+
         return Point(gameState.points[pointNum].owner, numPips);
     }
 
@@ -307,6 +322,15 @@ class PipRenderer {
             transitionStack = transitionStack[0..$-1];
         }
         selectedMoves = selectedMoves[0..$-1];
+    }
+
+    void startDrag(uint pointIndex) {
+        dragPointIndex = pointIndex;
+        isDragging = true;
+    }
+
+    void releaseDrag() {
+        isDragging = false;
     }
 
     void setMode(PipRendererMode mode) {
