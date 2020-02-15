@@ -2,7 +2,7 @@ module utils.cairowrappers;
 
 import cairo.Context;
 import cairo.Matrix;
-import ui.board.layout : ScreenCoords;
+import ui.board.layout : ScreenPoint;
 
 /**
  * Return the transformation matrix of cairo context
@@ -17,12 +17,12 @@ Matrix getMatrix(Context cr) {
 /**
  * Transform coordinates
  */
-ScreenCoords transformCoordinates(Matrix m, ScreenCoords sc) {
+ScreenPoint transformCoordinates(Matrix m, ScreenPoint sc) {
     double x = sc.x;
     double y = sc.y;
     m.transformPoint(x, y);
 
-    return ScreenCoords(x, y);
+    return ScreenPoint(x, y);
 }
 
 /**

@@ -99,7 +99,7 @@ class PipRenderer {
         /**
          * Draw pip in between two positions
          */
-        void tweenPip(ScreenCoords startPos, ScreenCoords endPos, float progress, Player player) {
+        void tweenPip(ScreenPoint startPos, ScreenPoint endPos, float progress, Player player) {
             // Functions found here https://gist.github.com/gre/1650294
             // in/out quadratic easing
             float easingFunc(float t) {
@@ -107,7 +107,7 @@ class PipRenderer {
             }
 
             // Tween between positions
-            auto currPosition = ScreenCoords(
+            auto currPosition = ScreenPoint(
                 startPos.x + easingFunc(progress)*(endPos.x - startPos.x),
                 startPos.y + easingFunc(progress)*(endPos.y - startPos.y)
             );
@@ -156,8 +156,8 @@ class PipRenderer {
 
         // Draw pip movement animations
         foreach (transition; getCurrentTransitions()) {
-            ScreenCoords startPos;
-            ScreenCoords endPos;
+            ScreenPoint startPos;
+            ScreenPoint endPos;
 
             // If it's coming from the bar
             if (!transition.startPoint) {
@@ -172,7 +172,7 @@ class PipRenderer {
 
             // If it's being borne off
             if (!transition.endPoint) {
-                endPos = ScreenCoords(1.5 * style.boardWidth, 0.5*style.boardHeight);
+                endPos = ScreenPoint(1.5 * style.boardWidth, 0.5*style.boardHeight);
             } else {
                 auto endPoint = calculatePointAtTime(transition.endPoint,
                                     transition.startTime + style.animationSpeed.msecs);

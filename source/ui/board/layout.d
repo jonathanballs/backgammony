@@ -1,5 +1,6 @@
 module ui.board.layout;
 
+import std.math;
 import std.stdio;
 import std.typecons;
 
@@ -15,9 +16,46 @@ enum Corner {
     TR
 }
 
-struct ScreenCoords {
+/**
+ * A single point on the screen
+ */
+struct ScreenPoint {
     float x;
     float y;
+
+    /**
+     * Return euclidean distance to another ScreenPoint
+     */
+    float distance(ScreenPoint p) {
+        return sqrt(pow(p.x - x, 2) + pow(p.y - y, 2));
+    }
+}
+
+/**
+ * A circle on the screen
+ */
+struct ScreenCircle {
+    float x;
+    float y;
+    float radius;
+
+    /**
+     * Returns the area of the circle
+     */
+    float area() {
+        return PI * pow(radius, 2);
+    }
+
+    ScreenPoint center() {
+        return ScreenPoint(x, y);
+    }
+
+    /**
+     * Returns whether the circle contains a point
+     */
+    bool contains(ScreenPoint p) {
+        return p.distance(center()) <= radius;
+    }
 }
 
 class BoardLayout {
@@ -35,13 +73,13 @@ class BoardLayout {
      * Params:
      *      pointIndex = point number between 0 and 23
      */
-    ScreenCoords[2] getPointPosition(uint pointIndex) {
+    ScreenPoint[2] getPointPosition(uint pointIndex) {
         // Calculate for TR and then modify at the end
         assert (1 <= pointIndex && pointIndex <= 24);
         pointIndex--;
 
-        ScreenCoords start;
-        ScreenCoords finish;
+        ScreenPoint start;
+        ScreenPoint finish;
 
         // y-coordinate
         if (pointIndex < 12) {
@@ -84,7 +122,7 @@ class BoardLayout {
         return [start, finish];
     }
 
-    ScreenCoords getPipPosition(uint pointNum, uint pipNum) {
+    ScreenPoint getPipPosition(uint pointNum, uint pipNum) {
         assert (1 <= pointNum && pointNum <= 24);
         if (!pipNum) {
             throw new Exception("errrr");
@@ -97,15 +135,15 @@ class BoardLayout {
             pointY = style.boardHeight - pointY;
         }
 
-        return ScreenCoords(pointPosition[0].x, pointY);
+        return ScreenPoint(pointPosition[0].x, pointY);
     }
 
-    ScreenCoords getTakenPipPosition(Player player, uint pipNum) {
+    ScreenPoint getTakenPipPosition(Player player, uint pipNum) {
         assert(pipNum && pipNum <= 20);
         float pointX = style.boardWidth / 2;
         float pointY = style.boardHeight / 2 - (pipNum+1)*style.pipRadius;
         if (player == Player.P2) pointY = style.boardHeight - pointY;
-        return ScreenCoords(pointX, pointY);
+        return ScreenPoint(pointX, pointY);
     }
 
     /**

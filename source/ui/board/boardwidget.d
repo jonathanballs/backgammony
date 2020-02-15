@@ -46,21 +46,27 @@ class BackgammonBoardWidget : DrawingArea {
     BoardStyle style;
     BoardLayout layout;
     PipRenderer pipRenderer;
+    Matrix boardTMatrix;
 
-    /// Animation
+    /**
+     * Animation
+     */
     SysTime lastAnimation;
     SysTime frameTime;
     AnimatedDie[] animatedDice;
+    bool showEndGame;
+    SysTime endGameTransition;
+    bool applyTurnAtEndOfAnimation = false;
+
+    /**
+     * Drag and drop
+     */
+    bool isDragging = false;
+    ScreenPoint dragStart;
+    SysTime dragStartTime;
 
     PipMovement[] _selectedMoves;
 
-    bool showEndGame;
-    SysTime endGameTransition;
-
-    bool applyTurnAtEndOfAnimation = false;
-
-    /// Transformation matrix of the board
-    Matrix boardTMatrix;
 
     /// Fired when the user selects or undoes a potential move
     public Signal!() onChangePotentialMovements;
