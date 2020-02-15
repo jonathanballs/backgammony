@@ -134,22 +134,6 @@ class BackgammonBoardWidget : DrawingArea {
                 return false;
             }
 
-            auto possibleTurns = getGameState().generatePossibleTurns().filter!((t) {
-                foreach (j; 0..getSelectedMoves.length) {
-                    if (getSelectedMoves[j] != t[j]) return false;
-                }
-                return true;
-            }).array;
-
-            if (!possibleTurns.length) return false;
-
-            if (getSelectedMoves().length == possibleTurns[0].length) return false;
-
-            // TODO: Put bearing off ahead of normal movement
-            possibleTurns = possibleTurns.sort!((a, b) {
-                return a[getSelectedMoves.length].diceValue > b[getSelectedMoves.length].diceValue;
-            }).array;
-
             // Where have we clicked?
             uint startPos;
 
@@ -176,24 +160,18 @@ class BackgammonBoardWidget : DrawingArea {
                 }
             }
 
-            // Okay we have a startPos here. Check if we can calculate it from 
-            // the matrix alone
 
-            uint[] moveValues = getGameState().diceValues;
-            moveValues = moveValues[0] == moveValues[1]
-                ? moveValues ~ moveValues
-                : moveValues;
+            auto possibleTurns = getGameState().generatePossibleTurns().filter!((t) {
+                return equal(getSelectedMoves[], t[0..getSelectedMoves.length])
+                    && t.length > getSelectedMoves.length
+                    && t[getSelectedMoves.length].startPoint == startPos;
+            }).array.sort!((a, b) {
+                return a[getSelectedMoves.length].diceValue > b[getSelectedMoves.length].diceValue;
+            });
 
-            try {
-                foreach (t; possibleTurns) {
-                    if (t[getSelectedMoves.length].startPoint == startPos) {
-                        selectMove(t[getSelectedMoves.length]);
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-                writeln("Invalid move: ", e.message);
-            }
+            if (!possibleTurns.length) return false;
+
+            selectMove(possibleTurns[0][getSelectedMoves.length]);
         }
         return false;
     }
