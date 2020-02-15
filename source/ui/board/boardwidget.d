@@ -202,12 +202,46 @@ class BackgammonBoardWidget : DrawingArea {
 
             isMouseDown = false;
             if (pipRenderer.isDragging) {
-                pipRenderer.releaseDrag(); // Should this take final position??
 
                 if (pipRenderer.dragOffset.magnitude < 5.0) {
+                    pipRenderer.releaseDrag();
                     // Hardly been moved so just act as if it was a click
                 } else {
                     // Possible move to the next place
+                    auto pipStartPoint = pipRenderer.calculatePointAtTime(pipRenderer.dragPointIndex, pipRenderer.dragStartTime);
+                    auto pipStartPos = layout.getPipPosition(pipRenderer.dragPointIndex, pipStartPoint.numPieces);
+                    auto currentPos = pipStartPos + pipRenderer.dragOffset;
+
+                    uint endPos;
+
+                    foreach (uint i; 1..cast(uint)getGameState.points[].length+1) {
+                        auto c = layout.getPointPosition(i)[]
+                            .map!(p => transformCoordinates(boardTMatrix, p))
+                            .array;
+                        if (e.button.y > min(c[0].y, c[1].y)
+                                && e.button.y < max(c[0].y, c[1].y)
+                                && e.button.x > c[0].x - style.pointWidth/2.5
+                                && e.button.x < c[0].x + style.pointWidth/2.5) {
+                            endPos = i;
+                            break;
+                        }
+                    }
+
+                    if (endPos) {
+                        writeln("Released onto point ", endPos);
+                    }
+
+                    // Calculate the theoretical turn
+                    auto potentialMove = PipMovement(
+                        PipMoveType.Movement,
+                        pipRenderer.dragPointIndex,
+                        endPos
+                    );
+
+                    selectMove(potentialMove);
+
+                    pipRenderer.releaseDrag();
+
                     return false;
                 }
             }
@@ -304,9 +338,8 @@ class BackgammonBoardWidget : DrawingArea {
     /**
      * Select a move. This will not be applied to the gamestate but will be
      * layered on top of it for the user to see.
-     * TODO: Move signal firing to here
      */
-    public void selectMove(PipMovement move) {
+    public void selectMove(PipMovement move, bool animate = true) {
         _selectedMoves ~= move;
         pipRenderer.selectMove(move);
         onChangePotentialMovements.emit();
