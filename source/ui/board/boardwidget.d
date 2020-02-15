@@ -435,8 +435,8 @@ class BackgammonBoardWidget : DrawingArea {
 
         frameTime = Clock.currTime(); // for animations
         if (this.getGameState() && this.getGameState._currentPlayer != Player.NONE) {
-            pipRenderer.drawPips(cr, frameTime);
             drawDice(cr);
+            pipRenderer.drawPips(cr, frameTime);
         }
 
         drawMessages(cr);
