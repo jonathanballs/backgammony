@@ -301,7 +301,8 @@ class PipRenderer {
                 // Find the last time that someone landed there
                 auto landed = transitionStack.filter!(t => t.endPoint == move.startPoint).array;
                 assert(landed.length);
-                startTime = landed[$-1].startTime + style.animationSpeed.msecs;
+                startTime = landed[$-1].startTime + style.animationSpeed.msecs
+                    + transitionStack.length.msecs; // Staggered to fix uitests.doublePipMove()
             }
         }
 
@@ -326,6 +327,9 @@ class PipRenderer {
     void clearTransitions() {
         selectedMoves = [];
         transitionStack = [];
+        isDragging = false;
+        dragPointIndex = 0;
+        dragOffset = ScreenPoint();
     }
 
     void undoTransition() {

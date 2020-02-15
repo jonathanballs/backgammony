@@ -143,8 +143,8 @@ private class UITests {
     @uitest static void doublePipMove(BackgammonWindow w) {
         auto gs = new GameState();
         gs.newGame();
-        w.setGameState(gs);
         gs.rollDice(1, 1);
+        w.setGameState(gs);
         w.backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 6, 5));
         w.backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 6, 5));
         w.backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 5, 4));
