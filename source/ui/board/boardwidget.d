@@ -138,6 +138,16 @@ class BackgammonBoardWidget : DrawingArea {
             dMatrix.invert();
             dragStart = dMatrix.transformCoordinates(ScreenPoint(e.button.x, e.button.y));
             dragStartTime = Clock.currTime;
+
+            foreach (pIndex; 1..25) {
+                Point point = pipRenderer.calculatePointAtTime(pIndex, Clock.currTime);
+                if (!point.numPieces) continue;
+                ScreenPoint topPip = layout.getPipPosition(pIndex, point.numPieces);
+                ScreenCircle topPipCircle = ScreenCircle(topPip.x, topPip.y, style.pipRadius);
+                if (topPipCircle.contains(dragStart)) {
+                    writeln("Dragging from point ", pIndex);
+                }
+            }
         }
         return true;
     }
