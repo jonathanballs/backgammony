@@ -6,7 +6,6 @@ import std.typecons;
 import std.stdio;
 import std.digest.sha;
 import requests;
-import bencode;
 
 import gtk.Box;
 import gtk.Button;
