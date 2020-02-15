@@ -227,7 +227,7 @@ class BackgammonBoardWidget : DrawingArea {
                         }
                     }
 
-                    if (endPos) {
+                    if (endPos && endPos != pipRenderer.dragPointIndex) {
                         writeln("Released onto point ", endPos);
                         // Calculate the theoretical turn
                         auto potentialMove = PipMovement(
@@ -281,7 +281,7 @@ class BackgammonBoardWidget : DrawingArea {
 
             if (!possibleTurns.length) return false;
 
-            selectMove(possibleTurns[0][getSelectedMoves.length]);
+            selectMove(possibleTurns[0][getSelectedMoves.length], true);
         }
         return false;
     }
@@ -340,7 +340,7 @@ class BackgammonBoardWidget : DrawingArea {
      */
     public void selectMove(PipMovement move, bool animate = true) {
         _selectedMoves ~= move;
-        pipRenderer.selectMove(move, false);
+        pipRenderer.selectMove(move, animate);
         onChangePotentialMovements.emit();
     }
 

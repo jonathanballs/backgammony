@@ -284,7 +284,7 @@ class PipRenderer {
 
     void selectMove(PipMovement move, bool animate = true) {
         if (mode == PipRendererMode.PipSelection) {
-            animateMove(move, false);
+            animateMove(move, animate);
             selectedMoves ~= tuple(move, true);
         } else {
             selectedMoves ~= tuple(move, false);
