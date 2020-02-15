@@ -230,17 +230,28 @@ class BackgammonBoardWidget : DrawingArea {
                     if (endPos && endPos != pipRenderer.dragPointIndex) {
                         writeln("Released onto point ", endPos);
                         // Calculate the theoretical turn
-                        auto potentialMove = PipMovement(
-                            PipMoveType.Movement,
-                            pipRenderer.dragPointIndex,
-                            endPos
-                        );
+                        PipMovement potentialMove;
+                        try {
+                            potentialMove = PipMovement(
+                                PipMoveType.Movement,
+                                pipRenderer.dragPointIndex,
+                                endPos
+                            );
+                            // Ensure that it is valid
+                            auto potentialTurnStart = getSelectedMoves ~ potentialMove;
+                            foreach (t; getGameState.generatePossibleTurns()) {
+                                if (equal(t[0..potentialTurnStart.length], potentialTurnStart)) {
+                                    selectMove(potentialMove, false);
+                                    break;
+                                }
+                            }
 
-                        selectMove(potentialMove, false);
+                        } catch (Exception e) {
+                            writeln("Invalid move");
+                        }
                     }
 
                     pipRenderer.releaseDrag();
-
                     return false;
                 }
             }
