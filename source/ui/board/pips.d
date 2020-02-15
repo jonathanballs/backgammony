@@ -33,7 +33,6 @@ enum PipRendererMode {
     BoardEditing,
 }
 
-
 /**
  * Pip rendering and interaction code
  */

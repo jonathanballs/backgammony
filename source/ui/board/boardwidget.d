@@ -91,7 +91,11 @@ class BackgammonBoardWidget : DrawingArea {
             this.queueDraw();
             return true;
         });
-        this.addOnButtonPress(delegate bool (Event e, Widget w) {
+
+        this.addOnButtonPress((Event e, Widget w) {
+            return true;
+        });
+        this.addOnButtonRelease((Event e, Widget w) {
             return this.handleMouseClick(e);
         });
     }
@@ -111,7 +115,7 @@ class BackgammonBoardWidget : DrawingArea {
      */
     bool handleMouseClick(Event e) {
         // Only accept left clicks - ignore right clicks and double click events
-        if (e.button.type != GdkEventType.BUTTON_PRESS) {
+        if (e.button.type != GdkEventType.BUTTON_RELEASE) {
             return false;
         }
 
@@ -159,7 +163,6 @@ class BackgammonBoardWidget : DrawingArea {
                     return false;
                 }
             }
-
 
             auto possibleTurns = getGameState().generatePossibleTurns().filter!((t) {
                 return equal(getSelectedMoves[], t[0..getSelectedMoves.length])
