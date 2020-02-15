@@ -61,6 +61,7 @@ class BackgammonBoardWidget : DrawingArea {
     /**
      * Drag and drop
      */
+    bool isMouseDown = false;
     bool isDragging = false;
     ScreenPoint dragStart;
     SysTime dragStartTime;
@@ -99,10 +100,17 @@ class BackgammonBoardWidget : DrawingArea {
         });
 
         this.addOnButtonPress((Event e, Widget w) {
-            return true;
+            return this.handleMousePress(e);
         });
         this.addOnButtonRelease((Event e, Widget w) {
-            return this.handleMouseClick(e);
+            return this.handleMouseRelease(e);
+        });
+        this.addOnMotionNotify((Event e, Widget w) {
+            // Change motion
+            if (isMouseDown) {
+                isDragging = true;
+            }
+            return true;
         });
     }
 
@@ -114,16 +122,35 @@ class BackgammonBoardWidget : DrawingArea {
         this.setGameState(gs);
     }
 
+    bool handleMousePress(Event e) {
+        if (e.button.button == GDK_BUTTON_PRIMARY) {
+            isMouseDown = true;
+            // Duplicate the matrix
+            auto dMatrix = duplicateMatrix(boardTMatrix);
+            dMatrix.invert();
+            dragStart = dMatrix.transformCoordinates(ScreenPoint(e.button.x, e.button.y));
+            dragStartTime = Clock.currTime;
+        }
+        return true;
+    }
+
     /**
      * Handles GTK moust click events. This currently includes piece movement
      * as well as forward/backward buttons for undo/complete move. This is a
      * complete mess at the moment.
      */
-    bool handleMouseClick(Event e) {
+    bool handleMouseRelease(Event e) {
         // Only accept left clicks - ignore right clicks and double click events
         if (e.button.type != GdkEventType.BUTTON_RELEASE) {
             return false;
         }
+
+        /**
+         * We're dragging...
+         */
+        auto dMatrix = duplicateMatrix(boardTMatrix);
+        dMatrix.invert();
+        auto dragEnd = dMatrix.transformCoordinates(ScreenPoint(e.button.x, e.button.y));
 
         // If we aren't animating the dice and it's a user's turn
         if (animatedDice.length && animatedDice[0].finished
@@ -141,6 +168,12 @@ class BackgammonBoardWidget : DrawingArea {
                     getGameState().validateTurn(getSelectedMoves());
                     this.finishTurn();
                 } catch (Exception e) { /* Wasn't valid, won't finsh turn */ }
+                return false;
+            }
+
+            isMouseDown = false;
+            if (isDragging) {
+                isDragging = false;
                 return false;
             }
 

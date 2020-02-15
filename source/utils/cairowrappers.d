@@ -15,6 +15,16 @@ Matrix getMatrix(Context cr) {
 }
 
 /**
+ * Duplicate a cairo matrix
+ */
+Matrix duplicateMatrix(Matrix m) {
+    cairo_matrix_t* tm = new cairo_matrix_t;
+    *tm = *m.getMatrixStruct();
+    auto matrix = new Matrix(tm);
+    return matrix;
+}
+
+/**
  * Transform coordinates
  */
 ScreenPoint transformCoordinates(Matrix m, ScreenPoint sc) {
