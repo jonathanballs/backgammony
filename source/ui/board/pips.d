@@ -305,7 +305,7 @@ class PipRenderer {
             }
         }
 
-        if (!animate) startTime = Clock.currTime - 20.seconds;
+        if (!animate) startTime = Clock.currTime - style.animationSpeed.msecs;
 
         // Is this going to take a piece?
         bool takesPiece = false;
