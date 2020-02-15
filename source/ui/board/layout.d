@@ -30,6 +30,10 @@ struct ScreenPoint {
         return sqrt(pow(p.x - x, 2) + pow(p.y - y, 2));
     }
 
+    float magnitude() {
+        return sqrt(pow(x, 2) + pow(y, 2));
+    }
+
     ScreenPoint opBinary(string op)(ScreenPoint rhs) {
         static if (op == "+") {
             return ScreenPoint(x+rhs.x, y+rhs.y);

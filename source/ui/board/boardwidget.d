@@ -62,7 +62,6 @@ class BackgammonBoardWidget : DrawingArea {
      * Drag and drop
      */
     bool isMouseDown = false;
-    bool isDragging = false;
     ScreenPoint dragStart;
     SysTime dragStartTime;
 
@@ -111,7 +110,6 @@ class BackgammonBoardWidget : DrawingArea {
                 /**
                 * We're dragging...
                 */
-                isDragging = true;
                 auto dMatrix = duplicateMatrix(boardTMatrix);
                 dMatrix.invert();
                 auto dragEnd = dMatrix.transformCoordinates(ScreenPoint(e.button.x, e.button.y));
@@ -134,23 +132,31 @@ class BackgammonBoardWidget : DrawingArea {
      * Start the mouse drag
      */
     bool handleMousePress(Event e) {
-        if (e.button.button == GDK_BUTTON_PRIMARY) {
-            isMouseDown = true;
-            // Duplicate the matrix
-            auto dMatrix = duplicateMatrix(boardTMatrix);
-            dMatrix.invert();
-            dragStart = dMatrix.transformCoordinates(ScreenPoint(e.button.x, e.button.y));
-            dragStartTime = Clock.currTime;
+        // If we aren't animating the dice and it's a user's turn
+        if (animatedDice.length && animatedDice[0].finished
+                && this.getGameState().turnState == TurnState.MoveSelection
+                && this.getGameState().players[getGameState().currentPlayer].type == PlayerType.User
+                && this.getGameState().generatePossibleTurns().length
+                && this.getGameState().generatePossibleTurns[0].length > getSelectedMoves.length) {
 
-            foreach (pIndex; 1..25) {
-                Point point = pipRenderer.calculatePointAtTime(pIndex, Clock.currTime);
-                if (!point.numPieces) continue;
-                ScreenPoint topPip = layout.getPipPosition(pIndex, point.numPieces);
-                ScreenCircle topPipCircle = ScreenCircle(topPip.x, topPip.y, style.pipRadius);
-                if (topPipCircle.contains(dragStart)) {
-                    writeln("Dragging from point ", pIndex);
-                    pipRenderer.startDrag(pIndex);
-                    break;
+            if (e.button.button == GDK_BUTTON_PRIMARY) {
+                isMouseDown = true;
+                // Duplicate the matrix
+                auto dMatrix = duplicateMatrix(boardTMatrix);
+                dMatrix.invert();
+                dragStart = dMatrix.transformCoordinates(ScreenPoint(e.button.x, e.button.y));
+                dragStartTime = Clock.currTime;
+
+                foreach (pIndex; 1..25) {
+                    Point point = pipRenderer.calculatePointAtTime(pIndex, Clock.currTime);
+                    if (!point.numPieces) continue;
+                    ScreenPoint topPip = layout.getPipPosition(pIndex, point.numPieces);
+                    ScreenCircle topPipCircle = ScreenCircle(topPip.x, topPip.y, style.pipRadius);
+                    if (topPipCircle.contains(dragStart)) {
+                        writeln("Dragging from point ", pIndex);
+                        pipRenderer.startDrag(pIndex);
+                        break;
+                    }
                 }
             }
         }
@@ -195,10 +201,15 @@ class BackgammonBoardWidget : DrawingArea {
             }
 
             isMouseDown = false;
-            if (isDragging) {
+            if (pipRenderer.isDragging) {
                 pipRenderer.releaseDrag(); // Should this take final position??
-                isDragging = false;
-                return false;
+
+                if (pipRenderer.dragOffset.magnitude < 5.0) {
+                    // Hardly been moved so just act as if it was a click
+                } else {
+                    // Possible move to the next place
+                    return false;
+                }
             }
 
             // Where have we clicked?
