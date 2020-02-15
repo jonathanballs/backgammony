@@ -231,7 +231,11 @@ class PipRenderer {
             .filter!(t => t.startPoint == pointNum)
             .filter!(t => t.startTime < time)
             .array.length;
-        
+
+        if (isDragging && dragPointIndex == pointNum && numPips && time > dragStartTime) {
+            numPips--;
+        }
+
         if (transitionStack.filter!(t => t.endPoint == pointNum)
                 .filter!(t => t.startTime + style.animationSpeed.msecs <= time).array.length) {
 
@@ -249,11 +253,6 @@ class PipRenderer {
             writeln(time);
             writeln(transitionStack);
             assert(0);
-        }
-
-        // In case a pip is being dragged
-        if (isDragging && dragPointIndex == pointNum && numPips && time > dragStartTime) {
-            numPips--;
         }
 
         return Point(gameState.points[pointNum].owner, numPips);
