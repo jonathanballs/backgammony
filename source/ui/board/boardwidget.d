@@ -229,16 +229,15 @@ class BackgammonBoardWidget : DrawingArea {
 
                     if (endPos) {
                         writeln("Released onto point ", endPos);
+                        // Calculate the theoretical turn
+                        auto potentialMove = PipMovement(
+                            PipMoveType.Movement,
+                            pipRenderer.dragPointIndex,
+                            endPos
+                        );
+
+                        selectMove(potentialMove, false);
                     }
-
-                    // Calculate the theoretical turn
-                    auto potentialMove = PipMovement(
-                        PipMoveType.Movement,
-                        pipRenderer.dragPointIndex,
-                        endPos
-                    );
-
-                    selectMove(potentialMove);
 
                     pipRenderer.releaseDrag();
 
@@ -341,7 +340,7 @@ class BackgammonBoardWidget : DrawingArea {
      */
     public void selectMove(PipMovement move, bool animate = true) {
         _selectedMoves ~= move;
-        pipRenderer.selectMove(move);
+        pipRenderer.selectMove(move, false);
         onChangePotentialMovements.emit();
     }
 

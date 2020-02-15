@@ -67,7 +67,8 @@ class PipRenderer {
     /**
      * Moves that are not part of the gamestate, but have been selected by the
      * user as potential moves. The board will animate these movements if
-     * animation is enabled. The boolean is whether the selected move is 
+     * animation is enabled. The boolean is whether the selected move has been
+     * added to the animation stack.
      */
     PipTransition[] transitionStack;
     Tuple!(PipMovement, bool)[] selectedMoves;
@@ -281,16 +282,16 @@ class PipRenderer {
                 .array.length;
     }
 
-    void selectMove(PipMovement move) {
+    void selectMove(PipMovement move, bool animate = true) {
         if (mode == PipRendererMode.PipSelection) {
-            animateMove(move);
+            animateMove(move, false);
             selectedMoves ~= tuple(move, true);
         } else {
             selectedMoves ~= tuple(move, false);
         }
     }
 
-    private void animateMove(PipMovement move) {
+    private void animateMove(PipMovement move, bool animate = true) {
         SysTime startTime = Clock.currTime;
 
         if (move.startPoint) {
@@ -303,6 +304,8 @@ class PipRenderer {
                 startTime = landed[$-1].startTime + style.animationSpeed.msecs;
             }
         }
+
+        if (!animate) startTime = Clock.currTime - 20.seconds;
 
         // Is this going to take a piece?
         bool takesPiece = false;
