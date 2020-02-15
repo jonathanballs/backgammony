@@ -46,6 +46,7 @@ class PipRenderer {
     bool isDragging;
     uint dragPointIndex;
     ScreenPoint dragOffset;
+    SysTime dragStartTime;
 
     /**
      * Create a new PipRenderer
@@ -194,6 +195,14 @@ class PipRenderer {
             tweenPip(startPos, endPos, progress, gameState.currentPlayer);
         }
 
+        // Draw the dragged pip
+        if (isDragging) {
+            auto pipStartPoint = calculatePointAtTime(dragPointIndex, dragStartTime);
+            auto pipStartPos = layout.getPipPosition(dragPointIndex, pipStartPoint.numPieces);
+            auto currentPos = pipStartPos + dragOffset;
+            drawPip(currentPos.x, currentPos.y,
+                gameState._currentPlayer == Player.P1 ? style.p1Colour : style.p2Colour);
+        }
     }
 
     PipTransition[] getCurrentTransitions() {
@@ -243,7 +252,7 @@ class PipRenderer {
         }
 
         // In case a pip is being dragged
-        if (isDragging && dragPointIndex == pointNum && numPips) {
+        if (isDragging && dragPointIndex == pointNum && numPips && time > dragStartTime) {
             numPips--;
         }
 
@@ -325,7 +334,9 @@ class PipRenderer {
     }
 
     void startDrag(uint pointIndex) {
+        dragStartTime = Clock.currTime;
         dragPointIndex = pointIndex;
+        dragOffset = ScreenPoint(0.0, 0.0);
         isDragging = true;
     }
 

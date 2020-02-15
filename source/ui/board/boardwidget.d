@@ -111,12 +111,12 @@ class BackgammonBoardWidget : DrawingArea {
                 /**
                 * We're dragging...
                 */
+                isDragging = true;
                 auto dMatrix = duplicateMatrix(boardTMatrix);
                 dMatrix.invert();
                 auto dragEnd = dMatrix.transformCoordinates(ScreenPoint(e.button.x, e.button.y));
-                ScreenPoint diff = dragStart - dragEnd;
-                writeln(diff);
-                isDragging = true;
+                ScreenPoint diff = dragEnd - dragStart;
+                pipRenderer.dragOffset = diff;
             }
             return true;
         });
@@ -130,6 +130,9 @@ class BackgammonBoardWidget : DrawingArea {
         this.setGameState(gs);
     }
 
+    /**
+     * Start the mouse drag
+     */
     bool handleMousePress(Event e) {
         if (e.button.button == GDK_BUTTON_PRIMARY) {
             isMouseDown = true;
@@ -146,6 +149,8 @@ class BackgammonBoardWidget : DrawingArea {
                 ScreenCircle topPipCircle = ScreenCircle(topPip.x, topPip.y, style.pipRadius);
                 if (topPipCircle.contains(dragStart)) {
                     writeln("Dragging from point ", pIndex);
+                    pipRenderer.startDrag(pIndex);
+                    break;
                 }
             }
         }
@@ -191,6 +196,7 @@ class BackgammonBoardWidget : DrawingArea {
 
             isMouseDown = false;
             if (isDragging) {
+                pipRenderer.releaseDrag(); // Should this take final position??
                 isDragging = false;
                 return false;
             }
