@@ -317,10 +317,12 @@ class PipRenderer {
             if (pointAtStart.numPieces == 0
                     || pointAtStart.owner == gameState.currentPlayer.opposite) {
                 // Find the last time that someone landed there
-                auto landed = transitionStack.filter!(t => t.endPoint == move.startPoint).array;
-                assert(landed.length); // This is failing sometimes bc of drag and drops
-                startTime = landed[$-1].startTime + style.animationSpeed.msecs
-                    + transitionStack.length.msecs; // Staggered to fix uitests.doublePipMove()
+                if (animate) {
+                    auto landed = transitionStack.filter!(t => t.endPoint == move.startPoint).array;
+                    assert(landed.length); // This is failing sometimes bc of drag and drops
+                    startTime = landed[$-1].startTime + style.animationSpeed.msecs
+                        + transitionStack.length.msecs; // Staggered to fix uitests.doublePipMove()
+                }
             }
         }
 

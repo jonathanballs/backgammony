@@ -68,7 +68,7 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
     GameState[] pGameStates;
 
     outer: foreach (t; gs.generatePossibleTurns()) {
-        auto d = gs.dup().applyTurn(t);
+        auto d = gs.dup().applyTurn(t, true);
         foreach (f; pGameStates) {
             if (d.equals(f)) continue outer;
         }
