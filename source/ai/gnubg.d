@@ -92,7 +92,13 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
 
     GnubgEvalResult[] pResults = [];
     foreach (pos; pGameStates) {
-        string gnubgCommand = format!"EVALUATION FIBSBOARD %s PLIES 1 CUBELESS"(pos.toFibsString());
+        string gnubgCommand = format!"EVALUATION FIBSBOARD %s PLIES %d %s %s NOISE %d"(
+            pos.toFibsString(),
+            context.nPlies,
+            context.usePrune ? "PRUNE" : "",
+            "CUBELESS", // No support for cube currently
+            cast(int) (context.noise * 10000),
+            );
         c.writeline(gnubgCommand);
         float[] r = c.readline().split().map!(n => n.to!float).array;
         if (r.length < 5) throw new Exception("couldnt parse output");
