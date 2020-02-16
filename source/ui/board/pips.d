@@ -203,8 +203,16 @@ class PipRenderer {
 
         // Draw the dragged pip
         if (isDragging) {
-            auto pipStartPoint = calculatePointAtTime(dragPointIndex, dragStartTime);
-            auto pipStartPos = layout.getPipPosition(dragPointIndex, pipStartPoint.numPieces);
+            ScreenPoint pipStartPos;
+            if (dragPointIndex) {
+                auto pipStartPoint = calculatePointAtTime(dragPointIndex, dragStartTime);
+                pipStartPos = layout.getPipPosition(dragPointIndex, pipStartPoint.numPieces);
+            } else {
+                auto pipStartPoint = calculateTakenPiecesAtTime(
+                    gameState.currentPlayer, dragStartTime);
+                pipStartPos = layout.getTakenPipPosition(gameState.currentPlayer, pipStartPoint);
+            }
+
             auto currentPos = pipStartPos + dragOffset;
             drawPip(currentPos.x, currentPos.y,
                 gameState._currentPlayer == Player.P1 ? style.p1Colour : style.p2Colour);

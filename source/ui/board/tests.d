@@ -160,4 +160,12 @@ private class UITests {
         gs.points[4] = Point(Player.P2, 1);
         w.setGameState(gs);
     }
+
+    @uitest static void userEntersBoard(BackgammonWindow w) {
+        auto gs = new GameState();
+        gs.newGame();
+        gs.takenPieces[Player.P1] = 1;
+        gs.rollDice(2, 1);
+        w.setGameState(gs);
+    }
 }

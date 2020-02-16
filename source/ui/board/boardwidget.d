@@ -159,6 +159,21 @@ class BackgammonBoardWidget : DrawingArea {
                         break;
                     }
                 }
+
+                // Is it the bar?
+                uint numTakenPieces = pipRenderer.calculateTakenPiecesAtTime(
+                    getGameState.currentPlayer, Clock.currTime);
+                if (numTakenPieces) {
+                    ScreenPoint topPip = layout.getTakenPipPosition(
+                        getGameState.currentPlayer, numTakenPieces
+                    );
+
+                    ScreenCircle topPipCircle = ScreenCircle(topPip.x, topPip.y, style.pipRadius);
+                    if (topPipCircle.contains(dragStart)) {
+                        writeln("Dragging from the bar");
+                        pipRenderer.startDrag(0);
+                    }
+                }
             }
         }
         return true;
@@ -209,8 +224,15 @@ class BackgammonBoardWidget : DrawingArea {
                     // Hardly been moved so just act as if it was a click
                 } else {
                     // Possible move to the next place
-                    auto pipStartPoint = pipRenderer.calculatePointAtTime(pipRenderer.dragPointIndex, pipRenderer.dragStartTime);
-                    auto pipStartPos = layout.getPipPosition(pipRenderer.dragPointIndex, pipStartPoint.numPieces);
+                    ScreenPoint pipStartPos;
+                    if (pipRenderer.dragPointIndex) {
+                        auto pipStartPoint = pipRenderer.calculatePointAtTime(pipRenderer.dragPointIndex, pipRenderer.dragStartTime);
+                        pipStartPos = layout.getPipPosition(pipRenderer.dragPointIndex, pipStartPoint.numPieces);
+                    } else {
+                        auto pipStartPoint = pipRenderer.calculateTakenPiecesAtTime(
+                            getGameState.currentPlayer, pipRenderer.dragStartTime);
+                        pipStartPos = layout.getTakenPipPosition(getGameState.currentPlayer, pipStartPoint);
+                    }
                     auto currentPos = pipStartPos + pipRenderer.dragOffset;
 
                     uint endPos;
@@ -234,7 +256,7 @@ class BackgammonBoardWidget : DrawingArea {
                         PipMovement potentialMove;
                         try {
                             potentialMove = PipMovement(
-                                PipMoveType.Movement,
+                                pipRenderer.dragPointIndex ? PipMoveType.Movement : PipMoveType.Entering,
                                 pipRenderer.dragPointIndex,
                                 endPos
                             );
