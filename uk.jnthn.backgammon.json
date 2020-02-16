@@ -39,6 +39,37 @@
                 }
             ]
         }, {
+            "name": "druntime",
+            "sources":
+            [
+                {
+                    "type": "git",
+                    "url": "http://github.com/D-Programming-Language/druntime",
+                    "tag": "v2.090.0"
+                },
+                {
+                    "type": "file",
+                    "path": "druntime-configure.sh",
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
+            "name": "phobos",
+            "sources":
+            [
+                {
+                    "type": "git",
+                    "url": "http://github.com/D-Programming-Language/phobos",
+                    "tag": "v2.090.0"
+                },
+                {
+                    "type": "file",
+                    "path": "phobos-configure.sh",
+                    "dest-filename": "configure"
+                }
+            ]
+        }, {
             "name": "backgammon",
             "buildsystem": "simple",
             "build-commands": [
