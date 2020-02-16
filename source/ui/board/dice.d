@@ -64,11 +64,11 @@ class AnimatedDie {
 
         // Calculate the end position and go back from there.
         pos.clear(0.0);
-        finalRot = rot = dieFaces[diceValue-1].rot.inverse();
+        finalRot = dieFaces[diceValue-1].rot.inverse();
 
         vel = (1000.0 / animationTime) * vec3(-8.0, 0.6, 0.0);
         rotAxis = vec3(0.11, -1.0, 0.0);
-        angVel = PI * 3;
+        angVel = (1000.0 / animationTime) * PI * 3;
 
         if (!animationTime) {
             finished = true;
@@ -79,8 +79,8 @@ class AnimatedDie {
         pos -= (animationTime / 1000.0) * vel;
 
         Quaternion!float rotationQuat;
-        auto rota = rotationQuat.axis_rotation(2 * angVel, rotAxis).to_matrix!(3, 3);
-        rot = rota.inverse() * rot;
+        auto rota = rotationQuat.axis_rotation((animationTime/1000.0) * angVel, rotAxis).to_matrix!(3, 3);
+        rot = rota.inverse() * finalRot;
         startTime = Clock.currTime();
     }
 

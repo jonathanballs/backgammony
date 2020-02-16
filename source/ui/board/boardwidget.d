@@ -471,7 +471,6 @@ class BackgammonBoardWidget : DrawingArea {
             foreach (i, die; animatedDice) {
                 cr.save();
 
-
                 die.update(dt.total!"msecs" / 1_000.0);
                 cr.translate(65*i + style.boardWidth * 0.65, style.boardHeight / 2 + 25*i);
                 cr.scale(style.boardWidth / 24, style.boardWidth / 24);
