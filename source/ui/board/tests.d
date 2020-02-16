@@ -151,4 +151,13 @@ private class UITests {
         w.backgammonBoard.selectMove(PipMovement(PipMoveType.Movement, 5, 4));
         w.backgammonBoard.finishTurn();
     }
+
+    @uitest static void userTakesPiece(BackgammonWindow w) {
+        auto gs = new GameState();
+        gs.newGame();
+        gs.rollDice(2, 1);
+        gs.points[5] = Point(Player.P2, 1);
+        gs.points[4] = Point(Player.P2, 1);
+        w.setGameState(gs);
+    }
 }

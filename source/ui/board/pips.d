@@ -271,6 +271,10 @@ class PipRenderer {
         } else {
             numPips -= transitionStack.filter!(t => !t.startPoint && t.startTime < time).array.length;
         }
+
+        if (isDragging && !dragPointIndex && numPips && time > dragStartTime) {
+            numPips--;
+        }
         // Minus points that have left
         return numPips;
     }
@@ -294,13 +298,14 @@ class PipRenderer {
     private void animateMove(PipMovement move, bool animate = true) {
         SysTime startTime = Clock.currTime;
 
+        // Do we need to delay this move
         if (move.startPoint) {
             const auto pointAtStart = calculatePointAtTime(move.startPoint, startTime);
             if (pointAtStart.numPieces == 0
                     || pointAtStart.owner == gameState.currentPlayer.opposite) {
                 // Find the last time that someone landed there
                 auto landed = transitionStack.filter!(t => t.endPoint == move.startPoint).array;
-                assert(landed.length);
+                assert(landed.length); // This is failing sometimes bc of drag and drops
                 startTime = landed[$-1].startTime + style.animationSpeed.msecs
                     + transitionStack.length.msecs; // Staggered to fix uitests.doublePipMove()
             }

@@ -336,6 +336,18 @@ class BackgammonBoardWidget : DrawingArea {
         this._selectedMoves = [];
         this.animatedDice = [];
         this.applyTurnAtEndOfAnimation = false;
+
+        // If the dice are already rolled
+        if (gameState.turnState == TurnState.MoveSelection) {
+            animatedDice = [
+                new AnimatedDie(gameState.diceValues[0], 0),
+                new AnimatedDie(gameState.diceValues[1], 0)
+            ];
+            lastAnimation = Clock.currTime;
+            this.pipRenderer.setMode(PipRendererMode.PipSelection);
+        } else {
+            this.pipRenderer.setMode(PipRendererMode.AwaitingAnimation);
+        }
     }
 
     /**
