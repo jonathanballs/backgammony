@@ -151,13 +151,13 @@ class BackgammonWindow : MainWindow {
 
         // Start game 50msecs after first draw
         import cairo.Context : Context;
-        import gobject.Signals;
+        import gobject.Signals : Signals;
         gulong sigId;
         sigId = backgammonBoard.addOnDraw((Scoped!Context c, Widget w) {
             Signals.handlerDisconnect(backgammonBoard, sigId);
 
             // Timeout
-            import glib.Timeout;
+            import glib.Timeout : Timeout;
             Timeout t;
             // Wait 100msecs and start a game
             t = new Timeout(100, () {

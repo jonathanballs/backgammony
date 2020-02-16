@@ -6,15 +6,50 @@
     "command": "backgammon",
     "modules": [
         {
-            "name": "hello",
+            "name": "dub",
+            "buildsystem": "simple",
+            "build-options": {
+                "build-args": ["--share=network"]
+            },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/dlang/dub/releases/download/v1.19.0/dub-v1.19.0-linux-x86_64.tar.gz",
+                    "sha256": "5f2a91a6c4aac0ea48dc0a8688ca13436052fd02450daf729c129d59137a9ec0",
+                    "strip-components": 0
+                }
+            ],
+            "build-commands": [
+                "install -D dub /app/bin/dub"
+            ]
+        }, {
+            "name": "dmd",
+            "build-options": {
+                "build-args": ["--share=network"]
+            },
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "http://github.com/D-Programming-Language/dmd",
+                    "tag": "v2.090.0"
+                }, {
+                    "type": "file",
+                    "path": "dmd-configure.sh",
+                    "dest-filename": "configure"
+                }
+            ]
+        }, {
+            "name": "backgammon",
             "buildsystem": "simple",
             "build-commands": [
+                "dub build",
                 "install -D backgammon /app/bin/backgammon"
             ],
             "sources": [
                 {
-                    "type": "file",
-                    "path": "backgammon"
+                    "type": "git",
+                    "url": "https://github.com/jonathanballs/backgammon.git",
+                    "branch": "master"
                 }
             ]
         }
@@ -23,7 +58,7 @@
         "--socket=x11",
         "--socket=wayland",
         "--share=ipc",
+        "--share=network",
         "--device=dri"
     ]
 }
-
