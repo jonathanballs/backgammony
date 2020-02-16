@@ -182,13 +182,18 @@ class PipRenderer {
                 startPos = layout.getPipPosition(transition.startPoint, startPoint.numPieces);
             }
 
-            // If it's being borne off
-            if (!transition.endPoint) {
-                endPos = ScreenPoint(1.5 * style.boardWidth, 0.5*style.boardHeight);
-            } else {
+            if (transition.endPoint) {
                 auto endPoint = calculatePointAtTime(transition.endPoint,
                                     transition.startTime + style.animationSpeed.msecs);
-                endPos = layout.getPipPosition(transition.endPoint, endPoint.numPieces);
+                try {
+                    endPos = layout.getPipPosition(transition.endPoint, endPoint.numPieces);
+                } catch (Exception e) {
+                    writeln(transitionStack);
+                    writeln(selectedMoves);
+                }
+            } else {
+                // If it's being borne off
+                endPos = ScreenPoint(1.5 * style.boardWidth, 0.5*style.boardHeight);
             }
 
             float progress = (frameTime - transition.startTime).total!"msecs" / cast(float) style.animationSpeed;
