@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Backgammon
+Exec=backgammon
+Icon=backgammon
+Type=Application
+Categories=GTK;Games;
