@@ -112,15 +112,19 @@ class BackgammonWindow : MainWindow {
         // Game board
         backgammonBoard = new BackgammonBoardWidget();
         backgammonBoard.onChangePotentialMovements.connect(() {
-            undoMoveBtn.setSensitive(!!backgammonBoard.getSelectedMoves().length);
-
+            undoMoveBtn.setSensitive(false);
             finishTurnBtn.setSensitive(false);
-            if (gameState.turnState == TurnState.MoveSelection) {
-                try {
-                    backgammonBoard.getGameState().validateTurn(backgammonBoard.getSelectedMoves());
-                    finishTurnBtn.setSensitive(true);
-                } catch (Exception e) {
-                    finishTurnBtn.setSensitive(false);
+
+            if (gameState.players[gameState.currentPlayer].type == PlayerType.User) {
+
+                undoMoveBtn.setSensitive(!!backgammonBoard.getSelectedMoves().length);
+                if (gameState.turnState == TurnState.MoveSelection) {
+                    try {
+                        backgammonBoard.getGameState().validateTurn(backgammonBoard.getSelectedMoves());
+                        finishTurnBtn.setSensitive(true);
+                    } catch (Exception e) {
+                        finishTurnBtn.setSensitive(false);
+                    }
                 }
             }
         });
