@@ -3,76 +3,20 @@
     "runtime": "org.gnome.Platform",
     "runtime-version": "3.34",
     "sdk": "org.gnome.Sdk",
+    "sdk-extensions": [
+        "org.freedesktop.Sdk.Extension.dmd"
+    ],
     "command": "backgammon",
     "modules": [
         {
-            "name": "dub",
-            "buildsystem": "simple",
-            "build-options": {
-                "build-args": ["--share=network"]
-            },
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://github.com/dlang/dub/releases/download/v1.19.0/dub-v1.19.0-linux-x86_64.tar.gz",
-                    "sha256": "5f2a91a6c4aac0ea48dc0a8688ca13436052fd02450daf729c129d59137a9ec0",
-                    "strip-components": 0
-                }
-            ],
-            "build-commands": [
-                "install -D dub /app/bin/dub"
-            ]
-        }, {
-            "name": "dmd",
-            "build-options": {
-                "build-args": ["--share=network"]
-            },
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "http://github.com/D-Programming-Language/dmd",
-                    "tag": "v2.090.0"
-                }, {
-                    "type": "file",
-                    "path": "dmd-configure.sh",
-                    "dest-filename": "configure"
-                }
-            ]
-        }, {
-            "name": "druntime",
-            "sources":
-            [
-                {
-                    "type": "git",
-                    "url": "http://github.com/D-Programming-Language/druntime",
-                    "tag": "v2.090.0"
-                },
-                {
-                    "type": "file",
-                    "path": "druntime-configure.sh",
-                    "dest-filename": "configure"
-                }
-            ]
-        },
-        {
-            "name": "phobos",
-            "sources":
-            [
-                {
-                    "type": "git",
-                    "url": "http://github.com/D-Programming-Language/phobos",
-                    "tag": "v2.090.0"
-                },
-                {
-                    "type": "file",
-                    "path": "phobos-configure.sh",
-                    "dest-filename": "configure"
-                }
-            ]
-        }, {
             "name": "backgammon",
             "buildsystem": "simple",
+            "build-options": {
+                "append-path": "/usr/lib/sdk/dmd/bin",
+                "build-args": ["--share=network"]
+            },
             "build-commands": [
+                "dmd --version",
                 "dub build",
                 "install -D backgammon /app/bin/backgammon"
             ],
