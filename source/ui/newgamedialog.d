@@ -48,6 +48,7 @@ class NewGameDialog : Dialog {
     HumanSelector hvaHumanSelector;
     AISelector hvaAISelector;
     Button hvaStartGame;
+    Label hvaErrorMessage;
 
     /**
      * Human vs Human
@@ -56,6 +57,7 @@ class NewGameDialog : Dialog {
     HumanSelector hvhHumanSelector1;
     HumanSelector hvhHumanSelector2;
     Button hvhStartGame;
+    Label hvhErrorMessage;
 
     /**
      * AI vs AI
@@ -64,6 +66,7 @@ class NewGameDialog : Dialog {
     AISelector avaAISelector1;
     AISelector avaAISelector2;
     Button avaStartGame;
+    Label avaErrorMessage;
     
     PlayerMeta[] availableAIs;
 
@@ -98,12 +101,19 @@ class NewGameDialog : Dialog {
         hvaStartGame = new Button("Start Game");
         hvaStartGame.getStyleContext().addClass("suggested-action");
         hvaStartGame.addOnClicked((Button b) {
-            auto ai = hvaAISelector.getActiveSelection();
-            auto human = hvaHumanSelector.getActiveSelection();
-            auto gs = new GameState(ai, human);
-            this.onCreateNewGame.emit(gs);
+            try {
+                auto ai = hvaAISelector.getActiveSelection();
+                auto human = hvaHumanSelector.getActiveSelection();
+                auto gs = new GameState(ai, human);
+                this.onCreateNewGame.emit(gs);
+            } catch (Exception e) {
+                hvaErrorMessage.setMarkup(format!"<span foreground='red'>%s</span>"(e.message));
+            }
         });
         hvaBox.packEnd(hvaStartGame, false, false, 0);
+        // In case of any errors we'll put them here
+        hvaErrorMessage = new Label("");
+        hvaBox.packEnd(hvaErrorMessage, false, false, 0);
 
         /**
          * AI vs AI
@@ -117,11 +127,18 @@ class NewGameDialog : Dialog {
         avaStartGame = new Button("Start Game");
         avaStartGame.getStyleContext().addClass("suggested-action");
         avaStartGame.addOnClicked((Button b) {
-            auto ai1 = avaAISelector1.getActiveSelection();
-            auto ai2 = avaAISelector2.getActiveSelection();
-            this.onCreateNewGame.emit(new GameState(ai1, ai2));
+            try {
+                auto ai1 = avaAISelector1.getActiveSelection();
+                auto ai2 = avaAISelector2.getActiveSelection();
+                this.onCreateNewGame.emit(new GameState(ai1, ai2));
+            } catch (Exception e) {
+                avaErrorMessage.setMarkup(format!"<span foreground='red'>%s</span>"(e.message));
+            }
         });
         avaBox.packEnd(avaStartGame, false, false, 0);
+        // In case of any errors we'll put them here
+        avaErrorMessage = new Label("");
+        avaBox.packEnd(avaErrorMessage, false, false, 0);
 
         /**
          * Human vs Human
@@ -135,11 +152,18 @@ class NewGameDialog : Dialog {
         hvhStartGame = new Button("Start Game");
         hvhStartGame.getStyleContext().addClass("suggested-action");
         hvhStartGame.addOnClicked((Button b) {
-            auto human1 = hvhHumanSelector1.getActiveSelection();
-            auto human2 = hvhHumanSelector2.getActiveSelection();
-            this.onCreateNewGame.emit(new GameState(human1, human2));
+            try {
+                auto human1 = hvhHumanSelector1.getActiveSelection();
+                auto human2 = hvhHumanSelector2.getActiveSelection();
+                this.onCreateNewGame.emit(new GameState(human1, human2));
+            } catch (Exception e) {
+                hvhErrorMessage.setMarkup(format!"<span foreground='red'>%s</span>"(e.message));
+            }
         });
         hvhBox.packEnd(hvhStartGame, false, false, 0);
+        // In case of any errors we'll put them here
+        hvhErrorMessage = new Label("");
+        hvhBox.packEnd(hvhErrorMessage, false, false, 0);
 
         tabs = new Notebook();
         tabs.appendPage(hvaBox, new Label("Human vs AI"));
@@ -159,7 +183,7 @@ class NewGameDialog : Dialog {
         // Gnu Backgammon
         import std.process : execute;
         try {
-            const auto gnubg = execute(["gnubg", "--version"]);
+            const auto gnubg = execute(["agnubg", "--version"]);
             if (!gnubg.status) {
                 auto lines = gnubg.output.split('\n');
                 if (lines.length) {
