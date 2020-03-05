@@ -123,8 +123,8 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
     float bestProb = 0.0;
     PipMovement[] bestTurn;
     foreach (index, GnubgEvalResult result; pResults) {
-        if (result.chanceWin >= bestProb) {
-            bestProb = result.chanceWin;
+        if (1.0 - result.chanceWin >= bestProb) {
+            bestProb = 1.0 - result.chanceWin;
             bestTurn = pMovements[index];
         }
     }

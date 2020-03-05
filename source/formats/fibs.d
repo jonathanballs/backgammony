@@ -11,7 +11,7 @@ import game;
 /**
  * Contains functions and methods for handling FIBS encoded games and moves
  * Reference: http://www.fibs.com/fibs_interface.html#game_play
- * P1 = 0 (positive), P2 = X (negative)
+ * P1 = O (positive on board), P2 = X (negative on board)
  */
 
 /**
@@ -31,7 +31,7 @@ string toFibsString(GameState gs, Player perspective = Player.NONE) {
             .map!(p => (p.owner == Player.P2 ? "-" : "") ~ p.numPieces.to!string ~ ":")
             .reduce!((a,b) => a ~ b)[0..$-1], // Board
         gs.takenPieces[Player.P2].to!string, // P2 bar
-        gs.currentPlayer == Player.P1 ? "1" : "-1", // Who's turn turn
+        gs.currentPlayer == Player.P1 ? "1" : "-1", // Who's turn
         format!"%d:%d:%d:%d"(gs.diceValues[0], gs.diceValues[1], gs.diceValues[0], gs.diceValues[1]), // Dice
         "1", // Doubling cube
         "0:0", // May double
