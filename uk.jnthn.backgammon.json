@@ -13,8 +13,10 @@
             "buildsystem": "simple",
             "build-commands": [
                 "./configure",
-                "make",
-                "install -D gnubg /app/bin/gnubg"
+                "make datadir=/app/share",
+                "install -D gnubg /app/bin/gnubg",
+                "install -D gnubg.wd /app/share/gnubg/gnubg.wd",
+                "install -D gnubg.weights /app/share/gnubg/gnubg.weights"
             ],
             "sources": [
                 {
