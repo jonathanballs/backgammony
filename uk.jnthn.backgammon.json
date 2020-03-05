@@ -9,6 +9,22 @@
     "command": "backgammon",
     "modules": [
         {
+            "name": "gnubg",
+            "buildsystem": "simple",
+            "build-commands": [
+                "./configure",
+                "make",
+                "install -D gnubg /app/bin/gnubg"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "ftp://ftp.gnu.org/gnu/gnubg/gnubg-release-1.06.002-sources.tar.gz",
+                    "sha256": "ce1b0b0c1900717cc598032a14cf8c0ee60faf24d84368b39922c0102983bc87"
+                }
+            ]
+        },
+        {
             "name": "backgammon",
             "buildsystem": "simple",
             "build-options": {
