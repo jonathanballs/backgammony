@@ -147,32 +147,38 @@ class BackgammonWindow : MainWindow {
         // By default, let's start a game between the player and the AI with
         // the player going first (assuming that gnubg exists)
         import std.file : exists;
-        if (exists("/usr/bin/gnubg")) {
-            Variant aiConfig = gnubgDefaultEvalContexts[0];
-            auto gs = new GameState(
-                PlayerMeta("Player", "gnubg", PlayerType.User, aiConfig),
-                PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
-            );
-            setGameState(gs);
-            // Start game 50msecs after first draw
-            import cairo.Context : Context;
-            import gobject.Signals : Signals;
-            gulong sigId;
-            sigId = backgammonBoard.addOnDraw((Scoped!Context c, Widget w) {
-                Signals.handlerDisconnect(backgammonBoard, sigId);
+        try {
+            if (exists("/usr/bin/gnubg")) {
+                Variant aiConfig = gnubgDefaultEvalContexts[0];
+                auto gs = new GameState(
+                    PlayerMeta("Player", "gnubg", PlayerType.User, aiConfig),
+                    PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
+                );
+                setGameState(gs);
+                // Start game 50msecs after first draw
+                import cairo.Context : Context;
+                import gobject.Signals : Signals;
+                gulong sigId;
+                sigId = backgammonBoard.addOnDraw((Scoped!Context c, Widget w) {
+                    Signals.handlerDisconnect(backgammonBoard, sigId);
 
-                // Timeout
-                import glib.Timeout : Timeout;
-                Timeout t;
-                // Wait 100msecs and start a game
-                t = new Timeout(100, () {
-                    gs.newGame();
-                    t.stop();
+                    // Timeout
+                    import glib.Timeout : Timeout;
+                    Timeout t;
+                    // Wait 100msecs and start a game
+                    t = new Timeout(100, () {
+                        gs.newGame();
+                        t.stop();
+                        return false;
+                    }, false);
+
                     return false;
-                }, false);
-
-                return false;
-            });
+                });
+            } else {
+                writeln("GNUBG not installed. Not starting game");
+            }
+        } catch (Exception e) {
+            writeln(e);
         }
     }
 
