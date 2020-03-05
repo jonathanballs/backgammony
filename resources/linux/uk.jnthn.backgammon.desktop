@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Backgammon
 Exec=backgammon
-Icon=backgammon
+Icon=uk.jnthn.backgammon
 Type=Application
-Categories=GTK;Games;
+Categories=GTK;Game;StrategyGame;

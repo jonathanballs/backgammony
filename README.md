@@ -9,6 +9,8 @@ Backgammon is written in the D language so make sure that you have a D compiler 
 
 ```
 dub build && ./backgammon
+# Or for flatpak
+flatpak-builder --install build-dir  uk.jnthn.backgammon.json --force-clean --user
 ```
 
 Make sure that you install Gnu Backgammon if you wish to play against an AI as Backgammon does not have an AI currently.

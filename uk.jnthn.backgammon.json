@@ -16,9 +16,12 @@
                 "build-args": ["--share=network"]
             },
             "build-commands": [
-                "dmd --version",
                 "dub build",
-                "install -D backgammon /app/bin/backgammon"
+                "install -D backgammon /app/bin/backgammon",
+                "install -d \"/app/share/applications\"",
+                "install -D resources/linux/uk.jnthn.backgammon.desktop /app/share/applications",
+                "install -d \"/app/share/icons/hicolor/512x512/apps\"",
+                "install -D resources/icon.png /app/share/icons/hicolor/512x512/apps/uk.jnthn.backgammon.png"
             ],
             "sources": [
                 {
