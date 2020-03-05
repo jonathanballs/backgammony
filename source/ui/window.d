@@ -295,7 +295,7 @@ class BackgammonWindow : MainWindow {
             backgammonBoard.finishTurn();
         }
 
-        if (gameState.isNetworkGame) {
+        if (gameState && gameState.isNetworkGame) {
             receiveTimeout(1.msecs,
                 (NetworkThreadNewMove moves) {
                     assert(gameState.turnState == TurnState.MoveSelection);
