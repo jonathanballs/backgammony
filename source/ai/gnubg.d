@@ -86,7 +86,16 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
     f.close();
 
     auto process = pipeProcess(["gnubg", "--tty", "-c", tmpFileName]);
-    Thread.sleep(1.seconds);
+
+    // Wait for up to 2 seconds
+    foreach (i; 0..200) {
+        if (exists(tmpSock)) break;
+        Thread.sleep(10.msecs);
+    }
+
+    if (!exists(tmpSock)) {
+        throw new Exception("Could not start gnubg");
+    }
 
     auto c = new Connection(tmpSock);
 
