@@ -183,7 +183,7 @@ class NewGameDialog : Dialog {
         // Gnu Backgammon
         import std.process : execute;
         try {
-            const auto gnubg = execute(["agnubg", "--version"]);
+            const auto gnubg = execute(["gnubg", "--version"]);
             if (!gnubg.status) {
                 auto lines = gnubg.output.split('\n');
                 if (lines.length) {
