@@ -151,8 +151,8 @@ class BackgammonWindow : MainWindow {
             if (exists("/usr/bin/gnubg")) {
                 Variant aiConfig = gnubgDefaultEvalContexts[4];
                 auto gs = new GameState(
-                    PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig),
-                    PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
+                    PlayerMeta("Player", "gnubg", PlayerType.User),
+                    PlayerMeta("AI", "gnubg", PlayerType.AI, aiConfig)
                 );
                 setGameState(gs);
                 // Start game 50msecs after first draw

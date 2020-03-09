@@ -176,4 +176,20 @@ private class UITests {
         gs.rollDice(2, 1);
         w.setGameState(gs);
     }
+
+    @uitest static void userBearOff(BackgammonWindow w) {
+        auto gs = new GameState();
+        gs.newGame();
+        gs.points[24] = Point(Player.NONE, 0);
+        gs.points[13] = Point(Player.NONE, 0);
+        gs.points[8] = Point(Player.NONE, 0);
+
+        gs.points[5] = Point(Player.P1, 1);
+        gs.points[4] = Point(Player.P1, 1);
+        gs.points[3] = Point(Player.P1, 1);
+        gs.points[2] = Point(Player.P1, 1);
+        gs.points[1] = Point(Player.P1, 1);
+        w.setGameState(gs);
+        gs.rollDice(2, 1);
+    }
 }

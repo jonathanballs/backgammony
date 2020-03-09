@@ -310,6 +310,12 @@ class BackgammonBoardWidget : DrawingArea {
                     && t.length > getSelectedMoves.length
                     && t[getSelectedMoves.length].startPoint == startPos;
             }).array.sort!((a, b) {
+                bool eitherBearOff = (a[getSelectedMoves.length].moveType == PipMoveType.BearingOff)
+                                   ^ (b[getSelectedMoves.length].moveType == PipMoveType.BearingOff);
+                if (eitherBearOff) {
+                    return a[getSelectedMoves.length].moveType == PipMoveType.BearingOff;
+                }
+
                 return a[getSelectedMoves.length].diceValue > b[getSelectedMoves.length].diceValue;
             });
 
