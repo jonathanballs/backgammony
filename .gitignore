@@ -10,9 +10,9 @@ __dummy.html
 *.db
 
 # Compiled
-backgammon
+backgammony
 dub.selections.json
-backgammon-test-library
+backgammony-test-library
 
 # Flatpak
 .flatpak-builder/

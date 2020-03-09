@@ -1,6 +1,5 @@
 {
-	"name": "backgammon",
-        "version": "0.0.0",
+	"name": "backgammony",
 	"description": "A GTK backgammon game",
 	"authors": [
 		"Jonathan Balls"

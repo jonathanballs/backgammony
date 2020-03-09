@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>uk.jnthn.backgammon</id>
-  <url type="homepage">https://github.com/jonathanballs/backgammon</url>
+  <id>uk.jnthn.backgammony</id>
+  <url type="homepage">https://github.com/jonathanballs/backgammony</url>
 
   <name>Backgammony</name>
-  <summary>A Backgammon frontend with multiplayer support</summary>
+  <summary>A backgammon frontend with multiplayer support</summary>
 
   <metadata_license>FSFAP</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
@@ -21,10 +21,10 @@
     </p>
   </description>
 
-  <launchable type="desktop-id">uk.jnthn.backgammon.desktop</launchable>
+  <launchable type="desktop-id">uk.jnthn.backgammony.desktop</launchable>
   <screenshots>
     <screenshot type="default">
-      <image height="900" width="1213">https://raw.githubusercontent.com/jonathanballs/backgammon/master/resources/screenshot.png</image>
+      <image height="900" width="1213">https://raw.githubusercontent.com/jonathanballs/backgammony/master/resources/screenshot.png</image>
     </screenshot>
   </screenshots>
   <content_rating type="oars-1.0">

@@ -1,12 +1,12 @@
 {
-    "app-id": "uk.jnthn.backgammon",
+    "app-id": "uk.jnthn.backgammony",
     "runtime": "org.gnome.Platform",
     "runtime-version": "3.34",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
         "org.freedesktop.Sdk.Extension.dmd"
     ],
-    "command": "backgammon",
+    "command": "backgammony",
     "modules": [
         {
             "name": "gnubg",
@@ -27,7 +27,7 @@
             ]
         },
         {
-            "name": "backgammon",
+            "name": "backgammony",
             "buildsystem": "simple",
             "build-options": {
                 "append-path": "/usr/lib/sdk/dmd/bin",
@@ -35,13 +35,13 @@
             },
             "build-commands": [
                 "dub build",
-                "install -D backgammon /app/bin/backgammon",
+                "install -D backgammony /app/bin/backgammony",
                 "install -d \"/app/share/applications\"",
-                "install -D resources/linux/uk.jnthn.backgammon.desktop /app/share/applications",
+                "install -D resources/linux/uk.jnthn.backgammony.desktop /app/share/applications",
                 "install -d \"/app/share/icons/hicolor/512x512/apps\"",
-                "install -D resources/icon.png /app/share/icons/hicolor/512x512/apps/uk.jnthn.backgammon.png",
+                "install -D resources/icon.png /app/share/icons/hicolor/512x512/apps/uk.jnthn.backgammony.png",
                 "install -d /app/share/metainfo",
-                "install -D resources/linux/uk.jnthn.backgammon.appdata.xml /app/share/metainfo/uk.jnthn.backgammon.metainfo.xml"
+                "install -D resources/linux/uk.jnthn.backgammony.appdata.xml /app/share/metainfo/uk.jnthn.backgammony.metainfo.xml"
             ],
             "sources": [
                 {

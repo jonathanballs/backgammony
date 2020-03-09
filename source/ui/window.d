@@ -55,10 +55,10 @@ class BackgammonWindow : MainWindow {
      * Create a new backgammon board window
      */
     public this() {
-        super("Backgammon");
+        super("Backgammony");
 
         header = new HeaderBar();
-        header.setTitle("Backgammon");
+        header.setTitle("Backgammony");
         header.setShowCloseButton(true);
         this.setTitlebar(header);
 
