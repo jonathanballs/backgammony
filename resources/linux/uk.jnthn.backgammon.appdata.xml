@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>uk.jnthn.backgammony</id>
+
+  <name>Backgammony</name>
+  <summary>A Backgammon frontend with multiplayer support</summary>
+
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  
+​  <recommends>
+​    <control>pointing​</control>
+​    <control>keyboard</control>
+​    <control>touch</control>
+  </recommends>
+
+  <description>
+    <p>
+    Backgammony is a free backgammon frontend for linux. It provides a user interface around Gnu Backgammon&apos;s AI as well as trustless Internet and LAN games.
+    </p>
+  </description>
+
+​  <launchable type="desktop-id">uk.jnthn.backgammon.desktop​</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/jonathanballs/backgammon/master/resources/screenshot.png</image>
+    </screenshot>
+  </screenshots>
+</component>

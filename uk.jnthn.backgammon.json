@@ -39,7 +39,9 @@
                 "install -d \"/app/share/applications\"",
                 "install -D resources/linux/uk.jnthn.backgammon.desktop /app/share/applications",
                 "install -d \"/app/share/icons/hicolor/512x512/apps\"",
-                "install -D resources/icon.png /app/share/icons/hicolor/512x512/apps/uk.jnthn.backgammon.png"
+                "install -D resources/icon.png /app/share/icons/hicolor/512x512/apps/uk.jnthn.backgammon.png",
+                "install -d /app/share/metainfo",
+                "install -D resources/linux/uk.jnthn.backgammon.appdata.xml /app/share/metainfo/uk.jnthn.backgammon.metainfo.xml"
             ],
             "sources": [
                 {
