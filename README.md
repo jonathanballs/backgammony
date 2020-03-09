@@ -16,7 +16,7 @@ Backgammony is written in the D language so make sure that you have a D compiler
 ```
 dub build && ./backgammon
 # Or for flatpak (this installs gnubg inside the flatpak container)
-flatpak-builder --install build-dir  uk.jnthn.backgammon.json --force-clean --user
+flatpak-builder --install build-dir resources/linux/uk.jnthn.backgammon.json --force-clean --user
 ```
 
 Make sure that you install GNU Backgammon installed if you wish to play against an AI as Backgammony does not have an AI currently.
