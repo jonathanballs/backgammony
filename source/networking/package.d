@@ -128,7 +128,7 @@ class NetworkingThread {
         try {
             this.state = NetworkState.AwaitingConnection;
             conn = new Connection(getAddress(serverHost, serverPort)[0]);
-            conn.writeline("RequestGame " ~ player.name);
+            conn.writeline("RequestGame " ~ player.name ~ " v0.0.0");
             while(true) {
                 /**
                  * Receive messages from the user. E.g. dice rolls
