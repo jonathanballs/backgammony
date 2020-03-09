@@ -296,12 +296,13 @@ class BackgammonWindow : MainWindow {
         }
 
         if (gameState && gameState.isNetworkGame) {
-            receiveTimeout(1.msecs,
+            receiveTimeout(0.msecs,
                 (NetworkThreadNewMove moves) {
                     assert(gameState.turnState == TurnState.MoveSelection);
                     foreach(move; moves.moves[0..moves.numMoves]) {
                         backgammonBoard.selectMove(move);
                     }
+                    backgammonBoard.finishTurn();
                 },
                 (NetworkNewDiceRoll diceRoll) {
                     writeln("Received dice roll: ", diceRoll);
