@@ -151,7 +151,7 @@ class BackgammonWindow : MainWindow {
             if (exists("/usr/bin/gnubg")) {
                 Variant aiConfig = gnubgDefaultEvalContexts[4];
                 auto gs = new GameState(
-                    PlayerMeta("Player", "gnubg", PlayerType.User, aiConfig),
+                    PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig),
                     PlayerMeta("AI 1", "gnubg", PlayerType.AI, aiConfig)
                 );
                 setGameState(gs);

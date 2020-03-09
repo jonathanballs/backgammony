@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>uk.jnthn.backgammony</id>
+  <id>uk.jnthn.backgammon</id>
+  <url type="homepage">https://github.com/jonathanballs/backgammon</url>
 
   <name>Backgammony</name>
   <summary>A Backgammon frontend with multiplayer support</summary>
@@ -9,7 +10,7 @@
   <project_license>GPL-3.0-or-later</project_license>
   
    <recommends>
-     <control>pointing​</control>
+     <control>pointing</control>
      <control>keyboard</control>
      <control>touch</control>
   </recommends>
@@ -20,10 +21,22 @@
     </p>
   </description>
 
-​  <launchable type="desktop-id">uk.jnthn.backgammon.desktop​</launchable>
+  <launchable type="desktop-id">uk.jnthn.backgammon.desktop</launchable>
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/jonathanballs/backgammon/master/resources/screenshot.png</image>
+      <image height="900" width="1213">https://raw.githubusercontent.com/jonathanballs/backgammon/master/resources/screenshot.png</image>
     </screenshot>
   </screenshots>
+  <content_rating type="oars-1.0">
+    <content_attribute id="money-gambling">mild</content_attribute>
+  </content_rating>
+
+  <releases>
+    <release version="1.0.0" date="2020-03-10">
+      <description>
+        <p>Initial release</p>
+      </description>
+    </release>
+  </releases>
+
 </component>
