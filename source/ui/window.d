@@ -148,7 +148,7 @@ class BackgammonWindow : MainWindow {
         // the player going first (assuming that gnubg exists)
         import std.file : exists;
         try {
-            if (exists("/usr/bin/gnubg")) {
+            if (exists("/usr/bin/gnubg") || exists("/app/bin/gnubg")) {
                 Variant aiConfig = gnubgDefaultEvalContexts[4];
                 auto gs = new GameState(
                     PlayerMeta("Player", "gnubg", PlayerType.User),
