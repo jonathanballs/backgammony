@@ -8,10 +8,10 @@
   <metadata_license>FSFAP</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   
-​  <recommends>
-​    <control>pointing​</control>
-​    <control>keyboard</control>
-​    <control>touch</control>
+   <recommends>
+     <control>pointing​</control>
+     <control>keyboard</control>
+     <control>touch</control>
   </recommends>
 
   <description>
