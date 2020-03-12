@@ -37,11 +37,10 @@
             "name": "backgammony",
             "buildsystem": "simple",
             "build-options": {
-                "append-path": "/usr/lib/sdk/dmd/bin",
-                "build-args": ["--share=network"]
+                "append-path": "/usr/lib/sdk/dmd/bin"
             },
             "build-commands": [
-                "dub build",
+                "dub build --skip-registry=all",
                 "install -D backgammony /app/bin/backgammony",
                 "install -d /app/share/applications",
                 "install -D resources/linux/uk.jnthn.backgammony.desktop /app/share/applications",
@@ -53,9 +52,10 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/jonathanballs/backgammon.git",
-                    "commit": "5a0922584c2d5474fc1e63181e543967400c4f06"
-                }
+                    "url": "https://github.com/jonathanballs/backgammony.git",
+                    "branch": "master"
+                },
+                "generated-sources.json"
             ]
         }
     ]
