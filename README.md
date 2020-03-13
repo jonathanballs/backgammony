@@ -3,14 +3,21 @@ Backgammony is a backgammon client for Linux written with Dlang and GTK. It supp
 
 ![Screenshot](resources/screenshot.png)
 
+## Installing
+
+```
+flatpak install uk.jnthn.backgammony
+```
+
+<a href='https://flathub.org/apps/details/uk.jnthn.backgammony'><img width='240' alt='Download on Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
+
 ## Artificial Intelligences
-Backgammony currently only supports the GNU Backgammon artificial intelligence since there is no standard communication protocol like there is for chess. I am currently writing my own engine and will document the communication protocol thoroughly in an attempt to bring some standardisation to this area.
+Backgammony currently only supports the GNU Backgammon artificial intelligence since there is no standard communication protocol like there is for chess. I am currently writing my own engine and will document the communication protocol (likely based on the Backgammony network play protocol) in an attempt to bring some standardisation to this area.
 
 ## Network Play
-Backgammony brings an innovative approach to network play - predominantly where it has to generate dice rolls. The algorithm uses a basic [commitment scheme](https://en.wikipedia.org/wiki/Commitment_scheme) to ensure that dice rolls are non-interferable and games are trustless. To view the dice roll implementation please inspect the DiceRoll class in the [networking package](https://github.com/jonathanballs/backgammony/blob/master/source/networking/package.d).
+Backgammony has support for both LAN and internet games matched through a remote server. Backgammony brings an innovative approach to network play - predominantly where it has to generate dice rolls. The algorithm uses a basic [commitment scheme](https://en.wikipedia.org/wiki/Commitment_scheme) to ensure that dice rolls are non-interferable and games are trustless. To view the dice roll implementation please inspect the DiceRoll class in the [networking package](https://github.com/jonathanballs/backgammony/blob/master/source/networking/package.d). The protocol lacks certain features notably the doubling cube and could not be considered to be complete. Future work will be invested in fleshing out and documenting the protocol.
 
 ## Building
-
 Backgammony is written in the D language so make sure that you have a D compiler and the Dub package manager installed. Navigate to the project directory and run:
 
 ```
