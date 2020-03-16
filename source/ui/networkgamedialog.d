@@ -23,6 +23,7 @@ import networking;
 import player;
 import ui.newgamedialog : HumanSelector, setMarginsExpand;
 import utils.addtickcallback;
+import utils.os;
 import utils.signals;
 
 enum formPadding = 10;
@@ -63,7 +64,7 @@ class NetworkGameDialog : Dialog {
          */
         inetBox = new Box(GtkOrientation.VERTICAL, formPadding);
         inetBox.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
-        inetHuman = new HumanSelector("Username", "jonathan");
+        inetHuman = new HumanSelector("Username", getLocalUserName());
         inetBox.packStart(inetHuman, false, false, 0);
 
         inetStartSearchLabel = new Label("Find Opponent");
@@ -106,7 +107,7 @@ class NetworkGameDialog : Dialog {
          */
         lanBox = new Box(GtkOrientation.VERTICAL, formPadding);
         lanBox.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
-        lanHuman = new HumanSelector("Username", "jonathan");
+        lanHuman = new HumanSelector("Username", getLocalUserName());
         lanBox.packStart(lanHuman, false, false, 0);
 
         tabs = new Notebook();

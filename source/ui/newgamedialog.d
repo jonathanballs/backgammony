@@ -19,6 +19,7 @@ import gtk.Window;
 
 import ai.gnubg;
 import utils.signals;
+import utils.os;
 import player;
 import game;
 
@@ -195,19 +196,6 @@ class NewGameDialog : Dialog {
         }
 
         return ais;
-    }
-
-    /**
-     * Get the local user name. Useful as  a default for player name
-     */
-    private string getLocalUserName() {
-        import std.process : environment;
-        version(Posix) {
-            return environment.get("USER", "Human");
-        }
-        version(Windows) {
-            return environment.get("%USERNAME%", "Human");
-        }
     }
 }
 
