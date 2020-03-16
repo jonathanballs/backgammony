@@ -709,3 +709,13 @@ class BackgammonBoardWidget : DrawingArea {
         cr.fill();
     }
 }
+
+unittest {
+    writeln("Testing BackgammonBoardWidget");
+    import gtk.Main;
+    string[] mainArgs;
+    Main.init(mainArgs);
+
+    auto gs = new GameState().newGame();
+    auto bw = new BackgammonBoardWidget(gs);
+}
