@@ -334,26 +334,17 @@ class BackgammonBoardWidget : DrawingArea {
      * TODO: Wipe current listeners. Check current state e.g. dice, is finished
      */
     public void setGameState(GameState gameState) {
-        gameState.onDiceRolled.connect((GameState gs, uint a, uint b) {
-            animatedDice = [
-                new AnimatedDie(a, 2 * style.animationSpeed),
-                new AnimatedDie(b, 2 * style.animationSpeed),
-            ];
-            lastAnimation = Clock.currTime;
-        });
-        gameState.onBeginTurn.connect((GameState gs, Player p) {
-            animatedDice = [];
-            _selectedMoves = [];
-            onChangePotentialMovements.emit();
-            pipRenderer.setMode(PipRendererMode.AwaitingAnimation);
-        });
-        gameState.onEndGame.connect((GameState gs, Player winner) {
-            this.showEndGame = true;
-            this.endGameTransition = Clock.currTime;
-        });
-        gameState.onStartGame.connect((GameState gs) {
-            this.showEndGame = false;
-        });
+        // Subscribe to the new signal handlers
+        if (this._gameState) {
+            this._gameState.onDiceRolled.disconnect(&this.onGameStateDiceRolled);
+            this._gameState.onBeginTurn.disconnect(&this.onGameStateBeginTurn);
+            this._gameState.onEndGame.disconnect(&this.onGameStateEndGame);
+            this._gameState.onStartGame.disconnect(&this.onGameStateStartGame);
+        }
+        gameState.onDiceRolled.connect(&this.onGameStateDiceRolled);
+        gameState.onBeginTurn.connect(&this.onGameStateBeginTurn);
+        gameState.onEndGame.connect(&this.onGameStateEndGame);
+        gameState.onStartGame.connect(&this.onGameStateStartGame);
 
         this._gameState = gameState;
         this.pipRenderer.setGameState(gameState);
@@ -373,6 +364,30 @@ class BackgammonBoardWidget : DrawingArea {
         } else {
             this.pipRenderer.setMode(PipRendererMode.AwaitingAnimation);
         }
+    }
+
+    void onGameStateDiceRolled(GameState gs, uint a, uint b) {
+        animatedDice = [
+            new AnimatedDie(a, 2 * style.animationSpeed),
+            new AnimatedDie(b, 2 * style.animationSpeed),
+        ];
+        lastAnimation = Clock.currTime;
+    }
+
+    void onGameStateBeginTurn(GameState gs, Player p) {
+        animatedDice = [];
+        _selectedMoves = [];
+        onChangePotentialMovements.emit();
+        pipRenderer.setMode(PipRendererMode.AwaitingAnimation);
+    }
+
+    void onGameStateEndGame(GameState gs, Player winner) {
+        this.showEndGame = true;
+        this.endGameTransition = Clock.currTime;
+    }
+
+    void onGameStateStartGame(GameState gs) {
+        this.showEndGame = false;
     }
 
     /**
