@@ -426,15 +426,11 @@ class BackgammonBoardWidget : DrawingArea {
      * Maybe remove this... Don't like the idea of renderer managing gamestate
      */
     public void finishTurn() {
-        if (!_selectedMoves.length) {
-            this.displayMessage("No movement available", () {});
-        }
-
         applyTurnAtEndOfAnimation = true;
     }
 
     /**
-     * Remove the most recent potential move
+     * Remove the last selected move
      */
     public void undoSelectedMove() {
         if (_selectedMoves.length > 0) {
@@ -542,10 +538,19 @@ class BackgammonBoardWidget : DrawingArea {
 
         if (applyTurnAtEndOfAnimation && !isAnimating()) {
             applyTurnAtEndOfAnimation = false;
-            auto pMoves = getSelectedMoves();
-            _selectedMoves = [];
-            pipRenderer.clearTransitions();
-            getGameState().applyTurn(pMoves);
+            if (!_selectedMoves.length) {
+                this.displayMessage("No movement available", () {
+                    auto pMoves = getSelectedMoves();
+                    _selectedMoves = [];
+                    pipRenderer.clearTransitions();
+                    getGameState().applyTurn(pMoves);
+                });
+            } else {
+                auto pMoves = getSelectedMoves();
+                _selectedMoves = [];
+                pipRenderer.clearTransitions();
+                getGameState().applyTurn(pMoves);
+            }
         }
 
         return false;

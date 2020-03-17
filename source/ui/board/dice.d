@@ -162,7 +162,5 @@ class AnimatedDie {
                 cr.restore();
             }
         }
-
-        if (cr) return;
     }
 }
