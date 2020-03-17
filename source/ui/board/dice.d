@@ -64,16 +64,16 @@ class AnimatedDie {
 
         // Calculate the end position and go back from there.
         pos.clear(0.0);
-        finalRot = dieFaces[diceValue-1].rot.inverse();
-
-        vel = (1000.0 / animationTime) * vec3(-8.0, 0.6, 0.0);
-        rotAxis = vec3(0.11, -1.0, 0.0);
-        angVel = (1000.0 / animationTime) * PI * 3;
+        rot = finalRot = dieFaces[diceValue-1].rot.inverse();
 
         if (!animationTime) {
             finished = true;
             return;
         }
+
+        vel = (1000.0 / animationTime) * vec3(-8.0, 0.6, 0.0);
+        rotAxis = vec3(0.11, -1.0, 0.0);
+        angVel = (1000.0 / animationTime) * PI * 3;
 
         // Assume 1 second animation.
         pos -= (animationTime / 1000.0) * vel;
