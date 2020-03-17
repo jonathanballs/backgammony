@@ -401,17 +401,36 @@ unittest {
      * Test animation timing. Move from 6=>5=>3 then get taken by P2 from point 1
      */
     gs.rollDice(1, 2);
-    auto move = PipMovement(PipMoveType.Movement, 6, 5);
-
-    // Assert that animation does not start while awaiting animation
     assert(pr.mode == PipRendererMode.AwaitingAnimation);
-    pr.selectMove(move);
+
+    /**
+     * Move piece 6 => 5
+     */
+    pr.selectMove(PipMovement(PipMoveType.Movement, 6, 5));
     assert(pr.selectedMoves.length == 1);
     assert(pr.transitionStack.length == 0);
     assert(pr.calculatePointAtTime(6, Clock.currTime).numPieces == 5);
-
     // Enable the pip seletion and start the animations
     pr.setMode(PipRendererMode.PipSelection);
     assert(pr.transitionStack.length == 1);
+    // Check that piece has left point 6
     assert(pr.calculatePointAtTime(6, Clock.currTime).numPieces == 4);
+    assert(pr.calculatePointAtTime(6, pr.transitionStack[0].startTime).numPieces == 5);
+    // And doesn't arrive at point 5 until animationSpeed.msecs later
+    assert(pr.calculatePointAtTime(5, Clock.currTime).numPieces == 0);
+    assert(pr.calculatePointAtTime(5, pr.transitionStack[0].startTime
+                                    + (style.animationSpeed - 1).msecs).numPieces == 0);
+    assert(pr.calculatePointAtTime(5, pr.transitionStack[0].startTime
+                                    + style.animationSpeed.msecs).numPieces == 1);
+
+    /**
+     * Move the piece 5 => 3
+     */
+    pr.selectMove(PipMovement(PipMoveType.Movement, 5, 3));
+    assert(pr.calculatePointAtTime(5, pr.transitionStack[0].startTime
+                                    + style.animationSpeed.msecs).numPieces == 1);
+    assert(pr.calculatePointAtTime(5, pr.transitionStack[0].startTime
+                                    + (5 + style.animationSpeed).msecs).numPieces == 0);
+    assert(pr.calculatePointAtTime(3, pr.transitionStack[0].startTime
+                                    + 2*style.animationSpeed.msecs + 5.msecs).numPieces == 1);
 }
