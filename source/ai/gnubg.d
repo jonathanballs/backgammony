@@ -133,7 +133,7 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
 }
 
 unittest {
-    writeln("Testing gnubg...");
+    writeln("Testing gnubg");
     auto gs = new GameState();
     gs.newGame();
     gs.rollDice(3, 3);

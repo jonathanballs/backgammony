@@ -25,7 +25,7 @@ template Signal(T...) {
 }
 
 unittest {
-    writeln("Testing Signals...");
+    writeln("Testing Signals");
 
     bool called;
     void handler(int i, string s) { called = true; }

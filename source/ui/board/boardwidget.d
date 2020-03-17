@@ -26,10 +26,6 @@ import ui.board.pips;
 import ui.board.style;
 import utils.cairowrappers;
 
-// TODO:
-// - Testing & benchmarking animations (potentially use separate thread?)
-// - Use GDK frameclock for animations
-
 /**
  * Widget for rendering a backgammon game state
  */

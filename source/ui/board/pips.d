@@ -1,5 +1,12 @@
 module ui.board.pips;
 
+/**
+ * Pip rendering for BackgammonBoardWidget. The functions and classes in this
+ * file provide functionality for animating and drawing the pips.
+ * TODO:
+ *  - Is there any reason for no gamestate to be set?
+ */
+
 import std.algorithm;
 import std.array;
 import std.datetime;
@@ -18,40 +25,39 @@ import ui.board.layout;
 private struct PipTransition {
     uint startPoint;
     uint endPoint;
-    bool undone;
     bool takesPiece;
     SysTime startTime;
 }
 
 /**
- * The renderer mode. Defines how the renderer responds to events.
+ * The renderer mode. Defines how the renderer responds to animation requests.
  */
-// Perhaps just bool isWaiting or something
 enum PipRendererMode {
-    AwaitingAnimation,
-    PipSelection,
-    BoardEditing,
+    AwaitingAnimation,          // Animation is queued
+    PipSelection,               // Animations are happening
+    BoardEditing,               // Not used yet - when the board is being edited
 }
 
 /**
  * Pip rendering and interaction code
  */
 class PipRenderer {
+    private:
     PipRendererMode mode;
     BoardStyle style;
     BoardLayout layout;
     GameState gameState;
     SysTime frameTime;
 
-    bool isDragging;
-    uint dragPointIndex;
-    ScreenPoint dragOffset;
-    SysTime dragStartTime;
+    public bool isDragging;
+    public uint dragPointIndex;
+    public ScreenPoint dragOffset;
+    public SysTime dragStartTime;
 
     /**
      * Create a new PipRenderer
      */
-    this(BoardLayout layout, BoardStyle style) {
+    public this(BoardLayout layout, BoardStyle style) {
         this.style = style;
         this.layout = layout;
     }
@@ -59,8 +65,9 @@ class PipRenderer {
     /**
      * Set the gamestate.
      */
-    void setGameState(GameState gs) {
+    public void setGameState(GameState gs) {
         clearTransitions();
+        isDragging = false;
         gameState = gs;
     }
 
@@ -90,7 +97,7 @@ class PipRenderer {
     /**
      * Draw gamestate pips onto the context
      */
-    void drawPips(Context cr, SysTime frameTime) {
+    public void drawPips(Context cr, SysTime frameTime) {
         this.frameTime = frameTime;
 
         // General function for drawing a pip at a certain point
@@ -229,7 +236,7 @@ class PipRenderer {
     /**
      * Calculates what a point will look like at a certain point in time
      */
-    Point calculatePointAtTime(uint pointNum, SysTime time) {
+    public Point calculatePointAtTime(uint pointNum, SysTime time) {
         assert(1 <= pointNum && pointNum <= 24);
 
         auto numPips = gameState.points[pointNum].numPieces;
@@ -275,7 +282,7 @@ class PipRenderer {
     /**
      * Calculates what's been taken
      */
-    uint calculateTakenPiecesAtTime(Player player, SysTime time) {
+    public uint calculateTakenPiecesAtTime(Player player, SysTime time) {
         uint numPips = gameState.takenPieces[player];
         // Add points that have arrived
         if (player == gameState.currentPlayer().opposite) {
@@ -292,14 +299,14 @@ class PipRenderer {
         return numPips;
     }
 
-    bool isAnimating() {
+    public bool isAnimating() {
         return !!transitionStack
                 .filter!(t => (t.startTime + style.animationSpeed.msecs > frameTime)
                     || (t.takesPiece && t.startTime + 2*style.animationSpeed.msecs > frameTime))
                 .array.length;
     }
 
-    void selectMove(PipMovement move, bool animate = true) {
+    public void selectMove(PipMovement move, bool animate = true) {
         if (mode == PipRendererMode.PipSelection) {
             animateMove(move, animate);
             selectedMoves ~= tuple(move, true);
@@ -308,7 +315,7 @@ class PipRenderer {
         }
     }
 
-    private void animateMove(PipMovement move, bool animate = true) {
+    void animateMove(PipMovement move, bool animate = true) {
         SysTime startTime = Clock.currTime;
 
         // Do we need to delay this move
@@ -337,14 +344,13 @@ class PipRenderer {
         auto pt = PipTransition(
             move.startPoint,
             move.endPoint,
-            false,
             takesPiece,
             startTime);
 
         if (mode == PipRendererMode.PipSelection) transitionStack ~= pt;
     }
 
-    void clearTransitions() {
+    public void clearTransitions() {
         selectedMoves = [];
         transitionStack = [];
         isDragging = false;
@@ -352,25 +358,25 @@ class PipRenderer {
         dragOffset = ScreenPoint();
     }
 
-    void undoTransition() {
+    public void undoTransition() {
         if (selectedMoves[$-1][1]) {
             transitionStack = transitionStack[0..$-1];
         }
         selectedMoves = selectedMoves[0..$-1];
     }
 
-    void startDrag(uint pointIndex) {
+    public void startDrag(uint pointIndex) {
         dragStartTime = Clock.currTime;
         dragPointIndex = pointIndex;
         dragOffset = ScreenPoint(0.0, 0.0);
         isDragging = true;
     }
 
-    void releaseDrag() {
+    public void releaseDrag() {
         isDragging = false;
     }
 
-    void setMode(PipRendererMode mode) {
+    public void setMode(PipRendererMode mode) {
         auto prevMode = this.mode;
         this.mode = mode;
 
@@ -382,4 +388,30 @@ class PipRenderer {
             }
         }
     }
+}
+
+unittest {
+    writeln("Testing PipRenderer");
+    auto style = new BoardStyle();
+    auto gs = new GameState().newGame();
+    auto pr = new PipRenderer(new BoardLayout(style), style);
+    pr.setGameState(gs);
+
+    /**
+     * Test animation timing. Move from 6=>5=>3 then get taken by P2 from point 1
+     */
+    gs.rollDice(1, 2);
+    auto move = PipMovement(PipMoveType.Movement, 6, 5);
+
+    // Assert that animation does not start while awaiting animation
+    assert(pr.mode == PipRendererMode.AwaitingAnimation);
+    pr.selectMove(move);
+    assert(pr.selectedMoves.length == 1);
+    assert(pr.transitionStack.length == 0);
+    assert(pr.calculatePointAtTime(6, Clock.currTime).numPieces == 5);
+
+    // Enable the pip seletion and start the animations
+    pr.setMode(PipRendererMode.PipSelection);
+    assert(pr.transitionStack.length == 1);
+    assert(pr.calculatePointAtTime(6, Clock.currTime).numPieces == 4);
 }
