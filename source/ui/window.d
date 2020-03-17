@@ -230,7 +230,6 @@ class BackgammonWindow : MainWindow {
     }
 
     public void setGameState(GameState gs) {
-        this.gameState = gs;
         this.aiGetTurn = null;
 
         backgammonBoard.setGameState(gs);
@@ -240,52 +239,63 @@ class BackgammonWindow : MainWindow {
             backgammonBoard.setPlayerCorner(Player.P2, Corner.BR);
         }
 
-        // Link up gamestate to various things
-        // How are dice rolls handled?
-        gs.onBeginTurn.connect((GameState _gs, Player p) {
-            header.setSubtitle(p == Player.P1 ? "Black to play" : "White to play");
-            finishTurnBtn.setSensitive(false);
+        if (this.gameState) {
+            this.gameState.onDiceRolled.disconnect(&this.onGameStateDiceRolled);
+            this.gameState.onBeginTurn.disconnect(&this.onGameStateBeginTurn);
+            this.gameState.onEndGame.disconnect(&this.onGameStateEndGame);
+        }
+        gs.onDiceRolled.connect(&this.onGameStateDiceRolled);
+        gs.onBeginTurn.connect(&this.onGameStateBeginTurn);
+        gs.onEndGame.connect(&this.onGameStateEndGame);
 
-            // Local games we can just roll the dice automatically. Otherwise,
-            // we will wait for a dice roll from the network thread.
-            if (!gs.isNetworkGame) {
-                if (gs.equals(gs.dup.newGame())) {
-                    backgammonBoard.displayMessage(_gs.players[p].name ~ " starts", () {
-                        _gs.rollDice();
-                    });
-                } else {
+        this.gameState = gs;
+    }
+
+    // Link up gamestate to various things
+    // How are dice rolls handled?
+    void onGameStateBeginTurn(GameState _gs, Player p) {
+        header.setSubtitle(p == Player.P1 ? "Black to play" : "White to play");
+        finishTurnBtn.setSensitive(false);
+
+        // Local games we can just roll the dice automatically. Otherwise,
+        // we will wait for a dice roll from the network thread.
+        if (!_gs.isNetworkGame) {
+            if (_gs.equals(_gs.dup.newGame())) {
+                backgammonBoard.displayMessage(_gs.players[p].name ~ " starts", () {
                     _gs.rollDice();
-                }
+                });
             } else {
-                if (_gs.players[p].type == PlayerType.User) {
-                    auto netThread = gameState.players[gameState.currentPlayer.opposite].config.peek!Tid;
-                    send(*netThread, NetworkTurnDiceRoll());
-                }
+                _gs.rollDice();
             }
+        } else {
+            if (_gs.players[p].type == PlayerType.User) {
+                auto netThread = gameState.players[gameState.currentPlayer.opposite].config.peek!Tid;
+                send(*netThread, NetworkTurnDiceRoll());
+            }
+        }
+    }
 
-        });
-        gs.onDiceRolled.connect((GameState gs, uint die1, uint die2) {
-            if (gs.players[gs.currentPlayer].type == PlayerType.User) {
-                if (!gs.generatePossibleTurns.length) {
-                    finishTurnBtn.setSensitive(true);
-                }
+    void onGameStateDiceRolled(GameState gs, uint die1, uint die2) {
+        if (gs.players[gs.currentPlayer].type == PlayerType.User) {
+            if (!gs.generatePossibleTurns.length) {
+                finishTurnBtn.setSensitive(true);
             }
+        }
 
-            // Who is handling this turn?
-            if (gs.players[gs.currentPlayer].type == PlayerType.AI) {
-                aiGetTurn = task!gnubgGetTurn(gs,
-                    *gs.players[gs.currentPlayer].config.peek!GnubgEvalContext);
-                aiGetTurn.executeInNewThread();
-            }
-        });
-        gs.onEndGame.connect((GameState gs, Player winner) {
-            finishTurnBtn.setSensitive(false);
-            undoMoveBtn.setSensitive(false);
-        });
+        // Start an AI request if necessary
+        if (gs.players[gs.currentPlayer].type == PlayerType.AI) {
+            aiGetTurn = task!gnubgGetTurn(gs,
+                *gs.players[gs.currentPlayer].config.peek!GnubgEvalContext);
+            aiGetTurn.executeInNewThread();
+        }
+    }
+
+    void onGameStateEndGame(GameState gs, Player winner) {
+        finishTurnBtn.setSensitive(false);
+        undoMoveBtn.setSensitive(false);
     }
 
     bool handleThreadMessages(Widget w, FrameClock f) {
-
         if (aiGetTurn && aiGetTurn.done) {
             remoteResult = aiGetTurn.yieldForce;
             aiGetTurn = null;
