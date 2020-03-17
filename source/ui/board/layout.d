@@ -138,7 +138,7 @@ class BoardLayout {
     ScreenPoint getPipPosition(uint pointNum, uint pipNum) {
         assert (1 <= pointNum && pointNum <= 24);
         if (!pipNum) {
-            throw new Exception("errrr");
+            throw new Exception("Tried to get pip position at pip 0");
         }
         pointNum--;
         pipNum--;

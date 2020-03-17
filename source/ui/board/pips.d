@@ -78,6 +78,7 @@ class PipRenderer {
      * added to the animation stack.
      */
     PipTransition[] transitionStack;
+    PipTransition[] undoTransitionStack;
     Tuple!(PipMovement, bool)[] selectedMoves;
 
     /// The current gamestate with selected moves applied. Transitions are
@@ -137,12 +138,12 @@ class PipRenderer {
         }
 
         // Draw pips on each point
-        uint pointNum = 0;
+        uint pointNum = 1;
         foreach(point; this.selectedGameState.points) {
-            const auto calculatedPoint = calculatePointAtTime(pointNum+1, frameTime);
+            const auto calculatedPoint = calculatePointAtTime(pointNum, frameTime);
 
             foreach(n; 0..calculatedPoint.numPieces) {
-                auto pipPosition = layout.getPipPosition(pointNum + 1, n + 1);
+                auto pipPosition = layout.getPipPosition(pointNum, n + 1);
                 drawPip(cast(uint) pipPosition.x, cast(uint) pipPosition.y,
                     calculatedPoint.owner == Player.P1 ? style.p1Colour : style.p2Colour);
             }
@@ -208,6 +209,46 @@ class PipRenderer {
             tweenPip(startPos, endPos, progress, gameState.currentPlayer);
         }
 
+        // Draw pip undo animations
+        auto currentUndoTransitions = undoTransitionStack
+            .filter!(t => t.startTime + style.animationSpeed.msecs > frameTime)
+            .filter!(t => t.startTime < frameTime)
+            .array;
+
+        foreach (transition; currentUndoTransitions) {
+            ScreenPoint startPos;
+            ScreenPoint endPos;
+
+            // If it's coming from the bar
+            if (!transition.startPoint) {
+                auto startingPip = calculateTakenPiecesAtTime(
+                    gameState.currentPlayer, transition.startTime
+                );
+                startPos = layout.getTakenPipPosition(gameState.currentPlayer, startingPip + 1);
+            } else {
+                auto startPoint = calculatePointAtTime(transition.startPoint, transition.startTime);
+                startPos = layout.getPipPosition(transition.startPoint, startPoint.numPieces + 1);
+            }
+
+            if (transition.endPoint) {
+                auto endPoint = calculatePointAtTime(transition.endPoint,
+                                    transition.startTime + style.animationSpeed.msecs);
+                try {
+                    endPos = layout.getPipPosition(transition.endPoint, endPoint.numPieces);
+                } catch (Exception e) {
+                    writeln(transitionStack);
+                    writeln(selectedMoves);
+                }
+            } else {
+                // If it's being borne off
+                endPos = ScreenPoint(1.5 * style.boardWidth, 0.5*style.boardHeight);
+            }
+
+            float progress = (frameTime - transition.startTime).total!"msecs" / cast(float) style.animationSpeed;
+            progress = progress > 1.0 ? 1.0 : progress;
+            tweenPip(startPos, endPos, progress, gameState.currentPlayer);
+        }
+
         // Draw the dragged pip
         if (isDragging) {
             ScreenPoint pipStartPos;
@@ -247,10 +288,16 @@ class PipRenderer {
             .filter!(t => t.startTime + style.animationSpeed.msecs <= time)
             .array.length;
 
-        // Minus the ones that left
+        // Minus the ones that left yet
         numPips -= transitionStack
             .filter!(t => t.startPoint == pointNum)
             .filter!(t => t.startTime < time)
+            .array.length;
+
+        // Minus those that haven't yet returned
+        numPips -= undoTransitionStack
+            .filter!(t => t.endPoint == pointNum)
+            .filter!(t => t.startTime + style.animationSpeed.msecs > time)
             .array.length;
 
         if (isDragging && dragPointIndex == pointNum && numPips && time > dragStartTime) {
@@ -353,6 +400,7 @@ class PipRenderer {
     public void clearTransitions() {
         selectedMoves = [];
         transitionStack = [];
+        undoTransitionStack = [];
         isDragging = false;
         dragPointIndex = 0;
         dragOffset = ScreenPoint();
@@ -360,6 +408,21 @@ class PipRenderer {
 
     public void undoTransition() {
         if (selectedMoves[$-1][1]) {
+            auto lastTransition = transitionStack[$-1];
+            if (lastTransition.startTime < Clock.currTime - style.animationSpeed.msecs) {
+                // What if double undoing? Need to delay...
+                undoTransitionStack ~= PipTransition(
+                    lastTransition.endPoint, lastTransition.startPoint,
+                    lastTransition.takesPiece, Clock.currTime
+                );
+            } else {
+                undoTransitionStack ~= PipTransition(
+                    lastTransition.endPoint, lastTransition.startPoint,
+                    lastTransition.takesPiece,
+                    (Clock.currTime - (style.animationSpeed.msecs - (Clock.currTime - lastTransition.startTime)))
+                );
+            }
+
             transitionStack = transitionStack[0..$-1];
         }
         selectedMoves = selectedMoves[0..$-1];
