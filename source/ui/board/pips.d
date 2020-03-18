@@ -3,6 +3,7 @@ module ui.board.pips;
 /**
  * Pip rendering for BackgammonBoardWidget. The functions and classes in this
  * file provide functionality for animating and drawing the pips.
+ * Warning: This code is very messy. I will try to clean it up at some point.
  * TODO:
  *  - Is there any reason for no gamestate to be set?
  */
@@ -300,6 +301,12 @@ class PipRenderer {
             .filter!(t => t.startTime + style.animationSpeed.msecs > time)
             .array.length;
 
+        // Add the ones that haven't started returning
+        numPips += undoTransitionStack
+            .filter!(t => t.startPoint == pointNum)
+            .filter!(t => t.startTime > time)
+            .array.length;
+
         if (isDragging && dragPointIndex == pointNum && numPips && time > dragStartTime) {
             numPips--;
         }
@@ -320,6 +327,7 @@ class PipRenderer {
             writeln(pointNum, " ", gameState.points[pointNum]);
             writeln(time);
             writeln(transitionStack);
+            writeln(undoTransitionStack);
             assert(0);
         }
 
@@ -410,11 +418,35 @@ class PipRenderer {
         if (selectedMoves[$-1][1]) {
             auto lastTransition = transitionStack[$-1];
             if (lastTransition.startTime < Clock.currTime - style.animationSpeed.msecs) {
+                SysTime startTime = Clock.currTime;
+
+                auto startPoint = lastTransition.endPoint;
+                auto endPoint = lastTransition.startPoint;
+
+                // Animation must be delayed if the pip has yet not arrived.
+                if (lastTransition.startPoint) {
+                    const auto pointAtStart = calculatePointAtTime(startPoint, startTime);
+                    if (pointAtStart.numPieces == 0
+                            || pointAtStart.owner == gameState.currentPlayer.opposite) {
+
+                        writeln("delayinggg.");
+
+                        // Find the last time that someone landed there
+                        auto landed = undoTransitionStack.filter!(t => t.endPoint == startPoint).array;
+                        assert(landed.length);
+                        startTime = landed[$-1].startTime + style.animationSpeed.msecs
+                            + undoTransitionStack.length.msecs; // Staggered to fix uitests.doublePipMove()
+
+                        writeln(landed, startTime);
+                    }
+                }
+
                 // What if double undoing? Need to delay...
                 undoTransitionStack ~= PipTransition(
                     lastTransition.endPoint, lastTransition.startPoint,
-                    lastTransition.takesPiece, Clock.currTime
+                    lastTransition.takesPiece, startTime
                 );
+
             } else {
                 undoTransitionStack ~= PipTransition(
                     lastTransition.endPoint, lastTransition.startPoint,
