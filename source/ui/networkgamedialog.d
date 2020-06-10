@@ -167,28 +167,76 @@ class NetworkGameDialog : Dialog {
     mixin AddTickCallback;
 }
 
+/**
+ * Login form for a FIBS server
+ */
 class FibsLoginForm : Box {
-    /// Fibs Login
+    /// Connection Settings
     Box fibsBox;
     LabeledEntry serverEntry;
     LabeledEntry usernameEntry;
     LabeledEntry passwordEntry;
 
+    /// Fibs connect button
+    Label connectionErrorMessage;
+    Button connectButton;
+    Box connectButtonBox;
+    Label connectButtonLabel;
+    Spinner connectButtonSpinner;
+    bool isConnecting;
+
     this() {
         super(GtkOrientation.VERTICAL, formPadding);
         this.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
+
+        /// Connection Info form
+        auto label = new Label("Connection Info");
+        this.packStart(label, false, false, 0);
+        label.setMarginTop(formPadding);
         serverEntry = new LabeledEntry("Server", "fibs.com:4321");
-        usernameEntry = new LabeledEntry("Username", getLocalUserName());
-        passwordEntry = new LabeledEntry("Password", "password");
         serverEntry.label.setWidthChars(8);
         serverEntry.label.setXalign(0.0);
+        usernameEntry = new LabeledEntry("Username", getLocalUserName());
         usernameEntry.label.setWidthChars(8);
         usernameEntry.label.setXalign(0.0);
+        passwordEntry = new LabeledEntry("Password", "password");
         passwordEntry.label.setWidthChars(8);
         passwordEntry.label.setXalign(0.0);
         passwordEntry.entry.setVisibility(false);
         this.add(serverEntry);
         this.add(usernameEntry);
         this.add(passwordEntry);
+
+        /// Connection button
+        connectButtonLabel = new Label("Connect");
+        connectButtonBox = new Box(GtkOrientation.HORIZONTAL, formPadding);
+        connectButtonBox.packStart(connectButtonLabel, false, false, 0);
+        connectButtonBox.setHalign(GtkAlign.CENTER);
+
+        connectButton = new Button();
+        connectButton.add(connectButtonBox);
+        connectButton.getStyleContext().addClass("suggested-action");
+        this.packEnd(connectButton, false, false, 0);
+        connectButton.addOnClicked((Button b) {
+            if (!isConnecting) {
+                connectButtonSpinner = new Spinner();
+                connectButtonBox.packStart(connectButtonSpinner, false, false, 0);
+                connectButtonBox.reorderChild(connectButtonSpinner, 0);
+                connectButtonSpinner.start();
+                connectButtonSpinner.show();
+                connectButtonLabel.setText("Connecting...");
+                // inetThreadTid = spawn((shared string playerName) {
+                //     auto p = PlayerMeta(playerName, playerName);
+                //     auto thread = new NetworkingThread(p);
+                //     thread.run();
+                // }, cast(immutable) inetHuman.getActiveSelection().id);
+                isConnecting = true;
+            } else {
+                // send(inetThreadTid, NetworkThreadShutdown());
+                isConnecting = false;
+                connectButtonSpinner.destroy();
+                connectButtonLabel.setText("Connect");
+            }
+        });
     }
 }
