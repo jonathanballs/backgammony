@@ -1,6 +1,8 @@
 import std.getopt;
+import std.stdio;
 import gtk.Main;
 import ui.window;
+import config;
 
 void main(string[] args) 
 {
@@ -13,6 +15,11 @@ void main(string[] args)
         "uitests", &uiTests
     );
 
+    // Read config file
+    Config.read();
+    if (!Config.couldReadAtStartup) {
+        writeln("Could not read config file: " ~ Config.startupErrorMessage);
+    }
 
     Main.init(args);
     auto window = new BackgammonWindow();

@@ -195,16 +195,17 @@ class FIBSLoginForm : Box {
         this.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
 
         /// Connection Info form
+        import config;
         auto label = new Label("Connection Info");
         this.packStart(label, false, false, 0);
         label.setMarginTop(formPadding);
-        serverEntry = new LabeledEntry("Server", "166.84.7.158:4321");
+        serverEntry = new LabeledEntry("Server", Config.fibsServer);
         serverEntry.label.setWidthChars(8);
         serverEntry.label.setXalign(0.0);
-        usernameEntry = new LabeledEntry("Username", getLocalUserName());
+        usernameEntry = new LabeledEntry("Username", Config.fibsUsername);
         usernameEntry.label.setWidthChars(8);
         usernameEntry.label.setXalign(0.0);
-        passwordEntry = new LabeledEntry("Password", "password");
+        passwordEntry = new LabeledEntry("Password", Config.fibsPassword);
         passwordEntry.label.setWidthChars(8);
         passwordEntry.label.setXalign(0.0);
         passwordEntry.entry.setVisibility(false);
