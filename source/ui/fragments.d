@@ -21,7 +21,7 @@ class LabeledEntry : Box {
     Entry entry;
 
     /**
-     * Create a new Human Selector
+     * Create a new text entry with a label
      */
     this(string labelText, string defaultValue) {
         super(GtkOrientation.VERTICAL, 0);
@@ -33,4 +33,7 @@ class LabeledEntry : Box {
         box.packStart(entry, true, true, 0);
         this.packStart(box, false, false, 0);
     }
+
+    string getText() { return entry.getText(); }
+    void setText(string s) { entry.setText(s); }
 }

@@ -5,6 +5,7 @@ import std.concurrency;
 import std.typecons;
 import std.stdio;
 import std.digest.sha;
+import std.socket;
 import requests;
 
 import gtk.Box;
@@ -20,6 +21,7 @@ import gtk.Window;
 import game;
 import networking.messages;
 import networking;
+import networking.fibs.thread;
 import player;
 import ui.newgamedialog : HumanSelector, setMarginsExpand;
 import ui.fragments;
@@ -47,7 +49,7 @@ class NetworkGameDialog : Dialog {
     bool inetThreadRunning;
     bool inetThreadPreserve; // Don't delete when closing
 
-    FibsLoginForm fibsLoginForm;
+    FIBSLoginForm fibsLoginForm;
 
     /**
      * Create a new Network Widget
@@ -116,7 +118,7 @@ class NetworkGameDialog : Dialog {
         /**
          * Fibs
          */
-        fibsLoginForm = new FibsLoginForm();
+        fibsLoginForm = new FIBSLoginForm();
 
         tabs = new Notebook();
         tabs.appendPage(inetBox, new Label("Internet"));
@@ -170,7 +172,7 @@ class NetworkGameDialog : Dialog {
 /**
  * Login form for a FIBS server
  */
-class FibsLoginForm : Box {
+class FIBSLoginForm : Box {
     /// Connection Settings
     Box fibsBox;
     LabeledEntry serverEntry;
@@ -185,6 +187,9 @@ class FibsLoginForm : Box {
     Spinner connectButtonSpinner;
     bool isConnecting;
 
+    /// Connection thread
+    Tid fibsNetworkThread;
+
     this() {
         super(GtkOrientation.VERTICAL, formPadding);
         this.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
@@ -193,7 +198,7 @@ class FibsLoginForm : Box {
         auto label = new Label("Connection Info");
         this.packStart(label, false, false, 0);
         label.setMarginTop(formPadding);
-        serverEntry = new LabeledEntry("Server", "fibs.com:4321");
+        serverEntry = new LabeledEntry("Server", "166.84.7.158:4321");
         serverEntry.label.setWidthChars(8);
         serverEntry.label.setXalign(0.0);
         usernameEntry = new LabeledEntry("Username", getLocalUserName());
@@ -225,11 +230,19 @@ class FibsLoginForm : Box {
                 connectButtonSpinner.start();
                 connectButtonSpinner.show();
                 connectButtonLabel.setText("Connecting...");
-                // inetThreadTid = spawn((shared string playerName) {
-                //     auto p = PlayerMeta(playerName, playerName);
-                //     auto thread = new NetworkingThread(p);
-                //     thread.run();
-                // }, cast(immutable) inetHuman.getActiveSelection().id);
+                fibsNetworkThread = spawn((shared string serverAddress,
+                                shared string username, shared string password) {
+                    import std.array : split;
+                    auto thread = new FIBSNetworkingThread(
+                        getAddress(serverAddress.split(':')[0], 4321)[0],
+                        username,
+                        password
+                    );
+                    thread.run();
+                }, cast(immutable) serverEntry.getText(),
+                    cast(immutable) usernameEntry.getText(),
+                    cast(immutable) passwordEntry.getText());
+
                 isConnecting = true;
             } else {
                 // send(inetThreadTid, NetworkThreadShutdown());
