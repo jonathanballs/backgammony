@@ -20,7 +20,7 @@ class FIBSNetworkingThread {
     public void run() {
         try {
             conn = new FIBSConnection(serverAddress, username, password);
-            // conn.writeline("RequestGame " ~ player.name ~ " v0.0.0");
+            conn.writeline("login backgammony-1.0.0 1008 " ~ username ~ " " ~ password);
             while(true) {
                 try {
                     auto line = conn.readline(25.msecs);

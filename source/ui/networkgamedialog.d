@@ -233,6 +233,7 @@ class FIBSLoginForm : Box {
                 fibsNetworkThread = spawn((shared string serverAddress,
                                 shared string username, shared string password) {
                     import std.array : split;
+                    // TODO: Safe address parsing
                     auto thread = new FIBSNetworkingThread(
                         getAddress(serverAddress.split(':')[0], 4321)[0],
                         username,
@@ -242,7 +243,6 @@ class FIBSLoginForm : Box {
                 }, cast(immutable) serverEntry.getText(),
                     cast(immutable) usernameEntry.getText(),
                     cast(immutable) passwordEntry.getText());
-
                 isConnecting = true;
             } else {
                 // send(inetThreadTid, NetworkThreadShutdown());

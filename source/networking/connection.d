@@ -21,8 +21,8 @@ struct ConnectionHeaders {
 // Wrapper around network connections. Provides helper functions and IP version
 // agnosticism. Handles initial connection.
 class Connection {
-    private Socket conn;
-    private Address address;
+    protected Socket conn;
+    protected Address address;
     bool isHost;
 
     /// Create a Connection and connects to address as a client
