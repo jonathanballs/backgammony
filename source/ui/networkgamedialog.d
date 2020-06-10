@@ -22,6 +22,7 @@ import networking.messages;
 import networking;
 import player;
 import ui.newgamedialog : HumanSelector, setMarginsExpand;
+import ui.fragments;
 import utils.addtickcallback;
 import utils.os;
 import utils.signals;
@@ -45,6 +46,8 @@ class NetworkGameDialog : Dialog {
     Tid inetThreadTid;
     bool inetThreadRunning;
     bool inetThreadPreserve; // Don't delete when closing
+
+    FibsLoginForm fibsLoginForm;
 
     /**
      * Create a new Network Widget
@@ -110,9 +113,15 @@ class NetworkGameDialog : Dialog {
         lanHuman = new HumanSelector("Username", getLocalUserName());
         lanBox.packStart(lanHuman, false, false, 0);
 
+        /**
+         * Fibs
+         */
+        fibsLoginForm = new FibsLoginForm();
+
         tabs = new Notebook();
         tabs.appendPage(inetBox, new Label("Internet"));
         tabs.appendPage(lanBox, new Label("LAN"));
+        tabs.appendPage(fibsLoginForm, new Label("FIBS"));
 
         this.getContentArea().add(tabs);
         this.showAll();
@@ -156,4 +165,30 @@ class NetworkGameDialog : Dialog {
     }
 
     mixin AddTickCallback;
+}
+
+class FibsLoginForm : Box {
+    /// Fibs Login
+    Box fibsBox;
+    LabeledEntry serverEntry;
+    LabeledEntry usernameEntry;
+    LabeledEntry passwordEntry;
+
+    this() {
+        super(GtkOrientation.VERTICAL, formPadding);
+        this.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
+        serverEntry = new LabeledEntry("Server", "fibs.com:4321");
+        usernameEntry = new LabeledEntry("Username", getLocalUserName());
+        passwordEntry = new LabeledEntry("Password", "password");
+        serverEntry.label.setWidthChars(8);
+        serverEntry.label.setXalign(0.0);
+        usernameEntry.label.setWidthChars(8);
+        usernameEntry.label.setXalign(0.0);
+        passwordEntry.label.setWidthChars(8);
+        passwordEntry.label.setXalign(0.0);
+        passwordEntry.entry.setVisibility(false);
+        this.add(serverEntry);
+        this.add(usernameEntry);
+        this.add(passwordEntry);
+    }
 }

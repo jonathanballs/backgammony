@@ -13,7 +13,6 @@ import gtk.Frame;
 import gtk.Label;
 import gtk.ListStore;
 import gtk.Notebook;
-import gtk.TreeIter;
 import gtk.Widget;
 import gtk.Window;
 
