@@ -13,10 +13,10 @@ class FibsSidebar : Box {
         StyleContext styleContext = this.getStyleContext();      
         CssProvider cssProvider = new CssProvider();         
         cssProvider.loadFromData("box {"      
-            ~ "border-left-width: 2px;"      
+            ~ "border-left-width: 1px;"      
             ~ "border-left-style: solid;"      
-            ~ "border-color: #000000;"      
-            ~ "background-color: @theme_bg_color }");      
+            ~ "border-color: #1b1b1b;"      
+            ~ "background-color: @theme_bg_color }");
         styleContext.addProvider(cssProvider, STYLE_PROVIDER_PRIORITY_APPLICATION);    
 
         this.setSizeRequest(250, 100);

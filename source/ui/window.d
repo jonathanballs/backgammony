@@ -18,6 +18,7 @@ import gtk.Image;
 import gtk.Label;
 import gtk.Main;
 import gtk.MainWindow;
+import gtk.Revealer;
 import gtk.Widget;
 
 import game;
@@ -44,6 +45,8 @@ class BackgammonWindow : MainWindow {
     Button undoMoveBtn;
 
     Box contentBox;
+    FibsSidebar fibsSidebar;
+    Revealer fibsSidebarRevealer;
     public BackgammonBoardWidget backgammonBoard;
     NetworkGameDialog networkWidget;
     NewGameDialog newGameDialog;
@@ -143,9 +146,15 @@ class BackgammonWindow : MainWindow {
         });
 
         contentBox = new Box(GtkOrientation.HORIZONTAL, 0);
+        fibsSidebar = new FibsSidebar();
+        fibsSidebarRevealer = new Revealer();
+        fibsSidebarRevealer.setTransitionType(GtkRevealerTransitionType.SLIDE_LEFT);
+        fibsSidebarRevealer.add(fibsSidebar);
+        fibsSidebarRevealer.setRevealChild(false);
+
         this.add(contentBox);
         contentBox.packStart(backgammonBoard, true, true, 0);
-        contentBox.packStart(new FibsSidebar(), false, true, 0);
+        contentBox.packStart(fibsSidebarRevealer, false, true, 0);
 
         this.setDefaultSize(1000, 600);
         this.addTickCallback(&handleThreadMessages);
@@ -236,6 +245,7 @@ class BackgammonWindow : MainWindow {
         networkWidget.onFibsConnection.connect(() {
             networkWidget.destroy();
             networkWidget = null;
+            this.fibsSidebarRevealer.setRevealChild(true);
         });
     }
 
