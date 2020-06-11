@@ -23,7 +23,7 @@ class FIBSNetworkingThread {
             while(true) {
                 try {
                     auto line = conn.readMessage(25.msecs);
-                    writeln("============ END MESSAGE ================");
+                    writeln(line);
                 } catch (Exception e) {
                 }
             }

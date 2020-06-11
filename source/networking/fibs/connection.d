@@ -7,9 +7,11 @@ import std.socket;
 import std.stdio;
 import std.variant;
 import networking.connection;
+import networking.fibs.clipmessages;
 
 /**
- * Handles connection with FIBS server
+ * Handles connection with FIBS server as well as formatting requests and parsing
+ * responses.
  */
 class FIBSConnection : Connection {
     // Create a new connection to a FIBS server and attempt to login
@@ -21,7 +23,6 @@ class FIBSConnection : Connection {
             try {
                 auto l = this.readline(25.msecs);
             } catch (TimeoutException e) {
-                writeln(this.recBuffer);
                 if (this.recBuffer.startsWith("login:")) {
                     this.recBuffer = "";
                     break;
@@ -43,14 +44,16 @@ class FIBSConnection : Connection {
             }
         }
 
-        writeln("Connected successfully");
+        writeln("Authenticated successfully to FIBS server ", serverAddress);
     }
 
     /*
      * Overrided writeline to send carriage return as well
      */
     override void writeline(string s = "") {
-        writeln("NETSND: ", s);
+        if (this._debug) {
+            writeln("NETSND: ", s);
+        }
         this.conn.send(s ~ "\r\n");
     }
 
@@ -90,7 +93,28 @@ class FIBSConnection : Connection {
 
         } while (timeout == Duration.zero || timer.peek < timeout);
 
-        Variant v = lines;
+        Variant v;
+        switch (lines[0].split()[0]) {
+            case "1":
+                assert(lines.length == 1);
+                v = CLIPWelcome(lines[0]);
+                break;
+            case "2":
+                assert(lines.length == 1);
+                v = CLIPOwnInfo(lines[0]);
+                break;
+            case "3":
+                assert(lines.length >= 2);
+                v = CLIPMOTD(lines);
+                break;
+            case "5":
+                v = CLIPWho(lines[0]);
+                break;
+            default:
+                v = "===> " ~ lines[0];
+                break;
+        }
+
         return v;
     }
 }
