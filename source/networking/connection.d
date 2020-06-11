@@ -56,11 +56,11 @@ class Connection {
         conn.close();
     }
 
-    /// Read a line (newline excluded) syncronously from the current connection.
-    /// ARGS:
-    ///   timeout: How long before throwing timeout exception. Leave for unlimited.
     string recBuffer;
-    string readline(Duration timeout = Duration.zero) {
+    /**
+     * Fills rec buffer until a new line is found
+     */
+    protected void fillRecBuffer(Duration timeout = Duration.zero) {
         import std.datetime.stopwatch;
         auto timer = new StopWatch(AutoStart.yes);
 
@@ -102,10 +102,18 @@ class Connection {
         if (timeout != Duration.zero && timer.peek > timeout) {
             throw new TimeoutException("Connection readline timeout");
         }
+    }
+
+    /// Read a line (newline excluded) syncronously from the current connection.
+    /// ARGS:
+    ///   timeout: How long before throwing timeout exception. Leave for unlimited.
+    string readline(Duration timeout = Duration.zero) {
+
+        this.fillRecBuffer(timeout);
 
         auto nlIndex = recBuffer.indexOf('\n');
         if (nlIndex != -1) {
-            string ret = recBuffer[0..nlIndex];
+            string ret = recBuffer[0..nlIndex+1].chomp();
             recBuffer = recBuffer[nlIndex+1..$];
             writeln("NETGET: ", ret);
             return ret;
