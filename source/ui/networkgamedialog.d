@@ -29,10 +29,18 @@ import utils.addtickcallback;
 import utils.os;
 import utils.signals;
 
+// TODO:
+//  - Move TBP form and functionality to separate class
+
 enum formPadding = 10;
 
 class NetworkGameDialog : Dialog {
+    /// Emitted when a new TBP game is started
     Signal!(GameState) onCreateNewGame;
+
+    /// Emitted when a connection to a FIBS server is made successfully
+    Signal!() onFibsConnection;
+
     Notebook tabs;
 
     Box lanBox;
@@ -63,6 +71,7 @@ class NetworkGameDialog : Dialog {
         this.setSizeRequest(400, 475);
         this.setTitle("Network Game");
         this.onCreateNewGame = new Signal!(GameState);
+        this.onFibsConnection = new Signal!();
 
         /**
          * Internet
@@ -119,6 +128,9 @@ class NetworkGameDialog : Dialog {
          * Fibs
          */
         fibsLoginForm = new FIBSLoginForm();
+        fibsLoginForm.onSuccessfulConnection.connect(() {
+            this.onFibsConnection.emit();
+        });
 
         tabs = new Notebook();
         tabs.appendPage(inetBox, new Label("Internet"));
@@ -173,6 +185,8 @@ class NetworkGameDialog : Dialog {
  * Login form for a FIBS server
  */
 class FIBSLoginForm : Box {
+    Signal!() onSuccessfulConnection;
+
     /// Connection Settings
     Box fibsBox;
     LabeledEntry serverEntry;
@@ -192,6 +206,9 @@ class FIBSLoginForm : Box {
 
     this() {
         super(GtkOrientation.VERTICAL, formPadding);
+
+        this.onSuccessfulConnection = new Signal!();
+
         this.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
 
         /// Connection Info form
@@ -225,6 +242,9 @@ class FIBSLoginForm : Box {
         this.packEnd(connectButton, false, false, 0);
         connectButton.addOnClicked((Button b) {
             if (!isConnecting) {
+                // Reset error message
+                connectionErrorMessage.setMarkup("");
+
                 connectButtonSpinner = new Spinner();
                 connectButtonBox.packStart(connectButtonSpinner, false, false, 0);
                 connectButtonBox.reorderChild(connectButtonSpinner, 0);
@@ -246,11 +266,49 @@ class FIBSLoginForm : Box {
                     cast(immutable) passwordEntry.getText());
                 isConnecting = true;
             } else {
+                // TODO: Kill thread
                 // send(inetThreadTid, NetworkThreadShutdown());
                 isConnecting = false;
                 connectButtonSpinner.destroy();
                 connectButtonLabel.setText("Connect");
             }
         });
+
+        // In case of any errors we'll put them here
+        connectionErrorMessage = new Label("");
+        this.packEnd(connectionErrorMessage, false, false, 0);
+
+        this.addTickCallback(&onTick);
     }
+
+    /**
+     * Handle connection events
+     */
+    bool onTick(Widget w, FrameClock f) {
+        import networking.fibs.messages;
+
+        if (!isConnecting) return true;
+
+        receiveTimeout(0.msecs,
+            (FIBSConnectionSuccess _) {
+                // Successful connection. Close window and reveal sidebar
+                this.onSuccessfulConnection.emit();
+            },
+            (FIBSConnectionFailure e) {
+                import std.format : format;
+                connectionErrorMessage.setMarkup(format!"<span foreground='red'>%s</span>"(e.message));
+                connectButton.clicked();
+            }
+        );
+        return true;
+    }
+
+    void onDestroy(Widget w) {
+        // if (inetThreadRunning && !inetThreadPreserve) {
+        //     send(inetThreadTid, NetworkThreadShutdown());
+        //     inetThreadRunning = false;
+        // }
+    }
+
+    mixin AddTickCallback;
 }

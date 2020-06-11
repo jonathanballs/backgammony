@@ -227,6 +227,10 @@ class BackgammonWindow : MainWindow {
             setGameState(gs);
             gs.newGame();
         });
+        networkWidget.onFibsConnection.connect(() {
+            networkWidget.destroy();
+            networkWidget = null;
+        });
     }
 
     public void setGameState(GameState gs) {

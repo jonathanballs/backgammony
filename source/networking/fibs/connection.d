@@ -33,15 +33,21 @@ class FIBSConnection : Connection {
         this.writeline("login backgammony-1.0.0 1008 " ~ username ~ " " ~ password);
 
         // Throw expception if receive another login prompt otherwise return
-        // active connection ready to exchange messages messages
+        // active connection ready to exchange messages messages. This has funny
+        // behavious. Usually a newline character will _not_ be emitted after the
+        // "login:" prompt but sometimes and a random CLIP message will be printed
+        // after and so a newline is found.
         try {
             this.readline(500.msecs); // Server will send a new line first
             auto l = this.readline(500.msecs);
-            this.recBuffer = l ~ "\r\n" ~ recBuffer;
-        } catch (TimeoutException e) {
-            if (this.recBuffer.startsWith("login:")) {
+
+            if (l.startsWith("login:")) {
                 throw new Exception("Authentication Failure");
             }
+
+            this.recBuffer = l ~ "\r\n" ~ recBuffer;
+        } catch (TimeoutException e) {
+            throw new Exception("Authentication Failure");
         }
 
         writeln("Authenticated successfully to FIBS server ", serverAddress);
@@ -66,10 +72,10 @@ class FIBSConnection : Connection {
 
         string[] lines;
 
-        // Skip empty lines
+        // Skip empty lines and useless 6
         do {
             lines ~= this.readline(timeout);
-            if (lines[0] == "") {
+            if (lines[0] == "" || lines[0] == "6") {
                 lines = [];
                 continue;
             }

@@ -1,9 +1,13 @@
 module networking.fibs.thread;
 
-import std.stdio;
+import std.concurrency;
+import std.conv;
 import std.socket;
+import std.stdio;
+import core.thread;
 import core.time;
 import networking.fibs.connection;
+import networking.fibs.messages;
 
 class FIBSNetworkingThread {
     FIBSConnection conn;
@@ -18,17 +22,23 @@ class FIBSNetworkingThread {
     }
 
     public void run() {
+        FIBSConnection conn;
         try {
             conn = new FIBSConnection(serverAddress, username, password);
-            while(true) {
-                try {
-                    auto line = conn.readMessage(25.msecs);
-                    writeln(line);
-                } catch (Exception e) {
-                }
-            }
         } catch (Exception e) {
-            writeln(e);
+            // Send connection failure information and exit thread
+            send(ownerTid, FIBSConnectionFailure(e.msg, e.info.to!string));
+            return;
+        }
+
+        send(ownerTid, FIBSConnectionSuccess());
+
+        while(true) {
+            try {
+                auto line = conn.readMessage(25.msecs);
+                writeln(line);
+            } catch (Exception e) {
+            }
         }
     }
 }
