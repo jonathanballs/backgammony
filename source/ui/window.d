@@ -25,6 +25,7 @@ import networking;
 import networking.messages;
 import player;
 import ui.board.boardwidget;
+import ui.fibssidebar;
 import ui.networkgamedialog;
 import ui.newgamedialog;
 import utils.addtickcallback;
@@ -42,6 +43,7 @@ class BackgammonWindow : MainWindow {
     Button finishTurnBtn;
     Button undoMoveBtn;
 
+    Box contentBox;
     public BackgammonBoardWidget backgammonBoard;
     NetworkGameDialog networkWidget;
     NewGameDialog newGameDialog;
@@ -140,8 +142,12 @@ class BackgammonWindow : MainWindow {
             }
         });
 
-        this.add(backgammonBoard);
-        this.setDefaultSize(800, 600);
+        contentBox = new Box(GtkOrientation.HORIZONTAL, 0);
+        this.add(contentBox);
+        contentBox.packStart(backgammonBoard, true, true, 0);
+        contentBox.packStart(new FibsSidebar(), false, true, 0);
+
+        this.setDefaultSize(1000, 600);
         this.addTickCallback(&handleThreadMessages);
 
         // By default, let's start a game between the player and the AI with
