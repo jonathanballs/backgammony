@@ -10,9 +10,13 @@ import gtk.Statusbar;
 import ui.fragments;
 import ui.chatbox;
 
+import networking.fibs.thread;
+
 enum defaultPadding = 10;
 
-class FibsSidebar : Box {
+class FIBSSidebar : Box {
+    FIBSController fibsController;
+
     Label fibsTitle;
     LabeledLabel username;
     LabeledLabel connectionStatus;
@@ -53,5 +57,9 @@ class FibsSidebar : Box {
         this.packStart(shoutBox, true, true, 0);
 
         this.setSizeRequest(250, 100);
+    }
+
+    void setController(FIBSController fibsController) {
+        this.fibsController = fibsController;
     }
 }

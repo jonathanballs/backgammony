@@ -202,7 +202,7 @@ class FIBSLoginForm : Box {
     bool isConnecting;
 
     /// Connection thread
-    Tid fibsNetworkThread;
+    FIBSController fibsController;
 
     this() {
         super(GtkOrientation.VERTICAL, formPadding);
@@ -251,19 +251,11 @@ class FIBSLoginForm : Box {
                 connectButtonSpinner.start();
                 connectButtonSpinner.show();
                 connectButtonLabel.setText("Connecting...");
-                fibsNetworkThread = spawn((shared string serverAddress,
-                                shared string username, shared string password) {
-                    import std.array : split;
-                    // TODO: Safe address parsing
-                    auto thread = new FIBSNetworkingThread(
-                        getAddress(serverAddress.split(':')[0], 4321)[0],
-                        username,
-                        password
-                    );
-                    thread.run();
-                }, cast(immutable) serverEntry.getText(),
-                    cast(immutable) usernameEntry.getText(),
-                    cast(immutable) passwordEntry.getText());
+                import std.array : split;
+                fibsController = new FIBSController(
+                    serverEntry.getText(),
+                    usernameEntry.getText(),
+                    passwordEntry.getText());
                 isConnecting = true;
             } else {
                 // TODO: Kill thread
@@ -287,19 +279,24 @@ class FIBSLoginForm : Box {
     bool onTick(Widget w, FrameClock f) {
         import networking.fibs.messages;
 
-        if (!isConnecting) return true;
+        if (this.fibsController) {
+            const auto connStatus = fibsController.connectionStatus();
 
-        receiveTimeout(0.msecs,
-            (FIBSConnectionSuccess _) {
-                // Successful connection. Close window and reveal sidebar
-                this.onSuccessfulConnection.emit();
-            },
-            (FIBSConnectionFailure e) {
-                import std.format : format;
-                connectionErrorMessage.setMarkup(format!"<span foreground='red'>%s</span>"(e.message));
-                connectButton.clicked();
+            switch (connStatus.status) {
+                case FIBSConnectionStatus.Connected:
+                    this.onSuccessfulConnection.emit();
+                    break;
+                case FIBSConnectionStatus.FailedConnection:
+                case FIBSConnectionStatus.Crashed:
+                    import std.format : format;
+                    connectionErrorMessage.setMarkup(format!"<span foreground='red'>%s</span>"(connStatus.message));
+                    connectButton.clicked();
+                    break;
+                default:
+                    break;
             }
-        );
+
+        }
         return true;
     }
 

@@ -26,7 +26,9 @@ void main(string[] args)
 
     // Show Fibs sidebar
     if (Config.fibsAutoConnect) {
-        window.fibsSidebarRevealer.setRevealChild(true);
+        import networking.fibs.thread;
+        window.setFibsController(new FIBSController(
+            Config.fibsServer, Config.fibsUsername, Config.fibsPassword));
     }
 
     window.showAll();

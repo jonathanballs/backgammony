@@ -24,6 +24,7 @@ import gtk.Widget;
 import game;
 import networking;
 import networking.messages;
+import networking.fibs.thread;
 import player;
 import ui.board.boardwidget;
 import ui.fibssidebar;
@@ -45,7 +46,7 @@ class BackgammonWindow : MainWindow {
     Button undoMoveBtn;
 
     Box contentBox;
-    FibsSidebar fibsSidebar;
+    FIBSSidebar fibsSidebar;
     public Revealer fibsSidebarRevealer;
     public BackgammonBoardWidget backgammonBoard;
     NetworkGameDialog networkWidget;
@@ -55,6 +56,8 @@ class BackgammonWindow : MainWindow {
 
     Task!(gnubgGetTurn, GameState, GnubgEvalContext) *aiGetTurn;
     Turn remoteResult;
+
+    FIBSController fibsController;
 
     /**
      * Create a new backgammon board window
@@ -146,7 +149,7 @@ class BackgammonWindow : MainWindow {
         });
 
         contentBox = new Box(GtkOrientation.HORIZONTAL, 0);
-        fibsSidebar = new FibsSidebar();
+        fibsSidebar = new FIBSSidebar();
         fibsSidebarRevealer = new Revealer();
         fibsSidebarRevealer.setTransitionType(GtkRevealerTransitionType.SLIDE_LEFT);
         fibsSidebarRevealer.add(fibsSidebar);
@@ -313,6 +316,13 @@ class BackgammonWindow : MainWindow {
     void onGameStateEndGame(GameState gs, Player winner) {
         finishTurnBtn.setSensitive(false);
         undoMoveBtn.setSensitive(false);
+    }
+
+    public void setFibsController(FIBSController FIBSController) {
+        assert(!this.fibsController);
+        this.fibsController = fibsController;
+        this.fibsSidebar.setController(fibsController);
+        this.fibsSidebarRevealer.setRevealChild(true);
     }
 
     bool handleThreadMessages(Widget w, FrameClock f) {
