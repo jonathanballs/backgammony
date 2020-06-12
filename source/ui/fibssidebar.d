@@ -10,8 +10,10 @@ import gtk.Separator;
 import gtk.StyleContext;
 import gtk.Statusbar;
 import gtk.Widget;
+import gtk.Window;
 import ui.fragments;
 import ui.chatbox;
+import ui.fibsplayerlistdialog;
 import utils.addtickcallback;
 
 import networking.fibs.thread;
@@ -27,6 +29,7 @@ class FIBSSidebar : Box {
 
     Button playerListButton;
     Label playerListButtonLabel;
+    FIBSPlayerListDialog fibsPlayerListDialog;
     ChatBox shoutBox;
     Statusbar statusBar;
 
@@ -56,6 +59,11 @@ class FIBSSidebar : Box {
         playerListButton = new Button();
         playerListButtonLabel = new Label("Players (0 online)");
         playerListButton.add(playerListButtonLabel);
+        playerListButton.addOnClicked((Button b) {
+            Window mainWindow = new Window(cast(GtkWindow *) this.getToplevel.getStruct());
+            fibsPlayerListDialog = new FIBSPlayerListDialog(
+                mainWindow, fibsController);
+        });
         this.packStart(playerListButton, false, true, 0);
 
         this.packStart(new Separator(GtkOrientation.HORIZONTAL), false, true, 5);
