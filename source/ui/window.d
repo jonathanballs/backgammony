@@ -46,7 +46,7 @@ class BackgammonWindow : MainWindow {
 
     Box contentBox;
     FibsSidebar fibsSidebar;
-    Revealer fibsSidebarRevealer;
+    public Revealer fibsSidebarRevealer;
     public BackgammonBoardWidget backgammonBoard;
     NetworkGameDialog networkWidget;
     NewGameDialog newGameDialog;

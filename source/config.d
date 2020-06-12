@@ -15,6 +15,7 @@ class Config {
     static string fibsServer = "fibs.com:4321";
     static string fibsUsername;
     static string fibsPassword;
+    static bool fibsAutoConnect;
 
     static void write() {
     }
@@ -38,6 +39,10 @@ class Config {
 
                     if ("password" in fibsConf.object) {
                         this.fibsPassword = fibsConf.object["password"].str;
+                    }
+
+                    if ("autoconnect" in fibsConf.object) {
+                        this.fibsAutoConnect = fibsConf.object["autoconnect"].boolean();
                     }
                 }
             }

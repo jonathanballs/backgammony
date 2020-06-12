@@ -6,9 +6,12 @@ import gtk.CssProvider;
 import gtk.StyleContext;
 
 class FibsSidebar : Box {
+    Label fibsTitle;
+
     this() {
-        super(GtkOrientation.VERTICAL, 0);
-        this.add(new Label("FIBS!!!!"));
+        super(GtkOrientation.VERTICAL, 10);
+        fibsTitle = new Label("FIBS");
+        this.packStart(fibsTitle, false, false, 10);
 
         StyleContext styleContext = this.getStyleContext();      
         CssProvider cssProvider = new CssProvider();         

@@ -23,6 +23,12 @@ void main(string[] args)
 
     Main.init(args);
     auto window = new BackgammonWindow();
+
+    // Show Fibs sidebar
+    if (Config.fibsAutoConnect) {
+        window.fibsSidebarRevealer.setRevealChild(true);
+    }
+
     window.showAll();
 
     if (uiTests) {
