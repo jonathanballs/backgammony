@@ -37,3 +37,25 @@ class LabeledEntry : Box {
     string getText() { return entry.getText(); }
     void setText(string s) { entry.setText(s); }
 }
+
+/**
+ * A right aligned label with a left aligned label.
+ */
+class LabeledLabel : Box {
+    Label label;
+    Label text;
+
+    /**
+     * Create a new text entry with a label
+     */
+    this(string label, string text) {
+        super(GtkOrientation.HORIZONTAL, 0);
+
+        this.label = new Label(label);
+        this.text = new Label(text);
+        this.text.setAlignment(1.0, 0.5);
+
+        this.packStart(this.label, false, false, 0);
+        this.packEnd(this.text, true, true, 0);
+    }
+}
