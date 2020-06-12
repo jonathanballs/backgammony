@@ -318,7 +318,7 @@ class BackgammonWindow : MainWindow {
         undoMoveBtn.setSensitive(false);
     }
 
-    public void setFibsController(FIBSController FIBSController) {
+    public void setFibsController(FIBSController fibsController) {
         assert(!this.fibsController);
         this.fibsController = fibsController;
         this.fibsSidebar.setController(fibsController);
@@ -326,6 +326,10 @@ class BackgammonWindow : MainWindow {
     }
 
     bool handleThreadMessages(Widget w, FrameClock f) {
+        if (fibsController) {
+            fibsController.processMessages();
+        }
+
         if (aiGetTurn && aiGetTurn.done) {
             remoteResult = aiGetTurn.yieldForce;
             aiGetTurn = null;

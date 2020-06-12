@@ -2,6 +2,7 @@ module networking.fibs.thread;
 
 import std.concurrency;
 import std.conv;
+import std.datetime;
 import std.socket;
 import std.stdio;
 import std.typecons;
@@ -10,9 +11,25 @@ import core.time;
 import std.array : split;
 import networking.fibs.connection;
 import networking.fibs.messages;
+import networking.fibs.clipmessages;
 
 enum FIBSConnectionStatus {
     Disconnected, Connecting, Connected, FailedConnection, Crashed
+}
+
+struct FIBSPlayer {
+    string name;
+    string opponent;
+    string watching;
+    bool ready;
+    bool away;
+    float rating;
+    uint experience;
+    uint idle;
+    SysTime login;
+    string hostname;
+    string client;
+    string email;
 }
 
 /**
@@ -28,6 +45,8 @@ class FIBSController {
     string serverAddress;
     string username;
     string password;
+
+    public FIBSPlayer[] players;
 
     public this(string serverAddress, string username, string password) {
         this.serverAddress = serverAddress;
@@ -65,7 +84,18 @@ class FIBSController {
     /**
      * Receive new CLIP messages and update data structures.
      */
-    void processMessages() {
+    public void processMessages() {
+                // Receive events for up to 50ms
+        auto startTime = MonoTime.currTime;
+        import std.variant;
+        while((MonoTime.currTime - startTime) < 50.msecs && receiveTimeout(-1.msecs,
+            (CLIPWho w) {
+                FIBSPlayer p = FIBSPlayer(w.name, w.opponent, w.watching,
+                    w.ready, w.away, w.rating, w.experience, w.idle, w.login,
+                    w.hostname, w.client, w.email);
+                players ~= p;
+            }
+        )) {}
     }
 
     void disconnect() {}
@@ -97,8 +127,7 @@ private class FIBSNetworkingThread {
 
         while(true) {
             try {
-                auto line = conn.readMessage(25.msecs);
-                writeln(line);
+                send(ownerTid, conn.readMessage(25.msecs));
             } catch (Exception e) {
             }
         }

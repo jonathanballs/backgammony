@@ -1,5 +1,7 @@
 module ui.fibssidebar;
 
+import std.format;
+import gdk.FrameClock;
 import gtk.Box;
 import gtk.Button;
 import gtk.CssProvider;
@@ -7,8 +9,10 @@ import gtk.Label;
 import gtk.Separator;
 import gtk.StyleContext;
 import gtk.Statusbar;
+import gtk.Widget;
 import ui.fragments;
 import ui.chatbox;
+import utils.addtickcallback;
 
 import networking.fibs.thread;
 
@@ -22,6 +26,7 @@ class FIBSSidebar : Box {
     LabeledLabel connectionStatus;
 
     Button playerListButton;
+    Label playerListButtonLabel;
     ChatBox shoutBox;
     Statusbar statusBar;
 
@@ -48,7 +53,9 @@ class FIBSSidebar : Box {
         connectionStatus = new LabeledLabel("Status", "Ready");
         this.packStart(connectionStatus, false, true, 0);
 
-        playerListButton = new Button("Players (27 online)");
+        playerListButton = new Button();
+        playerListButtonLabel = new Label("Players (0 online)");
+        playerListButton.add(playerListButtonLabel);
         this.packStart(playerListButton, false, true, 0);
 
         this.packStart(new Separator(GtkOrientation.HORIZONTAL), false, true, 5);
@@ -57,9 +64,23 @@ class FIBSSidebar : Box {
         this.packStart(shoutBox, true, true, 0);
 
         this.setSizeRequest(250, 100);
+        this.addTickCallback(&onTick);
     }
 
     void setController(FIBSController fibsController) {
         this.fibsController = fibsController;
     }
+
+    bool onTick(Widget w, FrameClock f) {
+        // Read information from FIBS controller
+        if (this.fibsController) {
+            import std.conv : to;
+            this.connectionStatus.text.setText(
+                            fibsController.connectionStatus.status.to!string);
+            playerListButtonLabel.setText(format!"Players (%d online)"(fibsController.players.length));
+        }
+        return true;
+    }
+
+    mixin AddTickCallback;
 }
