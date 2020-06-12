@@ -86,6 +86,10 @@ class FIBSSidebar : Box {
             this.connectionStatus.text.setText(
                             fibsController.connectionStatus.status.to!string);
             playerListButtonLabel.setText(format!"Players (%d online)"(fibsController.players.length));
+
+            if (this.fibsPlayerListDialog && this.fibsController.players.length) {
+                this.fibsPlayerListDialog.fillTree();
+            }
         }
         return true;
     }
