@@ -10,8 +10,14 @@ import gdk.Pixbuf;
  * Manages access to flags.
  */
 class FlagManager {
-    string flagDirectory;
+    static string flagDirectory;
     static Pixbuf[string] flags;
+
+    this() {
+        if (!flagDirectory.length) {
+            writeln("Warning: FlagManager initialized without flagDirectory");
+        }
+    }
 
     this(string flagDirectory) {
         this.flagDirectory = flagDirectory;

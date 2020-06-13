@@ -2,9 +2,11 @@ module ui.fibsplayerlistdialog;
 
 import std.stdio;
 import gdk.FrameClock;
+import gdk.Pixbuf;
 import gio.ThemedIcon;
 import gtk.Button;
 import gtk.CellRendererText;
+import gtk.CellRendererPixbuf;
 import gtk.Dialog;
 import gtk.HeaderBar;
 import gtk.Image;
@@ -67,8 +69,8 @@ class FIBSPlayerListDialog : Dialog {
         headerBar.packStart(refreshButton);
 
         this.listStore = new ListStore([
-            GType.STRING, GType.STRING, GType.INT,
-            GType.STRING, GType.STRING]);
+            GType.OBJECT, GType.STRING, GType.STRING,
+            GType.INT, GType.STRING, GType.STRING]);
 
         // Filter
         this.treeModelFilter = new TreeModelFilter(listStore, null);
@@ -87,11 +89,12 @@ class FIBSPlayerListDialog : Dialog {
         });
 
         columns = [
-            new TreeViewColumn("Username", new CellRendererText(), "text", 0),
-            new TreeViewColumn("Status", new CellRendererText(), "text", 1),
-            new TreeViewColumn("Rating", new CellRendererText(), "text", 2),
-            new TreeViewColumn("Experience", new CellRendererText(), "text", 3),
-            new TreeViewColumn("Idle", new CellRendererText(), "text", 4)
+            new TreeViewColumn("", new CellRendererPixbuf(), "pixbuf", 0),
+            new TreeViewColumn("Username", new CellRendererText(), "text", 1),
+            new TreeViewColumn("Status", new CellRendererText(), "text", 2),
+            new TreeViewColumn("Rating", new CellRendererText(), "text", 3),
+            new TreeViewColumn("Experience", new CellRendererText(), "text", 4),
+            new TreeViewColumn("Idle", new CellRendererText(), "text", 5)
         ];
 
         foreach (c; columns) {
@@ -114,15 +117,24 @@ class FIBSPlayerListDialog : Dialog {
      * Update tree
      */
     void fillTree() {
+        import ui.flagmanager;
+        auto flagManager = new FlagManager();
+
         // Create the list store
         listStore.clear();
         foreach(player; controller.players) {
             this.iters ~= listStore.createIter();
-            listStore.setValue(iters[$-1], 0, player.name);
-            listStore.setValue(iters[$-1], 1, player.status);
-            listStore.setValue(iters[$-1], 2, cast(int) player.rating);
-            listStore.setValue(iters[$-1], 3, player.experience);
-            listStore.setValue(iters[$-1], 4, player.idle);
+            auto c = player.country();
+            if (c in flagManager.flags) {
+                listStore.setValue(iters[$-1], 0, flagManager.flags[c]);
+            } else {
+                listStore.setValue(iters[$-1], 0, flagManager.flags["_unknown"]);
+            }
+            listStore.setValue(iters[$-1], 1, player.name);
+            listStore.setValue(iters[$-1], 2, player.status);
+            listStore.setValue(iters[$-1], 3, cast(int) player.rating);
+            listStore.setValue(iters[$-1], 4, player.experience);
+            listStore.setValue(iters[$-1], 5, player.idle);
         }
     }
 
