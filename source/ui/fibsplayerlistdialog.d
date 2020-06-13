@@ -1,24 +1,31 @@
 module ui.fibsplayerlistdialog;
 
+import std.stdio;
+import gdk.FrameClock;
+import gio.ThemedIcon;
+import gtk.Button;
+import gtk.CellRendererText;
 import gtk.Dialog;
-import gtk.Window;
-import gtk.TreeView;
+import gtk.HeaderBar;
+import gtk.Image;
 import gtk.ListStore;
 import gtk.ScrolledWindow;
-import gtk.TreeModelFilter;
 import gtk.TreeIter;
-import gtk.TreeSelection;
-import gtk.TreeViewColumn;
+import gtk.TreeModelFilter;
 import gtk.TreePath;
-import gtk.CellRendererText;
+import gtk.TreeSelection;
+import gtk.TreeView;
+import gtk.TreeViewColumn;
 import gtk.Widget;
-import gdk.FrameClock;
+import gtk.Window;
 import utils.addtickcallback;
 
 import networking.fibs.thread;
 
 class FIBSPlayerListDialog : Dialog {
     FIBSController controller;
+
+    HeaderBar headerBar;
 
     TreeView treeView;    
     TreeViewColumn[] columns;
@@ -36,7 +43,6 @@ class FIBSPlayerListDialog : Dialog {
         this.setPosition(GtkWindowPosition.CENTER_ON_PARENT);
         this.setTypeHint(GdkWindowTypeHint.DIALOG);
         this.setModal(true);
-        this.setTitle("Player list");
 
         GdkRectangle windowSize;
         w.getAllocation(windowSize);
@@ -44,6 +50,22 @@ class FIBSPlayerListDialog : Dialog {
             cast(int) (windowSize.width * 0.8),
             cast(int) (windowSize.height * 0.8));
         
+        headerBar = new HeaderBar();
+        headerBar.setTitle("Player list");
+        headerBar.setShowCloseButton(true);
+        headerBar.setProperty("spacing", 100);
+        this.setTitlebar(headerBar);
+
+        Button refreshButton = new Button();
+        auto icon = new ThemedIcon("view-refresh-symbolic");
+        auto inetImg = new Image();
+        inetImg.setFromGicon(icon, IconSize.BUTTON);
+        refreshButton.add(inetImg);
+        refreshButton.addOnClicked((Button b) {
+            this.fillTree();
+        });
+        headerBar.packStart(refreshButton);
+
         this.listStore = new ListStore([
             GType.STRING, GType.STRING, GType.STRING,
             GType.BOOLEAN, GType.BOOLEAN, GType.FLOAT,

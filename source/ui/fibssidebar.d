@@ -63,6 +63,8 @@ class FIBSSidebar : Box {
             Window mainWindow = new Window(cast(GtkWindow *) this.getToplevel.getStruct());
             fibsPlayerListDialog = new FIBSPlayerListDialog(
                 mainWindow, fibsController);
+
+            this.fibsPlayerListDialog.fillTree();
         });
         this.packStart(playerListButton, false, true, 0);
 
@@ -87,9 +89,6 @@ class FIBSSidebar : Box {
                             fibsController.connectionStatus.status.to!string);
             playerListButtonLabel.setText(format!"Players (%d online)"(fibsController.players.length));
 
-            if (this.fibsPlayerListDialog && this.fibsController.players.length) {
-                this.fibsPlayerListDialog.fillTree();
-            }
         }
         return true;
     }
