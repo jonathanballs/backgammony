@@ -245,9 +245,10 @@ class BackgammonWindow : MainWindow {
             setGameState(gs);
             gs.newGame();
         });
-        networkWidget.onFibsConnection.connect(() {
+        networkWidget.onFibsConnection.connect((FIBSController newController) {
             networkWidget.destroy();
             networkWidget = null;
+            this.setFibsController(newController);
             this.fibsSidebarRevealer.setRevealChild(true);
         });
     }
@@ -319,7 +320,12 @@ class BackgammonWindow : MainWindow {
     }
 
     public void setFibsController(FIBSController fibsController) {
-        assert(!this.fibsController);
+        if (this.fibsController) {
+            if (this.fibsController.connectionStatus.status == FIBSConnectionStatus.Connected) {
+                writeln("Warning, setting a new FIBS connection while already connected");
+                this.fibsController.disconnect();
+            }
+        }
         this.fibsController = fibsController;
         this.fibsSidebar.setController(fibsController);
         this.fibsSidebarRevealer.setRevealChild(true);

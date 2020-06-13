@@ -3,6 +3,7 @@ module networking.fibs.thread;
 import std.concurrency;
 import std.conv;
 import std.datetime;
+import std.format;
 import std.socket;
 import std.stdio;
 import std.typecons;
@@ -12,9 +13,10 @@ import std.array : split;
 import networking.fibs.connection;
 import networking.fibs.messages;
 import networking.fibs.clipmessages;
+import url;
 
 enum FIBSConnectionStatus {
-    Disconnected, Connecting, Connected, FailedConnection, Crashed
+    Disconnected, Connecting, Connected, Failed, Crashed
 }
 
 struct FIBSPlayer {
@@ -82,32 +84,59 @@ class FIBSController {
         this.password = password;
         this.fibsConnectionStatus = FIBSConnectionStatus.Connecting;
 
+        // Validate the server address
+        URL url;
+        if (!tryParseURL(serverAddress, url)) {
+            this.fibsConnectionStatus = FIBSConnectionStatus.Failed;
+            this.fibsConnectionStatusMessage = "Could not parse FIBS host: " ~ serverAddress;
+            return;
+        } else {
+            try {
+                // Ensure that IP can be resolved
+                getAddress(parseURL(serverAddress).host, parseURL(serverAddress).port);
+            } catch (Exception e) {
+                fibsConnectionStatus = FIBSConnectionStatus.Failed;
+                fibsConnectionStatusMessage = format!"Couldn't connect to FIBS server (%s)"
+                    (cast(string) e.message);
+                return;
+            }
+        }
+
         networkingThread = spawn((shared string serverAddress,
                             shared string username, shared string password) {
-            new FIBSNetworkingThread(
-                getAddress(serverAddress.split(':')[0], 4321)[0],
-                username, password).run();
-        }, cast(immutable) serverAddress,
-            cast(immutable) username,
-            cast(immutable) password);
+                new FIBSNetworkingThread(
+                    getAddress(parseURL(serverAddress).host, parseURL(serverAddress).port)[0],
+                    username,
+                    password
+                ).run();
+        }, cast(immutable) serverAddress, cast(immutable) username, cast(immutable) password);
+
+        // Register to check status later
+        register("fibsNetworkingThread", networkingThread);
     }
 
     /**
      * Get the current connection status of the FIBS thread
      */
     public Tuple!(FIBSConnectionStatus, "status", string, "message") connectionStatus() {
-        receiveTimeout(0.msecs,
-            (FIBSConnectionSuccess _) {
-                this.fibsConnectionStatus = FIBSConnectionStatus.Connected;
-                // Successful connection. Close window and reveal sidebar
-            },
-            (FIBSConnectionFailure e) {
-                this.fibsConnectionStatus = FIBSConnectionStatus.Connected;
-                this.fibsConnectionStatusMessage = e.message;
-            }
-        );
+        if (this.networkingThread != Tid.init) {
+            receiveTimeout(0.msecs,
+                (FIBSConnectionSuccess _) {
+                    this.fibsConnectionStatus = FIBSConnectionStatus.Connected;
+                    // Successful connection. Close window and reveal sidebar
+                },
+                (FIBSConnectionFailure e) {
+                    this.fibsConnectionStatus = FIBSConnectionStatus.Connected;
+                    this.fibsConnectionStatusMessage = e.message;
+                }
+            );
+        }
 
-        return tuple!("status", "message")(fibsConnectionStatus, "");
+        // Detect crashed
+        // if (locate("fibsNetworkingThread") != Tid.init) {
+        // }
+
+        return tuple!("status", "message")(fibsConnectionStatus, fibsConnectionStatusMessage);
     }
 
     /**
@@ -115,19 +144,24 @@ class FIBSController {
      */
     public void processMessages() {
                 // Receive events for up to 50ms
-        auto startTime = MonoTime.currTime;
-        import std.variant;
-        while((MonoTime.currTime - startTime) < 50.msecs && receiveTimeout(-1.msecs,
-            (CLIPWho w) {
-                FIBSPlayer p = FIBSPlayer(w.name, w.opponent, w.watching,
-                    w.ready, w.away, w.rating, w.experience, w.idle, w.login,
-                    w.hostname, w.client, w.email);
-                players ~= p;
-            }
-        )) {}
+        if (networkingThread != Tid.init) {
+            auto startTime = MonoTime.currTime;
+            import std.variant;
+            while((MonoTime.currTime - startTime) < 50.msecs && receiveTimeout(-1.msecs,
+                (CLIPWho w) {
+                    FIBSPlayer p = FIBSPlayer(w.name, w.opponent, w.watching,
+                        w.ready, w.away, w.rating, w.experience, w.idle, w.login,
+                        w.hostname, w.client, w.email);
+                    players ~= p;
+                }
+            )) {}
+        }
     }
-
-    void disconnect() {}
+    
+    /**
+     * Tell connection to disconnect
+     */
+    public void disconnect() {}
 }
 
 private class FIBSNetworkingThread {

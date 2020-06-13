@@ -39,7 +39,7 @@ class NetworkGameDialog : Dialog {
     Signal!(GameState) onCreateNewGame;
 
     /// Emitted when a connection to a FIBS server is made successfully
-    Signal!() onFibsConnection;
+    Signal!(FIBSController) onFibsConnection;
 
     Notebook tabs;
 
@@ -71,7 +71,7 @@ class NetworkGameDialog : Dialog {
         this.setSizeRequest(400, 475);
         this.setTitle("Network Game");
         this.onCreateNewGame = new Signal!(GameState);
-        this.onFibsConnection = new Signal!();
+        this.onFibsConnection = new Signal!(FIBSController);
 
         /**
          * Internet
@@ -128,8 +128,8 @@ class NetworkGameDialog : Dialog {
          * Fibs
          */
         fibsLoginForm = new FIBSLoginForm();
-        fibsLoginForm.onSuccessfulConnection.connect(() {
-            this.onFibsConnection.emit();
+        fibsLoginForm.onSuccessfulConnection.connect((FIBSController c) {
+            this.onFibsConnection.emit(c);
         });
 
         tabs = new Notebook();
@@ -185,7 +185,7 @@ class NetworkGameDialog : Dialog {
  * Login form for a FIBS server
  */
 class FIBSLoginForm : Box {
-    Signal!() onSuccessfulConnection;
+    Signal!(FIBSController) onSuccessfulConnection;
 
     /// Connection Settings
     Box fibsBox;
@@ -207,7 +207,7 @@ class FIBSLoginForm : Box {
     this() {
         super(GtkOrientation.VERTICAL, formPadding);
 
-        this.onSuccessfulConnection = new Signal!();
+        this.onSuccessfulConnection = new Signal!(FIBSController);
 
         this.setMarginsExpand(formPadding, formPadding, formPadding, formPadding, true, true);
 
@@ -268,6 +268,7 @@ class FIBSLoginForm : Box {
 
         // In case of any errors we'll put them here
         connectionErrorMessage = new Label("");
+        connectionErrorMessage.setLineWrap(true);
         this.packEnd(connectionErrorMessage, false, false, 0);
 
         this.addTickCallback(&onTick);
@@ -284,14 +285,18 @@ class FIBSLoginForm : Box {
 
             switch (connStatus.status) {
                 case FIBSConnectionStatus.Connected:
-                    this.onSuccessfulConnection.emit();
-                    break;
-                case FIBSConnectionStatus.FailedConnection:
+                    this.onSuccessfulConnection.emit(fibsController);
+                    return false;
+                case FIBSConnectionStatus.Failed:
                 case FIBSConnectionStatus.Crashed:
-                    import std.format : format;
-                    connectionErrorMessage.setMarkup(format!"<span foreground='red'>%s</span>"(connStatus.message));
-                    connectButton.clicked();
-                    break;
+                    if (isConnecting) {
+                        import std.format : format;
+                        connectionErrorMessage.setMarkup(format!"<span foreground='red'>%s</span>"(connStatus.message));
+                        isConnecting = false;
+                        connectButtonSpinner.destroy();
+                        connectButtonLabel.setText("Connect");
+                    }
+                    return false;
                 default:
                     break;
             }

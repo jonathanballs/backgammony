@@ -49,6 +49,10 @@ class FIBSSidebar : Box {
     Box connectingContentBox;
     Spinner connectingSpinner;
 
+    // Displayed when connection failed
+    Box connectionFailedContentBox;
+    Label connectionFailedErrorMessage;
+
     this() {
         super(GtkOrientation.VERTICAL, 5);
 
@@ -70,7 +74,7 @@ class FIBSSidebar : Box {
         this.packStart(fibsTitle, false, false, 10);
         username = new LabeledLabel("User", "jonathanballs (----)");
         this.packStart(username, false, true, 0);
-        connectionStatus = new LabeledLabel("Status", "Ready");
+        connectionStatus = new LabeledLabel("Connection status", "Ready");
         this.packStart(connectionStatus, false, true, 0);
 
         /**
@@ -101,10 +105,23 @@ class FIBSSidebar : Box {
         connectingSpinner.start();
         connectingContentBox.packStart(connectingSpinner, true, false, 0);
 
+        /**
+         * Failed connection view
+         */
+        connectionFailedContentBox = new Box(GtkOrientation.VERTICAL, 0);
+        connectionFailedErrorMessage = new Label("");
+        connectionFailedErrorMessage.setMaxWidthChars(25);
+        connectionFailedErrorMessage.setLineWrap(true);
+        connectionFailedContentBox.packStart(connectionFailedErrorMessage, true, false, 0);
+
+        /**
+         * Stack to change views
+         */
         contentStack = new Stack();
         contentStack.setTransitionType(GtkStackTransitionType.CROSSFADE);
         contentStack.addTitled(connectingContentBox, "connecting", "connecting");
         contentStack.addTitled(connectedContentBox, "connected", "connected");
+        contentStack.addTitled(connectionFailedContentBox, "failed", "failed");
         this.packStart(contentStack, true, true, 5);
 
         this.setSizeRequest(250, 100);
@@ -118,16 +135,22 @@ class FIBSSidebar : Box {
     bool onTick(Widget w, FrameClock f) {
         // Read information from FIBS controller
         if (this.fibsController) {
+            import std.conv : to;
+            this.connectionStatus.text.setText(
+                            fibsController.connectionStatus.status.to!string);
             switch (fibsController.connectionStatus.status) {
                 case FIBSConnectionStatus.Connecting:
                     contentStack.setVisibleChild(connectingContentBox);
                     break;
                 case FIBSConnectionStatus.Connected:
                     contentStack.setVisibleChild(connectedContentBox);
-                    import std.conv : to;
-                    this.connectionStatus.text.setText(
-                                    fibsController.connectionStatus.status.to!string);
                     playerListButtonLabel.setText(format!"Players (%d online)"(fibsController.players.length));
+                    break;
+                case FIBSConnectionStatus.Failed:
+                    contentStack.setVisibleChild(connectionFailedContentBox);
+                    connectionFailedErrorMessage.setMarkup(
+                        format!"<span foreground='red'>%s</span>"(
+                            fibsController.connectionStatus.message));
                     break;
                 default:
                     import std.stdio;
