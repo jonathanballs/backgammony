@@ -80,6 +80,7 @@ class FIBSController {
         this.serverAddress = serverAddress;
         this.username = username;
         this.password = password;
+        this.fibsConnectionStatus = FIBSConnectionStatus.Connecting;
 
         networkingThread = spawn((shared string serverAddress,
                             shared string username, shared string password) {
