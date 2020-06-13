@@ -26,7 +26,9 @@ class FlagManager {
     void load() {
         foreach (f; flagDirectory.dirEntries(SpanMode.shallow, false)) {
             if (f.name.endsWith(".png")) {
-                flags[baseName(stripExtension(f.name))] = new Pixbuf(f.name);
+                Pixbuf p = new Pixbuf(f.name);
+                p = p.scaleSimple(24, 24, GdkInterpType.HYPER);
+                flags[baseName(stripExtension(f.name))] = p;
             }
         }
     }
