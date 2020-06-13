@@ -21,6 +21,7 @@ class FIBSPlayerListDialog : Dialog {
     FIBSController controller;
 
     TreeView treeView;    
+    TreeViewColumn[] columns;
     ListStore listStore;    
     ScrolledWindow scrolledWindow;    
     TreeModelFilter treeModelFilter;    
@@ -43,9 +44,11 @@ class FIBSPlayerListDialog : Dialog {
             cast(int) (windowSize.width * 0.8),
             cast(int) (windowSize.height * 0.8));
         
-
-
-        this.listStore = new ListStore([GType.STRING]);
+        this.listStore = new ListStore([
+            GType.STRING, GType.STRING, GType.STRING,
+            GType.BOOLEAN, GType.BOOLEAN, GType.FLOAT,
+            GType.STRING, GType.STRING, GType.STRING,
+            GType.STRING, GType.STRING, GType.STRING]);
 
         // Filter
         this.treeModelFilter = new TreeModelFilter(listStore, null);
@@ -55,7 +58,6 @@ class FIBSPlayerListDialog : Dialog {
         // Create the tree view
         this.treeView = new TreeView();
         treeView.setModel(treeModelFilter);
-        treeView.setHeadersVisible(false);
         this.treeView.getSelection.addOnChanged((TreeSelection s) {
             auto selectedIter = this.treeView.getSelectedIter();
             if (selectedIter) {
@@ -64,9 +66,25 @@ class FIBSPlayerListDialog : Dialog {
             }
         });
 
-        auto column = new TreeViewColumn(
-            "Pod Name", new CellRendererText(), "text", 0);
-        treeView.appendColumn(column);
+        columns = [
+            new TreeViewColumn("Username", new CellRendererText(), "text", 0),
+            new TreeViewColumn("Opponent", new CellRendererText(), "text", 1),
+            new TreeViewColumn("Watching", new CellRendererText(), "text", 2),
+            new TreeViewColumn("Ready", new CellRendererText(), "text", 3),
+            new TreeViewColumn("Away", new CellRendererText(), "text", 4),
+            new TreeViewColumn("Rating", new CellRendererText(), "text", 5),
+            new TreeViewColumn("Experience", new CellRendererText(), "text", 6),
+            new TreeViewColumn("Idle", new CellRendererText(), "text", 7),
+            new TreeViewColumn("Login Time", new CellRendererText(), "text", 8),
+            new TreeViewColumn("Hostname", new CellRendererText(), "text", 9),
+            new TreeViewColumn("Client", new CellRendererText(), "text", 10),
+            new TreeViewColumn("Email", new CellRendererText(), "text", 11)
+        ];
+
+        foreach (c; columns) {
+            treeView.appendColumn(c);
+        }
+
         scrolledWindow = new ScrolledWindow();
         scrolledWindow.setVexpand(true);
         scrolledWindow.add(this.treeView);
@@ -88,6 +106,17 @@ class FIBSPlayerListDialog : Dialog {
         foreach(player; controller.players) {
             this.iters ~= listStore.createIter();
             listStore.setValue(iters[$-1], 0, player.name);
+            listStore.setValue(iters[$-1], 1, player.opponent);
+            listStore.setValue(iters[$-1], 2, player.watching);
+            listStore.setValue(iters[$-1], 3, player.ready);
+            listStore.setValue(iters[$-1], 4, player.away);
+            listStore.setValue(iters[$-1], 5, player.rating);
+            listStore.setValue(iters[$-1], 6, player.experience);
+            listStore.setValue(iters[$-1], 7, player.idle);
+            listStore.setValue(iters[$-1], 8, player.login.toSimpleString());
+            listStore.setValue(iters[$-1], 9, player.hostname);
+            listStore.setValue(iters[$-1], 10, player.client);
+            listStore.setValue(iters[$-1], 11, player.email);
         }
     }
 
