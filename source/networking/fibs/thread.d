@@ -30,6 +30,20 @@ struct FIBSPlayer {
     string hostname;
     string client;
     string email;
+
+    string status() {
+        if (opponent != "-") {
+            return "Playing against " ~ opponent;
+        } else if (watching != "-") {
+            return "Watching " ~ watching;
+        } else if (away) {
+            return "Away";
+        } else if (ready) {
+            return "Ready";
+        } else {
+            return "Online";
+        }
+    }
 }
 
 /**

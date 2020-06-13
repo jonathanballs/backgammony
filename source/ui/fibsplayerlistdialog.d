@@ -67,10 +67,8 @@ class FIBSPlayerListDialog : Dialog {
         headerBar.packStart(refreshButton);
 
         this.listStore = new ListStore([
-            GType.STRING, GType.STRING, GType.STRING,
-            GType.BOOLEAN, GType.BOOLEAN, GType.FLOAT,
-            GType.STRING, GType.STRING, GType.STRING,
-            GType.STRING, GType.STRING, GType.STRING]);
+            GType.STRING, GType.STRING, GType.INT,
+            GType.STRING, GType.STRING]);
 
         // Filter
         this.treeModelFilter = new TreeModelFilter(listStore, null);
@@ -90,17 +88,10 @@ class FIBSPlayerListDialog : Dialog {
 
         columns = [
             new TreeViewColumn("Username", new CellRendererText(), "text", 0),
-            new TreeViewColumn("Opponent", new CellRendererText(), "text", 1),
-            new TreeViewColumn("Watching", new CellRendererText(), "text", 2),
-            new TreeViewColumn("Ready", new CellRendererText(), "text", 3),
-            new TreeViewColumn("Away", new CellRendererText(), "text", 4),
-            new TreeViewColumn("Rating", new CellRendererText(), "text", 5),
-            new TreeViewColumn("Experience", new CellRendererText(), "text", 6),
-            new TreeViewColumn("Idle", new CellRendererText(), "text", 7),
-            new TreeViewColumn("Login Time", new CellRendererText(), "text", 8),
-            new TreeViewColumn("Hostname", new CellRendererText(), "text", 9),
-            new TreeViewColumn("Client", new CellRendererText(), "text", 10),
-            new TreeViewColumn("Email", new CellRendererText(), "text", 11)
+            new TreeViewColumn("Status", new CellRendererText(), "text", 1),
+            new TreeViewColumn("Rating", new CellRendererText(), "text", 2),
+            new TreeViewColumn("Experience", new CellRendererText(), "text", 3),
+            new TreeViewColumn("Idle", new CellRendererText(), "text", 4)
         ];
 
         foreach (c; columns) {
@@ -128,17 +119,10 @@ class FIBSPlayerListDialog : Dialog {
         foreach(player; controller.players) {
             this.iters ~= listStore.createIter();
             listStore.setValue(iters[$-1], 0, player.name);
-            listStore.setValue(iters[$-1], 1, player.opponent);
-            listStore.setValue(iters[$-1], 2, player.watching);
-            listStore.setValue(iters[$-1], 3, player.ready);
-            listStore.setValue(iters[$-1], 4, player.away);
-            listStore.setValue(iters[$-1], 5, player.rating);
-            listStore.setValue(iters[$-1], 6, player.experience);
-            listStore.setValue(iters[$-1], 7, player.idle);
-            listStore.setValue(iters[$-1], 8, player.login.toSimpleString());
-            listStore.setValue(iters[$-1], 9, player.hostname);
-            listStore.setValue(iters[$-1], 10, player.client);
-            listStore.setValue(iters[$-1], 11, player.email);
+            listStore.setValue(iters[$-1], 1, player.status);
+            listStore.setValue(iters[$-1], 2, cast(int) player.rating);
+            listStore.setValue(iters[$-1], 3, player.experience);
+            listStore.setValue(iters[$-1], 4, player.idle);
         }
     }
 
