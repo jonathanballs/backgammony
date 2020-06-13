@@ -1,6 +1,7 @@
 module ui.fibssidebar;
 
 import std.format;
+import std.path;
 import gdk.FrameClock;
 import gtk.Box;
 import gtk.Button;
@@ -14,7 +15,9 @@ import gtk.Window;
 import ui.fragments;
 import ui.chatbox;
 import ui.fibsplayerlistdialog;
+import ui.flagmanager;
 import utils.addtickcallback;
+import config;
 
 import networking.fibs.thread;
 
@@ -67,6 +70,8 @@ class FIBSSidebar : Box {
             this.fibsPlayerListDialog.fillTree();
         });
         this.packStart(playerListButton, false, true, 0);
+
+        new FlagManager(buildPath(Config.resourcesLocation, "flags")).load();
 
         this.packStart(new Separator(GtkOrientation.HORIZONTAL), false, true, 5);
 

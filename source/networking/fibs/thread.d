@@ -44,6 +44,20 @@ struct FIBSPlayer {
             return "Online";
         }
     }
+
+    /**
+     * The 2 letter country code of the player or blank if unknown. Currently
+     * just checks according to the player profile protocol defined in the FIBS
+     * standard. TODO: Use geo-ip.
+     */
+    string country() {
+        if (client.length > 4) {
+            if (client[0].to!byte >> 2 == 0b1111) {
+                return client[1..3];
+            }
+        }
+        return "";
+    }
 }
 
 /**

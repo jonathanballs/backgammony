@@ -7,6 +7,7 @@ import std.json;
 
 /**
  * Application configuration
+ * TODO: Use meta programming to clean up code, read from environment variables etc.
  */
 class Config {
     static bool couldReadAtStartup;
@@ -16,6 +17,8 @@ class Config {
     static string fibsUsername;
     static string fibsPassword;
     static bool fibsAutoConnect;
+
+    static string resourcesLocation;
 
     static void write() {
     }
@@ -48,6 +51,10 @@ class Config {
             }
             couldReadAtStartup = true;
             startupErrorMessage = "";
+
+            // resources location
+            resourcesLocation = buildPath(dirName(thisExePath()), "resources/");
+
         } catch (Exception e) {
             couldReadAtStartup = false;
             startupErrorMessage = cast(string) e.message;
