@@ -90,52 +90,134 @@ struct CLIPWho {
     string email;
 }
 
+/// Example:
+///     7 someplayer someplayer logs in.
 struct CLIPLogin {
+    this(string s) {
+        string message;
+        s.formattedRead!"7 %s %s"(name, message);
+    }
     string name;
 }
 
+/// Example:
+///     8 someplayer someplayer drops connection.
 struct CLIPLogout {
-    struct name;
+    this(string s) {
+        string message;
+        s.formattedRead!"8 %s %s"(name, message);
+    }
+    string name;
 }
 
+/// Example:
+///     9 someplayer 1041253132 I'll log in at 10pm if you want to finish that game.
 struct CLIPMessage {
+    this(string s) {
+        uint timeUnix;
+        s.formattedRead!"9 %s %d %s"(from, timeUnix, message);
+        time = SysTime.fromUnixTime(timeUnix);
+    }
+
     string from;
-    uint time;
+    SysTime time;
     string message;
 }
 
+/// Example:
+///     10 someplayer
 struct CLIPMessageDelivered {
+    this(string s) {
+        s.formattedRead!"10 %s"(name);
+    }
     string name;
 }
 
+/// Example:
+///     11 someplayer
 struct CLIPMessageSaved {
+    this(string s) {
+        s.formattedRead!"11 %s"(name);
+    }
     string name;
 }
 
+/// Example:
+///     12 someplayer Do you want to play a game?
 struct CLIPSays {
+    this(string s) {
+        s.formattedRead!"12 %s %s"(name, message);
+    }
     string name;
     string message;
 }
 
+/// Example:
+///     13 someplayer Anybody for a 5 point match?
 struct CLIPShouts {
+    this(string s) {
+        s.formattedRead!"13 %s %s"(name, message);
+    }
     string name;
     string message;
 }
 
+/// Example:
+///     14 someplayer I think he is using loaded dice  :-)
+struct CLIPWhispers {
+    this(string s) {
+        s.formattedRead!"14 %s %s"(name, message);
+    }
+    string name;
+    string message;
+}
+
+/// Example:
+///     15 someplayer G'Day and good luck from Hobart, Australia.
 struct CLIPKibitz {
+    this(string s) {
+        s.formattedRead!"15 %s %s"(name, message);
+    }
     string name;
     string message;
 }
 
+/// Example:
+///     16 someplayer What's this "G'Day" stuff you hick?  :-)
 struct CLIPYouSay {
+    this(string s) {
+        s.formattedRead!"16 %s %s"(name, message);
+    }
     string name;
     string message;
 }
 
-struct CLIPYouWhisper {
+/// Example:
+///     17 Watch out for someplayer.  He's a Tasmanian.
+struct CLIPYouShout {
+    this(string s) {
+        string name;
+        s.formattedRead!"17 %s %s"(name, message);
+    }
     string message;
 }
 
+/// Example:
+///     18 Hello and hope you enjoy watching this game.
+struct CLIPYouWhisper {
+    this(string s) {
+        string name;
+        s.formattedRead!"18 %s %s"(name, message);
+    }
+    string message;
+}
+
+/// Example:
+///     19 Are you sure those dice aren't loaded?
 struct CLIPYouKibitz {
+    this(string s) {
+        string name;
+        s.formattedRead!"19 %s %s"(name, message);
+    }
     string message;
 }

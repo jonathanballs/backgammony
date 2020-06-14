@@ -103,23 +103,47 @@ class FIBSConnection : Connection {
         switch (lines[0].split()[0]) {
             case "1":
                 assert(lines.length == 1);
-                v = CLIPWelcome(lines[0]);
-                break;
+                v = CLIPWelcome(lines[0]); break;
             case "2":
                 assert(lines.length == 1);
-                v = CLIPOwnInfo(lines[0]);
-                break;
+                v = CLIPOwnInfo(lines[0]); break;
             case "3":
                 assert(lines.length >= 2);
-                v = CLIPMOTD(lines);
-                break;
+                v = CLIPMOTD(lines); break;
             case "5":
-                v = CLIPWho(lines[0]);
-                break;
+                v = CLIPWho(lines[0]); break;
+            case "7":
+                v = CLIPLogin(lines[0]); break;
+            case "8":
+                v = CLIPLogout(lines[0]); break;
+            case "9":
+                v = CLIPMessage(lines[0]); break;
+            case "10":
+                v = CLIPMessageDelivered(lines[0]); break;
+            case "11":
+                v = CLIPMessageSaved(lines[0]); break;
+            case "12":
+                v = CLIPSays(lines[0]); break;
+            case "13":
+                v = CLIPShouts(lines[0]); break;
+            case "14":
+                v = CLIPWhispers(lines[0]); break;
+            case "15":
+                v = CLIPKibitz(lines[0]); break;
+            case "16":
+                v = CLIPYouSay(lines[0]); break;
+            case "17":
+                v = CLIPYouShout(lines[0]); break;
+            case "18":
+                v = CLIPYouWhisper(lines[0]); break;
+            case "19":
+                v = CLIPYouKibitz(lines[0]); break;
             default:
                 v = "===> " ~ lines[0];
                 break;
         }
+
+        writeln(v);
 
         return v;
     }
