@@ -221,3 +221,6 @@ struct CLIPYouKibitz {
     }
     string message;
 }
+
+struct FIBSRequestDisconnect {
+}

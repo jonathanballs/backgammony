@@ -159,9 +159,13 @@ class FIBSController {
     }
     
     /**
-     * Tell connection to disconnect
+     * Request disconnection
      */
-    public void disconnect() {}
+    public void disconnect() {
+        if (networkingThread != Tid.init) {
+            send(networkingThread, FIBSRequestDisconnect());
+        }
+    }
 }
 
 private class FIBSNetworkingThread {
@@ -190,6 +194,18 @@ private class FIBSNetworkingThread {
 
         while(true) {
             try {
+                bool requestExit;
+                receiveTimeout(0.msecs,
+                    (FIBSRequestDisconnect d) {
+                        requestExit = true;
+                    },
+                );
+
+                if (requestExit) {
+                    conn.writeline("adios");
+                    return;
+                }
+                
                 send(ownerTid, conn.readMessage(25.msecs));
             } catch (Exception e) {
             }

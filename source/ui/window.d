@@ -161,6 +161,7 @@ class BackgammonWindow : MainWindow {
 
         this.setDefaultSize(1000, 600);
         this.addTickCallback(&handleThreadMessages);
+        this.addOnDestroy(&onDestroy);
 
         // By default, let's start a game between the player and the AI with
         // the player going first (assuming that gnubg exists)
@@ -373,6 +374,12 @@ class BackgammonWindow : MainWindow {
             );
         }
         return true;
+    }
+
+    void onDestroy(Widget w) {
+        if (this.fibsController) {
+            fibsController.disconnect();
+        }
     }
 
     public mixin AddTickCallback;
