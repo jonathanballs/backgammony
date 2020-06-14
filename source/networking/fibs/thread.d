@@ -62,6 +62,12 @@ struct FIBSPlayer {
     }
 }
 
+struct FIBSMessage {
+    SysTime timestamp;
+    string from;
+    string message;
+}
+
 /**
  * Communication with the FIBS thread.
  */
@@ -75,6 +81,8 @@ class FIBSController {
     string serverAddress;
     string username;
     string password;
+
+    public FIBSMessage[] shoutBox;
 
     public FIBSPlayer[] players;
 
@@ -153,6 +161,10 @@ class FIBSController {
                         w.ready, w.away, w.rating, w.experience, w.idle, w.login,
                         w.hostname, w.client, w.email);
                     players ~= p;
+                },
+                (CLIPShouts s) {
+                    shoutBox ~= FIBSMessage(Clock.currTime, s.name, s.message);
+                    writeln(s);
                 }
             )) {}
         }
@@ -203,6 +215,7 @@ private class FIBSNetworkingThread {
 
                 if (requestExit) {
                     conn.writeline("adios");
+                    // TODO: Send confirm to main thread
                     return;
                 }
                 

@@ -130,6 +130,7 @@ class FIBSSidebar : Box {
 
     void setController(FIBSController fibsController) {
         this.fibsController = fibsController;
+        this.shoutBox.setFibsChatSource(&fibsController.shoutBox);
     }
 
     bool onTick(Widget w, FrameClock f) {
