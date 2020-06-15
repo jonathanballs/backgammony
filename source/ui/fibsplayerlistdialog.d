@@ -13,7 +13,9 @@ import gtk.Image;
 import gtk.ListStore;
 import gtk.ScrolledWindow;
 import gtk.TreeIter;
+import gtk.TreeModel;
 import gtk.TreeModelFilter;
+import gtk.TreeModelSort;
 import gtk.TreePath;
 import gtk.TreeSelection;
 import gtk.TreeView;
@@ -34,6 +36,7 @@ class FIBSPlayerListDialog : Dialog {
     ListStore listStore;    
     ScrolledWindow scrolledWindow;    
     TreeModelFilter treeModelFilter;    
+    TreeModelSort treeModelSort;
     TreeIter[] iters;    
 
     string filterString;
@@ -76,16 +79,19 @@ class FIBSPlayerListDialog : Dialog {
         this.treeModelFilter.setVisibleFunc(&filterTree, &this.filterString, null);
         this.treeModelFilter.refilter();
 
+        // Sorting
+        this.treeModelSort = new TreeModelSort(treeModelFilter);
+
         // Create the tree view
         this.treeView = new TreeView();
-        treeView.setModel(treeModelFilter);
-        this.treeView.getSelection.addOnChanged((TreeSelection s) {
-            auto selectedIter = this.treeView.getSelectedIter();
-            if (selectedIter) {
-                auto selectedPath = treeModelFilter.getPath(selectedIter);
-                this.treeView.scrollToCell(selectedPath, null, false, 0, 0);
-            }
-        });
+        treeView.setModel(treeModelSort);
+        // this.treeView.getSelection.addOnChanged((TreeSelection s) {
+        //     auto selectedIter = this.treeView.getSelectedIter();
+        //     if (selectedIter) {
+        //         auto selectedPath = treeModelFilter.getPath(selectedIter);
+        //         this.treeView.scrollToCell(selectedPath, null, false, 0, 0);
+        //     }
+        // });
 
         columns = [
             new TreeViewColumn("", new CellRendererPixbuf(), "pixbuf", 0),
@@ -94,8 +100,12 @@ class FIBSPlayerListDialog : Dialog {
             new TreeViewColumn("Status", new CellRendererText(), "text", 3),
         ];
 
-        foreach (c; columns) {
+        foreach (long i, c; columns) {
             treeView.appendColumn(c);
+            if (i > 0) {
+                c.setSortColumnId(cast(int) i);
+                treeModelSort.setSortFunc(cast(int) i, &sortColumnFunc, cast(void*) i, null);
+            }
         }
 
         scrolledWindow = new ScrolledWindow();
@@ -140,5 +150,28 @@ class FIBSPlayerListDialog : Dialog {
         // string name = model.getValue(iter, 0).getString();
         // import std.algorithm : canFind;
         // return name.canFind(*cast(string*) data);
+    }
+
+    public static extern(C) int sortColumnFunc(GtkTreeModel* m, GtkTreeIter* a, GtkTreeIter* b, void* data) {
+        TreeModel model = new TreeModel(m);
+        TreeIter  itera  = new TreeIter(a);
+        TreeIter  iterb  = new TreeIter(b);
+        import gobject.Value;
+
+        Value av = model.getValue(itera, cast(int) data);
+        Value bv = model.getValue(iterb, cast(int) data);
+
+        if (av.gType == GType.STRING) {
+            string as = av.getString();
+            string bs = bv.getString();
+            if (as == bs) return 0;
+            return (as < bs) ? -1 : 1;
+        } else if (av.gType == GType.INT) {
+            int ai = av.getInt();
+            int bi = bv.getInt();
+            if (ai == bi) return 0;
+            return (ai < bi) ? -1 : 1;
+        }
+        return 0;
     }
 }
