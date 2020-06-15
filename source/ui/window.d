@@ -162,43 +162,6 @@ class BackgammonWindow : MainWindow {
         this.setDefaultSize(1000, 600);
         this.addTickCallback(&handleThreadMessages);
         this.addOnDestroy(&onDestroy);
-
-        // By default, let's start a game between the player and the AI with
-        // the player going first (assuming that gnubg exists)
-        import std.file : exists;
-        try {
-            if (exists("/usr/bin/gnubg") || exists("/app/bin/gnubg")) {
-                Variant aiConfig = gnubgDefaultEvalContexts[4];
-                auto gs = new GameState(
-                    PlayerMeta("Player", "gnubg", PlayerType.User),
-                    PlayerMeta("AI", "gnubg", PlayerType.AI, aiConfig)
-                );
-                setGameState(gs);
-                // Start game 50msecs after first draw
-                import cairo.Context : Context;
-                import gobject.Signals : Signals;
-                gulong sigId;
-                sigId = backgammonBoard.addOnDraw((Scoped!Context c, Widget w) {
-                    Signals.handlerDisconnect(backgammonBoard, sigId);
-
-                    // Timeout
-                    import glib.Timeout : Timeout;
-                    Timeout t;
-                    // Wait 100msecs and start a game
-                    t = new Timeout(100, () {
-                        gs.newGame();
-                        t.stop();
-                        return false;
-                    }, false);
-
-                    return false;
-                });
-            } else {
-                writeln("GNUBG not installed. Not starting game");
-            }
-        } catch (Exception e) {
-            writeln(e);
-        }
     }
 
     /**

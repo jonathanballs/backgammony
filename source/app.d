@@ -24,11 +24,53 @@ void main(string[] args)
     Main.init(args);
     auto window = new BackgammonWindow();
 
-    // Show Fibs sidebar
+    // Connect to fibs or start a ai game
     if (Config.fibsAutoConnect) {
         import networking.fibs.thread;
         window.setFibsController(new FIBSController(
             Config.fibsServer, Config.fibsUsername, Config.fibsPassword));
+    } else {
+        // By default, let's start a game between the player and the AI with
+        // the player going first (assuming that gnubg exists)
+        import std.file : exists;
+        import ai.gnubg;
+        import std.variant;
+        import game;
+        import player;
+        import gtk.Widget;
+        try {
+            if (exists("/usr/bin/gnubg") || exists("/app/bin/gnubg")) {
+                Variant aiConfig = gnubgDefaultEvalContexts[4];
+                auto gs = new GameState(
+                    PlayerMeta("Player", "gnubg", PlayerType.User),
+                    PlayerMeta("AI", "gnubg", PlayerType.AI, aiConfig)
+                );
+                window.setGameState(gs);
+                // Start game 50msecs after first draw
+                import cairo.Context : Context;
+                import gobject.Signals : Signals;
+                gulong sigId;
+                sigId = window.backgammonBoard.addOnDraw((Scoped!Context c, Widget w) {
+                    Signals.handlerDisconnect(window.backgammonBoard, sigId);
+
+                    // Timeout
+                    import glib.Timeout : Timeout;
+                    Timeout t;
+                    // Wait 100msecs and start a game
+                    t = new Timeout(100, () {
+                        gs.newGame();
+                        t.stop();
+                        return false;
+                    }, false);
+
+                    return false;
+                });
+            } else {
+                writeln("GNUBG not installed. Not starting game");
+            }
+        } catch (Exception e) {
+            writeln(e);
+        }
     }
 
     window.showAll();
