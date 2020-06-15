@@ -8,6 +8,7 @@ import std.stdio;
 import std.variant;
 import networking.connection;
 import networking.fibs.clipmessages;
+public import networking.connection : TimeoutException;
 
 /**
  * Handles connection with FIBS server as well as formatting requests and parsing

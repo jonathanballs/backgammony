@@ -153,6 +153,12 @@ class FIBSSidebar : Box {
                         format!"<span foreground='red'>%s</span>"(
                             fibsController.connectionStatus.message));
                     break;
+                case FIBSConnectionStatus.Crashed:
+                    contentStack.setVisibleChild(connectionFailedContentBox);
+                    connectionFailedErrorMessage.setMarkup(
+                        format!"<span foreground='red'>%s</span>"("Network thread crashed."));
+                    contentStack.setVisibleChild(connectionFailedContentBox);
+                    break;
                 default:
                     import std.stdio;
                     writeln("whoops, have no relevant sidebar view for ",

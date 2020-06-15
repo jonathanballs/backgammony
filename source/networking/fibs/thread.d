@@ -143,6 +143,12 @@ class FIBSController {
         // Detect crashed
         // if (locate("fibsNetworkingThread") != Tid.init) {
         // }
+        if (fibsConnectionStatus != FIBSConnectionStatus.Disconnected) {
+            if (locate("fibsNetworkingThread") == Tid.init) {
+                return tuple!("status", "message")
+                    (FIBSConnectionStatus.Crashed, "");
+            }
+        }
 
         return tuple!("status", "message")(fibsConnectionStatus, fibsConnectionStatusMessage);
     }
@@ -220,7 +226,15 @@ private class FIBSNetworkingThread {
                 }
                 
                 send(ownerTid, conn.readMessage(25.msecs));
-            } catch (Exception e) {
+            } 
+            catch (TimeoutException e) {
+                continue;
+            }
+            catch (Exception e) {
+                writeln("NETWORKING THREAD CRASHED");
+                writeln("==================================================");
+                writeln(e);
+                return;
             }
         }
     }
