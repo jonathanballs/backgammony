@@ -37,6 +37,7 @@ import networking.fibs.thread;
 //   - Filter bots
 //   - Collapse bots
 //   - HiDPI flags
+//   - Flag tooltips
 
 /**
  * Gtk dialog that displays users from a FIBS server

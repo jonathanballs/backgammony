@@ -215,7 +215,7 @@ class NetworkingThread {
                                 moveStrings[i*3 + 1],
                                 moveStrings[i*3 + 2]
                             );
-                            moves ~= moveString.parseFibsString;
+                            moves ~= moveString.parseFibsMovement;
                         }
                         gs.applyTurn(moves);
                         auto msg = NetworkThreadNewMove(cast(uint) moves.length);

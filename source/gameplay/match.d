@@ -9,10 +9,8 @@ import gameplay.player;
 struct BackgammonMatch {
     PlayerMeta player1;
     PlayerMeta player2;
-
-    // The length of the match in points
+    int p1score;
+    int p2score;
     int length;
-
-    // The scores of the players
-    int[Player] score;
+    GameState currentGame;
 }
