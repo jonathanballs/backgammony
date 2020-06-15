@@ -169,6 +169,11 @@ class FIBSController {
                         w.hostname, w.client, w.email);
                     players[w.name] = p;
                 },
+                (CLIPLogout l) {
+                    // Remove players that logout.
+                    // TODO: Move to offline list? This data could still be useful
+                    players.remove(l.name);
+                },
                 (CLIPShouts s) {
                     shoutBox ~= FIBSMessage(Clock.currTime, s.name, s.message);
                     writeln(s);

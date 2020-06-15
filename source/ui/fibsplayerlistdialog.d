@@ -1,6 +1,7 @@
 module ui.fibsplayerlistdialog;
 
 import std.stdio;
+import gdk.Event;
 import gdk.FrameClock;
 import gdk.Pixbuf;
 import gio.ThemedIcon;
@@ -11,6 +12,8 @@ import gtk.Dialog;
 import gtk.HeaderBar;
 import gtk.Image;
 import gtk.ListStore;
+import gtk.Menu;
+import gtk.MenuItem;
 import gtk.ScrolledWindow;
 import gtk.TreeIter;
 import gtk.TreeModel;
@@ -81,11 +84,6 @@ class FIBSPlayerListDialog : Dialog {
 
         // Sorting
         this.treeModelSort = new TreeModelSort(treeModelFilter);
-
-        // Create the tree view
-        this.treeView = new TreeView();
-        treeView.setModel(treeModelSort);
-        this.treeModelSort.setSortColumnId(2, GtkSortType.DESCENDING);
         // this.treeView.getSelection.addOnChanged((TreeSelection s) {
         //     auto selectedIter = this.treeView.getSelectedIter();
         //     if (selectedIter) {
@@ -94,13 +92,21 @@ class FIBSPlayerListDialog : Dialog {
         //     }
         // });
 
+        // Create the tree view
+        this.treeView = new TreeView();
+        treeView.setModel(treeModelSort);
+        this.treeModelSort.setSortColumnId(2, GtkSortType.DESCENDING);
+        scrolledWindow = new ScrolledWindow();
+        scrolledWindow.setVexpand(true);
+        scrolledWindow.add(this.treeView);
+
+        // Create columns
         columns = [
             new TreeViewColumn("", new CellRendererPixbuf(), "pixbuf", 0),
             new TreeViewColumn("Username", new CellRendererText(), "text", 1),
             new TreeViewColumn("Rating", new CellRendererText(), "text", 2),
             new TreeViewColumn("Status", new CellRendererText(), "text", 3),
         ];
-
         foreach (long i, c; columns) {
             treeView.appendColumn(c);
             if (i > 0) {
@@ -109,20 +115,54 @@ class FIBSPlayerListDialog : Dialog {
             }
         }
 
-        scrolledWindow = new ScrolledWindow();
-        scrolledWindow.setVexpand(true);
-        scrolledWindow.add(this.treeView);
+        /**
+         * Display button press
+         */
+        treeView.addOnButtonPress((Event e, Widget w) {
+            if (e.button.button != GDK_BUTTON_SECONDARY) {
+                return false;
+            }
 
-        // Selection
-        auto selection = treeView.getSelection();
-        selection.selectPath(new TreePath(true));
+            // Selection
+            TreePath path;
+            TreeViewColumn col;
+            int cellx, celly;
+            if (!treeView.getPathAtPos(cast(int) e.button.x, cast(int) e.button.y, path, col, cellx, celly)) {
+                return false;
+            }
+            auto selection = treeView.getSelection();
+            selection.selectPath(path);
+
+            TreeIter iter = new TreeIter();
+            if (!treeView.getModel().getIter(iter, path)) {
+                return false;
+            }
+
+            string username = treeView.getModel().getValue(iter, 1).getString();
+
+            Menu menu = new Menu();
+
+            MenuItem profile = new MenuItem("Profile");
+            MenuItem watch = new MenuItem("Watch " ~ username);
+            MenuItem invite = new MenuItem("Invite " ~ username);
+
+            menu.append(profile);
+            menu.append(watch);
+            menu.append(invite);
+
+            menu.showAll();
+
+            menu.popupAtPointer(null);
+
+            return true;
+        });
 
         this.getContentArea().add(scrolledWindow);
         this.showAll();
     }
 
     /**
-     * Update tree
+     * Clear tree and fill with player data
      */
     void fillTree() {
         import ui.flagmanager;
@@ -144,6 +184,9 @@ class FIBSPlayerListDialog : Dialog {
         }
     }
 
+    /**
+     * Function for filtering the list
+     */
     public static extern(C) int filterTree(GtkTreeModel* m, GtkTreeIter* i, void* data) {
         return true;
         // TreeModel model = new TreeModel(m);
@@ -153,6 +196,9 @@ class FIBSPlayerListDialog : Dialog {
         // return name.canFind(*cast(string*) data);
     }
 
+    /**
+     * Function for sorting the list
+     */
     public static extern(C) int sortColumnFunc(GtkTreeModel* m, GtkTreeIter* a, GtkTreeIter* b, void* data) {
         TreeModel model = new TreeModel(m);
         TreeIter  itera  = new TreeIter(a);
