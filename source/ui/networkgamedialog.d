@@ -18,11 +18,11 @@ import gtk.Spinner;
 import gtk.Widget;
 import gtk.Window;
 
-import game;
+import gameplay.gamestate;
 import networking.messages;
 import networking;
 import networking.fibs.thread;
-import player;
+import gameplay.player;
 import ui.newgamedialog : HumanSelector, setMarginsExpand;
 import ui.fragments;
 import utils.addtickcallback;

@@ -21,11 +21,11 @@ import gtk.MainWindow;
 import gtk.Revealer;
 import gtk.Widget;
 
-import game;
+import gameplay.gamestate;
 import networking;
 import networking.messages;
 import networking.fibs.thread;
-import player;
+import gameplay.player;
 import ui.board.boardwidget;
 import ui.fibssidebar;
 import ui.networkgamedialog;

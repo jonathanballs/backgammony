@@ -15,7 +15,7 @@ import std.stdio;
 import std.string;
 
 import formats.fibs;
-import game;
+import gameplay.gamestate;
 
 /**
  * Gnubg Evaluation settings

@@ -11,8 +11,8 @@ import std.conv;
 import std.string;
 import std.digest.sha;
 
-import player;
-import game;
+import gameplay.player;
+import gameplay.gamestate;
 import networking.messages;
 import networking.connection;
 import formats.fibs;

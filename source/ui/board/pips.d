@@ -13,7 +13,7 @@ import std.datetime;
 import std.stdio;
 import std.typecons;
 import cairo.Context;
-import game;
+import gameplay.gamestate;
 
 import ui.board.style;
 import ui.board.layout;

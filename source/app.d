@@ -35,8 +35,8 @@ void main(string[] args)
         import std.file : exists;
         import ai.gnubg;
         import std.variant;
-        import game;
-        import player;
+        import gameplay.gamestate;
+        import gameplay.player;
         import gtk.Widget;
         try {
             if (exists("/usr/bin/gnubg") || exists("/app/bin/gnubg")) {

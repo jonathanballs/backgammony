@@ -1,4 +1,4 @@
-module player;
+module gameplay.player;
 
 import std.variant;
 

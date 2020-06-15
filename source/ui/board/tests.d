@@ -8,8 +8,8 @@ import gtk.Box;
 
 import ui.window;
 import ui.board.boardwidget;
-import game;
-import player;
+import gameplay.gamestate;
+import gameplay.player;
 
 // UDA for uitests
 private enum uitest;

@@ -5,7 +5,7 @@ import std.stdio;
 import std.typecons;
 
 import ui.board.style;
-import game : Player;
+import gameplay.gamestate : Player;
 
 /// A corner of the board. Useful for describing where a user's home should be.
 /// In the future, this will be changeable in the settings.

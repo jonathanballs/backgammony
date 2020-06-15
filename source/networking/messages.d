@@ -1,5 +1,5 @@
 module networking.messages;
-import game : Player, PipMovement;
+import gameplay.gamestate : Player, PipMovement;
 
 /**
  * Tell the network thread to shutdown immmediately

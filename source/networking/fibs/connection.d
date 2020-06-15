@@ -3,6 +3,7 @@ module networking.fibs.connection;
 import core.time;
 import std.algorithm : startsWith;
 import std.array;
+import std.regex;
 import std.socket;
 import std.stdio;
 import std.variant;
@@ -140,7 +141,13 @@ class FIBSConnection : Connection {
             case "19":
                 v = CLIPYouKibitz(lines[0]); break;
             default:
-                v = "===> " ~ lines[0];
+                // It's not a CLIP message, we'll have to try some REGEX
+                if (lines[0].match(regex("board:.*"))) {
+                    v = "BOARD";
+                    break;
+                }
+
+                v = "====> " ~ lines[0];
                 break;
         }
 

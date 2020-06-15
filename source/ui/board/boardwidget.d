@@ -16,8 +16,8 @@ import gtk.DrawingArea;
 import gtk.Widget;
 import gobject.Signals;
 
-import game;
-import player;
+import gameplay.gamestate;
+import gameplay.player;
 import utils.signals;
 import ui.board.dice;
 import ui.board.layout;

@@ -19,8 +19,8 @@ import gtk.Window;
 import ai.gnubg;
 import utils.signals;
 import utils.os;
-import player;
-import game;
+import gameplay.player;
+import gameplay.gamestate;
 
 enum formPadding = 10;
 

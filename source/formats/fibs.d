@@ -6,7 +6,7 @@ import std.algorithm;
 import std.array;
 import std.string;
 import std.stdio;
-import game;
+import gameplay.gamestate;
 
 /**
  * Contains functions and methods for handling FIBS encoded games and moves

@@ -1,4 +1,4 @@
-module game;
+module gameplay.gamestate;
 
 
 import std.algorithm;
@@ -8,7 +8,7 @@ import std.math;
 import std.range : enumerate, inputRangeObject;
 import std.stdio;
 
-import player;
+import gameplay.player;
 import utils.signals;
 import utils.types : EnumIndexStaticArray, OneIndexedStaticArray;
 
@@ -16,6 +16,7 @@ import utils.types : EnumIndexStaticArray, OneIndexedStaticArray;
 // - Handle users more smoothly - clean up functions etc.
 // - Record board history - and validate it.
 // - More compact data structures? Or leave that to the AI...
+
 
 /**
  * Represents a single move in a turn e.g. a piece moving from the bar or a
