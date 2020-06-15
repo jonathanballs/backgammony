@@ -84,7 +84,8 @@ class FIBSController {
 
     public FIBSMessage[] shoutBox;
 
-    public FIBSPlayer[] players;
+    /** Map usernames to fibs players **/
+    public FIBSPlayer[string] players;
 
     public this(string serverAddress, string username, string password) {
         this.serverAddress = serverAddress;
@@ -166,7 +167,7 @@ class FIBSController {
                     FIBSPlayer p = FIBSPlayer(w.name, w.opponent, w.watching,
                         w.ready, w.away, w.rating, w.experience, w.idle, w.login,
                         w.hostname, w.client, w.email);
-                    players ~= p;
+                    players[w.name] = p;
                 },
                 (CLIPShouts s) {
                     shoutBox ~= FIBSMessage(Clock.currTime, s.name, s.message);

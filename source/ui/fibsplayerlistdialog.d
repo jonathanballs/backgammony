@@ -85,6 +85,7 @@ class FIBSPlayerListDialog : Dialog {
         // Create the tree view
         this.treeView = new TreeView();
         treeView.setModel(treeModelSort);
+        this.treeModelSort.setSortColumnId(2, GtkSortType.DESCENDING);
         // this.treeView.getSelection.addOnChanged((TreeSelection s) {
         //     auto selectedIter = this.treeView.getSelectedIter();
         //     if (selectedIter) {
