@@ -29,6 +29,14 @@ import utils.addtickcallback;
 
 import networking.fibs.thread;
 
+// TODO:
+//   - Get player flags using geo-ip
+//   - Live updating player data
+//   - Show friends/enemies
+//   - Filter bots
+//   - Collapse bots
+//   - HiDPI flags
+
 class FIBSPlayerListDialog : Dialog {
     FIBSController controller;
 
