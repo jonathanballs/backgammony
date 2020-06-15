@@ -26,6 +26,7 @@ import gtk.TreeViewColumn;
 import gtk.Widget;
 import gtk.Window;
 import utils.addtickcallback;
+import utils.signals;
 
 import networking.fibs.thread;
 
@@ -37,10 +38,17 @@ import networking.fibs.thread;
 //   - Collapse bots
 //   - HiDPI flags
 
+/**
+ * Gtk dialog that displays users from a FIBS server
+ */
 class FIBSPlayerListDialog : Dialog {
+    Signal!(string) onWatchUser;
+    Signal!(string) onInviteUser;
+
     FIBSController controller;
 
     HeaderBar headerBar;
+    Button refreshButton;
 
     TreeView treeView;    
     TreeViewColumn[] columns;
@@ -55,6 +63,8 @@ class FIBSPlayerListDialog : Dialog {
     this(Window w, FIBSController controller) {
         super();
         this.controller = controller;
+        this.onWatchUser = new Signal!(string);
+        this.onInviteUser = new Signal!(string);
         this.setTransientFor(w);
         this.setPosition(GtkWindowPosition.CENTER_ON_PARENT);
         this.setTypeHint(GdkWindowTypeHint.DIALOG);
@@ -69,10 +79,9 @@ class FIBSPlayerListDialog : Dialog {
         headerBar = new HeaderBar();
         headerBar.setTitle("Player list");
         headerBar.setShowCloseButton(true);
-        headerBar.setProperty("spacing", 100);
         this.setTitlebar(headerBar);
 
-        Button refreshButton = new Button();
+        refreshButton = new Button();
         auto icon = new ThemedIcon("view-refresh-symbolic");
         auto inetImg = new Image();
         inetImg.setFromGicon(icon, IconSize.BUTTON);
@@ -85,7 +94,7 @@ class FIBSPlayerListDialog : Dialog {
         this.listStore = new ListStore([
             GType.OBJECT, GType.STRING, GType.INT, GType.STRING]);
 
-        // Filter
+        // Filtering
         this.treeModelFilter = new TreeModelFilter(listStore, null);
         this.treeModelFilter.setVisibleFunc(&filterTree, &this.filterString, null);
         this.treeModelFilter.refilter();
@@ -123,50 +132,59 @@ class FIBSPlayerListDialog : Dialog {
             }
         }
 
-        /**
-         * Display button press
-         */
-        treeView.addOnButtonPress((Event e, Widget w) {
-            if (e.button.button != GDK_BUTTON_SECONDARY) {
-                return false;
-            }
-
-            // Selection
-            TreePath path;
-            TreeViewColumn col;
-            int cellx, celly;
-            if (!treeView.getPathAtPos(cast(int) e.button.x, cast(int) e.button.y, path, col, cellx, celly)) {
-                return false;
-            }
-            auto selection = treeView.getSelection();
-            selection.selectPath(path);
-
-            TreeIter iter = new TreeIter();
-            if (!treeView.getModel().getIter(iter, path)) {
-                return false;
-            }
-
-            string username = treeView.getModel().getValue(iter, 1).getString();
-
-            Menu menu = new Menu();
-
-            MenuItem profile = new MenuItem("Profile");
-            MenuItem watch = new MenuItem("Watch " ~ username);
-            MenuItem invite = new MenuItem("Invite " ~ username);
-
-            menu.append(profile);
-            menu.append(watch);
-            menu.append(invite);
-
-            menu.showAll();
-
-            menu.popupAtPointer(null);
-
-            return true;
-        });
+        treeView.addOnButtonPress(&onButtonPress);
 
         this.getContentArea().add(scrolledWindow);
         this.showAll();
+    }
+
+    /**
+     * Handle button presses for the player TreeView and display an appropriate
+     * context menu.
+     */
+    bool onButtonPress(Event e, Widget w) {
+        if (e.button.button != GDK_BUTTON_SECONDARY) {
+            return false;
+        }
+
+        // Select the hovered treepath
+        TreePath path;
+        TreeViewColumn col;
+        int cellx, celly;
+        if (!treeView.getPathAtPos(cast(int) e.button.x, cast(int) e.button.y, path, col, cellx, celly)) {
+            return false;
+        }
+        auto selection = treeView.getSelection();
+        selection.selectPath(path);
+
+        // Find its associated user
+        TreeIter iter = new TreeIter();
+        if (!treeView.getModel().getIter(iter, path)) {
+            return false;
+        }
+        string username = treeView.getModel().getValue(iter, 1).getString();
+
+        // Present a context menu to the user
+        Menu menu = new Menu();
+        MenuItem profile = new MenuItem("Profile");
+        profile.addOnActivate((MenuItem) {
+            writeln("Display profile");
+        });
+        MenuItem watch = new MenuItem("Watch " ~ username);
+        watch.addOnActivate((MenuItem) {
+            this.onWatchUser.emit(username);
+        });
+        MenuItem invite = new MenuItem("Invite " ~ username);
+        invite.addOnActivate((MenuItem) {
+            this.onInviteUser.emit(username);
+        });
+        menu.append(profile);
+        menu.append(watch);
+        menu.append(invite);
+        menu.showAll();
+        menu.popupAtPointer(null);
+
+        return true;
     }
 
     /**

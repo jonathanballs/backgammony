@@ -88,7 +88,9 @@ class FIBSSidebar : Box {
             Window mainWindow = new Window(cast(GtkWindow *) this.getToplevel.getStruct());
             fibsPlayerListDialog = new FIBSPlayerListDialog(
                 mainWindow, fibsController);
-
+            fibsPlayerListDialog.onWatchUser.connect((string username) {
+                fibsController.requestWatch(username);
+            });
             this.fibsPlayerListDialog.fillTree();
         });
         connectedContentBox.packStart(playerListButton, false, true, 0);

@@ -125,6 +125,14 @@ class FIBSController {
     }
 
     /**
+     * Request to watch a particular user
+     */
+    public void requestWatch(string username) {
+        send(networkingThread, FIBSRequestCommand("watch " ~ username));
+        send(networkingThread, FIBSRequestCommand("board"));
+    }
+
+    /**
      * Get the current connection status of the FIBS thread
      */
     public Tuple!(FIBSConnectionStatus, "status", string, "message") connectionStatus() {
@@ -176,7 +184,6 @@ class FIBSController {
                 },
                 (CLIPShouts s) {
                     shoutBox ~= FIBSMessage(Clock.currTime, s.name, s.message);
-                    writeln(s);
                 }
             )) {}
         }
@@ -220,6 +227,9 @@ private class FIBSNetworkingThread {
             try {
                 bool requestExit;
                 receiveTimeout(0.msecs,
+                    (FIBSRequestCommand c) {
+                        conn.writeline(c.command);
+                    },
                     (FIBSRequestDisconnect d) {
                         requestExit = true;
                     },

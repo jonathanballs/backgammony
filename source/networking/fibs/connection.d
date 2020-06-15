@@ -144,7 +144,8 @@ class FIBSConnection : Connection {
                 break;
         }
 
-        writeln(v);
+        if (v.type != typeid(CLIPWho))
+            writeln(v);
 
         return v;
     }

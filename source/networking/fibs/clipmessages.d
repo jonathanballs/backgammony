@@ -224,3 +224,10 @@ struct CLIPYouKibitz {
 
 struct FIBSRequestDisconnect {
 }
+
+/**
+ * Request that a command be sent over the connection
+ */
+struct FIBSRequestCommand {
+    string command;
+}
