@@ -2,6 +2,7 @@ module networking.fibs.clipmessages;
 import std.conv : to;
 import std.format;
 import std.datetime;
+import gameplay.match;
 
 /// This is the very first line you'll see after a successful standard login in
 /// client mode.
@@ -220,6 +221,10 @@ struct CLIPYouKibitz {
         s.formattedRead!"19 %s %s"(name, message);
     }
     string message;
+}
+
+struct CLIPMatchState {
+    BackgammonMatch match;
 }
 
 struct FIBSRequestDisconnect {

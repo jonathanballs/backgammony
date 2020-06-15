@@ -3,6 +3,7 @@ module networking.fibs.connection;
 import core.time;
 import std.algorithm : startsWith;
 import std.array;
+import std.format;
 import std.regex;
 import std.socket;
 import std.stdio;
@@ -143,8 +144,16 @@ class FIBSConnection : Connection {
             default:
                 // It's not a CLIP message, we'll have to try some REGEX
                 if (lines[0].match(regex("board:.*"))) {
-                    v = "BOARD";
+                    import formats.fibs;
+                    v = CLIPMatchState(lines[0].parseFibsMatch());
                     break;
+                }
+
+                string movementRegex = "([0-9]+|bar)-[0-9]+";
+                auto turnRegex = regex(format!".* moves? %s %s( %s %s)?"(
+                    movementRegex, movementRegex, movementRegex, movementRegex));
+                if (lines[0].match(turnRegex)) {
+                    writeln("Movement");
                 }
 
                 v = "====> " ~ lines[0];
