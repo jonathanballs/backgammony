@@ -69,8 +69,7 @@ class FIBSPlayerListDialog : Dialog {
         headerBar.packStart(refreshButton);
 
         this.listStore = new ListStore([
-            GType.OBJECT, GType.STRING, GType.STRING,
-            GType.INT, GType.STRING, GType.STRING]);
+            GType.OBJECT, GType.STRING, GType.INT, GType.STRING]);
 
         // Filter
         this.treeModelFilter = new TreeModelFilter(listStore, null);
@@ -91,10 +90,8 @@ class FIBSPlayerListDialog : Dialog {
         columns = [
             new TreeViewColumn("", new CellRendererPixbuf(), "pixbuf", 0),
             new TreeViewColumn("Username", new CellRendererText(), "text", 1),
-            new TreeViewColumn("Status", new CellRendererText(), "text", 2),
-            new TreeViewColumn("Rating", new CellRendererText(), "text", 3),
-            new TreeViewColumn("Experience", new CellRendererText(), "text", 4),
-            new TreeViewColumn("Idle", new CellRendererText(), "text", 5)
+            new TreeViewColumn("Rating", new CellRendererText(), "text", 2),
+            new TreeViewColumn("Status", new CellRendererText(), "text", 3),
         ];
 
         foreach (c; columns) {
@@ -131,10 +128,8 @@ class FIBSPlayerListDialog : Dialog {
                 listStore.setValue(iters[$-1], 0, flagManager.flags["_unknown"]);
             }
             listStore.setValue(iters[$-1], 1, player.name);
-            listStore.setValue(iters[$-1], 2, player.status);
-            listStore.setValue(iters[$-1], 3, cast(int) player.rating);
-            listStore.setValue(iters[$-1], 4, player.experience);
-            listStore.setValue(iters[$-1], 5, player.idle);
+            listStore.setValue(iters[$-1], 2, cast(int) player.rating);
+            listStore.setValue(iters[$-1], 3, player.status);
         }
     }
 
