@@ -4,9 +4,9 @@ import gameplay.gamestate;
 import gameplay.player;
 
 /**
- * A match between two players. Could be multiple games.
+ * A match between two players.
  */
-struct BackgammonMatch {
+class BackgammonMatch {
     PlayerMeta player1;
     PlayerMeta player2;
     int p1score;

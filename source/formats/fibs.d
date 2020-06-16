@@ -22,7 +22,7 @@ import gameplay.match;
  * perspective blank to default to the currentPlayer variable of the gamestate.
  */
 string toFibsString(GameState gs, Player perspective = Player.NONE) {
-    BackgammonMatch m;
+    BackgammonMatch m = new BackgammonMatch();
     m.currentGame = gs;
     m.player1.name = "You";
     m.player2.name = "Opponent";
@@ -115,7 +115,7 @@ PipMovement parseFibsMovement(string fibsString){
 }
 
 BackgammonMatch parseFibsMatch(string s) {
-    BackgammonMatch m;
+    BackgammonMatch m = new BackgammonMatch();
     m.currentGame = new GameState();
 
     string[] sSplit = s.split(':');
