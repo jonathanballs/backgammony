@@ -21,17 +21,18 @@ import gtk.MainWindow;
 import gtk.Revealer;
 import gtk.Widget;
 
+import ai.gnubg;
 import gameplay.gamestate;
-import networking;
-import networking.messages;
-import networking.fibs.thread;
+import gameplay.match;
 import gameplay.player;
+import networking.fibs.thread;
+import networking.messages;
+import networking;
 import ui.board.boardwidget;
 import ui.fibssidebar;
 import ui.networkgamedialog;
 import ui.newgamedialog;
 import utils.addtickcallback;
-import ai.gnubg;
 
 /**
  * The MainWindow of the backgammon game. Also acts as a high level controller
@@ -52,7 +53,7 @@ class BackgammonWindow : MainWindow {
     NetworkGameDialog networkWidget;
     NewGameDialog newGameDialog;
 
-    GameState gameState;
+    BackgammonMatch match;
 
     Task!(gnubgGetTurn, GameState, GnubgEvalContext) *aiGetTurn;
     Turn remoteResult;
@@ -99,8 +100,8 @@ class BackgammonWindow : MainWindow {
             /**
              * Is this a network game? Should this be on a signal listener?
              */
-            if (gameState.isNetworkGame) {
-                auto netThread = gameState.players[gameState.currentPlayer.opposite].config.peek!Tid;
+            if (match.gs.isNetworkGame) {
+                auto netThread = match.gs.players[match.gs.currentPlayer.opposite].config.peek!Tid;
                 auto moves = backgammonBoard.getSelectedMoves();
                 auto msg = NetworkThreadNewMove(cast(uint) moves.length);
                 foreach (i, PipMovement m; moves) {
@@ -123,10 +124,10 @@ class BackgammonWindow : MainWindow {
             undoMoveBtn.setSensitive(false);
             finishTurnBtn.setSensitive(false);
 
-            if (gameState.players[gameState.currentPlayer].type == PlayerType.User) {
+            if (match.gs.players[match.gs.currentPlayer].type == PlayerType.User) {
 
                 undoMoveBtn.setSensitive(!!backgammonBoard.getSelectedMoves().length);
-                if (gameState.turnState == TurnState.MoveSelection) {
+                if (match.gs.turnState == TurnState.MoveSelection) {
                     try {
                         backgammonBoard.getGameState().validateTurn(backgammonBoard.getSelectedMoves());
                         finishTurnBtn.setSensitive(true);
@@ -140,9 +141,9 @@ class BackgammonWindow : MainWindow {
             // If it's a network player then we await their movement
             // TODO: Perhaps this should be triggered when a user finishes and
             // can't move...
-            if (gameState.players[gameState.currentPlayer].type == PlayerType.User) {
-                if (gameState.turnState == TurnState.MoveSelection
-                        && gameState.generatePossibleTurns().length == 0) {
+            if (match.gs.players[match.gs.currentPlayer].type == PlayerType.User) {
+                if (match.gs.turnState == TurnState.MoveSelection
+                        && match.gs.generatePossibleTurns().length == 0) {
                     backgammonBoard.finishTurn();
                 }
             }
@@ -220,6 +221,8 @@ class BackgammonWindow : MainWindow {
     public void setGameState(GameState gs) {
         this.aiGetTurn = null;
 
+        this.match = new BackgammonMatch();
+
         backgammonBoard.setGameState(gs);
         if (gs.players[Player.P1].type == PlayerType.User) {
             backgammonBoard.setPlayerCorner(Player.P1, Corner.BR);
@@ -227,16 +230,16 @@ class BackgammonWindow : MainWindow {
             backgammonBoard.setPlayerCorner(Player.P2, Corner.BR);
         }
 
-        if (this.gameState) {
-            this.gameState.onDiceRolled.disconnect(&this.onGameStateDiceRolled);
-            this.gameState.onBeginTurn.disconnect(&this.onGameStateBeginTurn);
-            this.gameState.onEndGame.disconnect(&this.onGameStateEndGame);
+        if (this.match.gs) {
+            this.match.gs.onDiceRolled.disconnect(&this.onGameStateDiceRolled);
+            this.match.gs.onBeginTurn.disconnect(&this.onGameStateBeginTurn);
+            this.match.gs.onEndGame.disconnect(&this.onGameStateEndGame);
         }
         gs.onDiceRolled.connect(&this.onGameStateDiceRolled);
         gs.onBeginTurn.connect(&this.onGameStateBeginTurn);
         gs.onEndGame.connect(&this.onGameStateEndGame);
 
-        this.gameState = gs;
+        this.match.gs = gs;
     }
 
     // Link up gamestate to various things
@@ -257,7 +260,7 @@ class BackgammonWindow : MainWindow {
             }
         } else {
             if (_gs.players[p].type == PlayerType.User) {
-                auto netThread = gameState.players[gameState.currentPlayer.opposite].config.peek!Tid;
+                auto netThread = match.gs.players[match.gs.currentPlayer.opposite].config.peek!Tid;
                 send(*netThread, NetworkTurnDiceRoll());
             }
         }
@@ -309,10 +312,10 @@ class BackgammonWindow : MainWindow {
             backgammonBoard.finishTurn();
         }
 
-        if (gameState && gameState.isNetworkGame) {
+        if (match && match.gs && match.gs.isNetworkGame) {
             receiveTimeout(0.msecs,
                 (NetworkThreadNewMove moves) {
-                    assert(gameState.turnState == TurnState.MoveSelection);
+                    assert(match.gs.turnState == TurnState.MoveSelection);
                     foreach(move; moves.moves[0..moves.numMoves]) {
                         backgammonBoard.selectMove(move);
                     }

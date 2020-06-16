@@ -23,7 +23,7 @@ import gameplay.match;
  */
 string toFibsString(GameState gs, Player perspective = Player.NONE) {
     BackgammonMatch m = new BackgammonMatch();
-    m.currentGame = gs;
+    m.gs = gs;
     m.player1.name = "You";
     m.player2.name = "Opponent";
     m.length = 1;
@@ -35,7 +35,7 @@ string toFibsString(GameState gs, Player perspective = Player.NONE) {
  * Converts a backgammon match into a FIBS string
  */
 string toFibsString(BackgammonMatch m, Player perspective = Player.NONE) {
-    auto gs = m.currentGame;
+    auto gs = m.gs;
 
     perspective = perspective == Player.NONE ? gs.currentPlayer : perspective;
     perspective = perspective == Player.NONE ? Player.P1 : perspective;
@@ -116,7 +116,7 @@ PipMovement parseFibsMovement(string fibsString){
 
 BackgammonMatch parseFibsMatch(string s) {
     BackgammonMatch m = new BackgammonMatch();
-    m.currentGame = new GameState();
+    m.gs = new GameState();
 
     string[] sSplit = s.split(':');
     bool p1isX = sSplit[41] == "-1"; // Is player 1 X
@@ -127,8 +127,8 @@ BackgammonMatch parseFibsMatch(string s) {
     m.length = sSplit[3].to!int;
     m.p1score = sSplit[4].to!int;
     m.p2score = sSplit[5].to!int;
-    m.currentGame.takenPieces[Player.P1] = sSplit[6].to!int;
-    m.currentGame.takenPieces[Player.P2] = sSplit[31].to!int;
+    m.gs.takenPieces[Player.P1] = sSplit[6].to!int;
+    m.gs.takenPieces[Player.P2] = sSplit[31].to!int;
 
     // Board
     string[] boardState = p1moveDown ? sSplit[7..31] : sSplit[7..31].reverse;
@@ -137,16 +137,16 @@ BackgammonMatch parseFibsMatch(string s) {
         if (pVal == 0) {
             continue;
         } else if (pVal < 0) {  // Negative is X
-            m.currentGame.points[i + 1] = Point(p1isX ? Player.P1 : Player.P2, abs(pVal));
+            m.gs.points[i + 1] = Point(p1isX ? Player.P1 : Player.P2, abs(pVal));
         } else {                // Positive is O
-            m.currentGame.points[i + 1] = Point(p1isX ? Player.P2 : Player.P1, abs(pVal));
+            m.gs.points[i + 1] = Point(p1isX ? Player.P2 : Player.P1, abs(pVal));
         }
     }
 
     // -1 is X's turn
-    m.currentGame._currentPlayer = sSplit[32] == "-1" ? Player.P1 : Player.P2;
-    if (!p1isX) m.currentGame._currentPlayer = m.currentGame.currentPlayer.opposite;
-    if (sSplit[32] == "0") m.currentGame._currentPlayer = Player.NONE;
+    m.gs._currentPlayer = sSplit[32] == "-1" ? Player.P1 : Player.P2;
+    if (!p1isX) m.gs._currentPlayer = m.gs.currentPlayer.opposite;
+    if (sSplit[32] == "0") m.gs._currentPlayer = Player.NONE;
 
     // 33,34,35,36 are dice rolls...
     return m;

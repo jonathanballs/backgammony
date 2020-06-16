@@ -7,6 +7,7 @@ enum PlayerType {
     User,       // The player is the user of this software (a very cool guy)
     AI,         // The player is an AI
     Network,    // The player is on the network (may be an AI)
+    FIBS,
 }
 
 /**
@@ -19,7 +20,7 @@ struct PlayerMeta {
     /// Username/peer_id/AI id
     string id;
 
-    /// String id
+    /// What type of player is this - who's controlling them
     PlayerType type;
 
     /// General configuration / depends on the type

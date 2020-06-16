@@ -12,5 +12,15 @@ class BackgammonMatch {
     int p1score;
     int p2score;
     int length;
-    GameState currentGame;
+    GameState gs;
+
+    /**
+     * Create a new match
+     */
+    this() {
+        player1 = PlayerMeta("Player 1", "p1", PlayerType.User);
+        player2 = PlayerMeta("Player 2", "p2", PlayerType.User);
+        length = 1;
+        gs = new GameState();
+    }
 }
