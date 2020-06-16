@@ -30,6 +30,7 @@ import networking.messages;
 import networking;
 import ui.board.boardwidget;
 import ui.fibssidebar;
+import ui.matchoverviewbox;
 import ui.networkgamedialog;
 import ui.newgamedialog;
 import utils.addtickcallback;
@@ -40,18 +41,29 @@ import utils.addtickcallback;
  */
 class BackgammonWindow : MainWindow {
     private:
+
+    // Header bar
     HeaderBar header;
     Button newGameBtn;
     Button inetGameBtn;
     Button finishTurnBtn;
     Button undoMoveBtn;
 
+    // Dialogs
+    NewGameDialog newGameDialog;
+    NetworkGameDialog networkWidget;
+
+    // Main window contents
+    Box gameplayBox;
     Box contentBox;
+
+    // Fibs sidebar
     FIBSSidebar fibsSidebar;
     public Revealer fibsSidebarRevealer;
     public BackgammonBoardWidget backgammonBoard;
-    NetworkGameDialog networkWidget;
-    NewGameDialog newGameDialog;
+
+    // Match sidebar
+    MatchOverviewBox matchOverviewBox;
 
     BackgammonMatch match;
 
@@ -65,12 +77,18 @@ class BackgammonWindow : MainWindow {
      */
     public this() {
         super("Backgammony");
+        this.setDefaultSize(1000, 600);
+        this.addOnKeyPress(&onKeyPress);
+        this.addTickCallback(&handleThreadMessages);
+        this.addOnDestroy(&onDestroy);
 
+        // Header
         header = new HeaderBar();
         header.setTitle("Backgammony");
         header.setShowCloseButton(true);
         this.setTitlebar(header);
 
+        // New game
         newGameBtn = new Button("New Game");
         newGameBtn.addOnClicked((Button b) => openNewGameDialog() );
         header.packStart(newGameBtn);
@@ -84,7 +102,7 @@ class BackgammonWindow : MainWindow {
         inetGameBtn.addOnClicked((Button b) => openNewNetworkGameDialog() );
         header.packStart(inetGameBtn);
 
-        // Move buttons
+        // Undo and finish buttons
         undoMoveBtn = new Button();
         icon = new ThemedIcon("edit-undo-symbolic");
         inetImg = new Image();
@@ -114,9 +132,6 @@ class BackgammonWindow : MainWindow {
         finishTurnBtn.setSensitive(false);
         header.packEnd(finishTurnBtn);
         header.packEnd(undoMoveBtn);
-
-        // Keyboard shortcuts
-        this.addOnKeyPress(&onKeyPress);
 
         // Game board
         backgammonBoard = new BackgammonBoardWidget();
@@ -149,20 +164,24 @@ class BackgammonWindow : MainWindow {
             }
         });
 
-        contentBox = new Box(GtkOrientation.HORIZONTAL, 0);
+        // FIBS sidebar
         fibsSidebar = new FIBSSidebar();
         fibsSidebarRevealer = new Revealer();
         fibsSidebarRevealer.setTransitionType(GtkRevealerTransitionType.SLIDE_LEFT);
         fibsSidebarRevealer.add(fibsSidebar);
         fibsSidebarRevealer.setRevealChild(false);
 
-        this.add(contentBox);
-        contentBox.packStart(backgammonBoard, true, true, 0);
-        contentBox.packStart(fibsSidebarRevealer, false, true, 0);
+        // Match sidebar
+        matchOverviewBox = new MatchOverviewBox();
 
-        this.setDefaultSize(1000, 600);
-        this.addTickCallback(&handleThreadMessages);
-        this.addOnDestroy(&onDestroy);
+        // Layout
+        contentBox = new Box(GtkOrientation.HORIZONTAL, 0);
+        gameplayBox = new Box(GtkOrientation.VERTICAL, 0);
+        gameplayBox.packStart(matchOverviewBox, false, true, 0);
+        gameplayBox.packStart(backgammonBoard, true, true, 0);
+        contentBox.packStart(gameplayBox, true, true, 0);
+        contentBox.packStart(fibsSidebarRevealer, false, true, 0);
+        this.add(contentBox);
     }
 
     /**

@@ -14,12 +14,13 @@ import gtk.Statusbar;
 import gtk.StyleContext;
 import gtk.Widget;
 import gtk.Window;
-import ui.fragments;
+
+import config;
 import ui.chatbox;
 import ui.fibsplayerlistdialog;
 import ui.flagmanager;
+import ui.fragments;
 import utils.addtickcallback;
-import config;
 
 import networking.fibs.thread;
 
