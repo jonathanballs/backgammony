@@ -241,6 +241,7 @@ class BackgammonWindow : MainWindow {
         this.aiGetTurn = null;
 
         this.match = new BackgammonMatch();
+        this.matchOverviewBox.setMatch(this.match);
 
         backgammonBoard.setGameState(gs);
         if (gs.players[Player.P1].type == PlayerType.User) {

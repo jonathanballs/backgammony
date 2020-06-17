@@ -1,13 +1,17 @@
 module ui.matchoverviewbox;
 
+import std.conv : to;
+import gdk.FrameClock;
 import gtk.Box;
+import gtk.CssProvider;
 import gtk.Fixed;
 import gtk.Label;
 import gtk.StyleContext;
-import gtk.CssProvider;
+import gtk.Widget;
 
 import gameplay.match;
 import gameplay.player;
+import utils.addtickcallback;
 
 
 /**
@@ -33,6 +37,7 @@ class MatchOverviewBox : Box {
     public this() {
         super(GtkOrientation.HORIZONTAL, 0);
         this.setSizeRequest(300, 50);
+        this.addTickCallback(&onTick);
 
         // Styling
         StyleContext styleContext = this.getStyleContext();      
@@ -78,4 +83,16 @@ class MatchOverviewBox : Box {
     public void setMatch(BackgammonMatch m) {
         this.match = m;
     }
+
+    public bool onTick(Widget w, FrameClock f) {
+        if (match) {
+            p1Name.setText(match.player1.name);
+            p2Name.setText(match.player2.name);
+            p1Score.setText(match.p1score.to!string);
+            p2Score.setText(match.p1score.to!string);
+        }
+        return true;
+    }
+
+    public mixin AddTickCallback;
 }
