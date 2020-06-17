@@ -10,10 +10,13 @@ import std.typecons;
 import core.thread;
 import core.time;
 import std.array : split;
+import url;
+
+import gameplay.match;
 import networking.fibs.connection;
 import networking.fibs.messages;
 import networking.fibs.clipmessages;
-import url;
+import utils.signals;
 
 enum FIBSConnectionStatus {
     Disconnected, Connecting, Connected, Failed, Crashed
@@ -75,6 +78,8 @@ class FIBSController {
     private:
     Tid networkingThread;
 
+    public Signal!(BackgammonMatch) onUpdateMatchState;
+
     FIBSConnectionStatus fibsConnectionStatus;
     string fibsConnectionStatusMessage;
 
@@ -92,6 +97,7 @@ class FIBSController {
         this.username = username;
         this.password = password;
         this.fibsConnectionStatus = FIBSConnectionStatus.Connecting;
+        this.onUpdateMatchState = new Signal!(BackgammonMatch);
 
         // Validate the server address
         URL url;
@@ -184,6 +190,9 @@ class FIBSController {
                 },
                 (CLIPShouts s) {
                     shoutBox ~= FIBSMessage(Clock.currTime, s.name, s.message);
+                },
+                (CLIPMatchState ms) {
+                    this.onUpdateMatchState.emit(ms.match);
                 }
             )) {}
         }

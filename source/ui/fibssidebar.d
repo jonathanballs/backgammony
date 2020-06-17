@@ -91,6 +91,9 @@ class FIBSSidebar : Box {
                 mainWindow, fibsController);
             fibsPlayerListDialog.onWatchUser.connect((string username) {
                 fibsController.requestWatch(username);
+                this.fibsPlayerListDialog.close();
+                this.fibsPlayerListDialog.destroy();
+                this.fibsPlayerListDialog = null;
             });
             this.fibsPlayerListDialog.fillTree();
         });

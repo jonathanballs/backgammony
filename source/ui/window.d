@@ -323,6 +323,7 @@ class BackgammonWindow : MainWindow {
         this.fibsController = fibsController;
         this.fibsSidebar.setController(fibsController);
         this.fibsSidebarRevealer.setRevealChild(true);
+        this.fibsController.onUpdateMatchState.connect(&setBackgammonMatch);
     }
 
     bool handleThreadMessages(Widget w, FrameClock f) {
