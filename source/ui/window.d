@@ -239,27 +239,34 @@ class BackgammonWindow : MainWindow {
 
     public void setGameState(GameState gs) {
         this.aiGetTurn = null;
+        auto _match = new BackgammonMatch();
+        _match.gs = gs;
+        setBackgammonMatch(_match);
+    }
 
-        this.match = new BackgammonMatch();
-        this.matchOverviewBox.setMatch(this.match);
+    public void setBackgammonMatch(BackgammonMatch m) {
+        this.match = m;
 
-        backgammonBoard.setGameState(gs);
-        if (gs.players[Player.P1].type == PlayerType.User) {
+        // Update the backgammon board
+        backgammonBoard.setGameState(match.gs);
+        if (match.gs.players[Player.P1].type == PlayerType.User) {
             backgammonBoard.setPlayerCorner(Player.P1, Corner.BR);
         } else {
             backgammonBoard.setPlayerCorner(Player.P2, Corner.BR);
         }
 
-        if (this.match.gs) {
+        // Update match overview box
+        this.matchOverviewBox.setMatch(this.match);
+
+        // Update 
+        if (this.match && this.match.gs) {
             this.match.gs.onDiceRolled.disconnect(&this.onGameStateDiceRolled);
             this.match.gs.onBeginTurn.disconnect(&this.onGameStateBeginTurn);
             this.match.gs.onEndGame.disconnect(&this.onGameStateEndGame);
         }
-        gs.onDiceRolled.connect(&this.onGameStateDiceRolled);
-        gs.onBeginTurn.connect(&this.onGameStateBeginTurn);
-        gs.onEndGame.connect(&this.onGameStateEndGame);
-
-        this.match.gs = gs;
+        this.match.gs.onDiceRolled.connect(&this.onGameStateDiceRolled);
+        this.match.gs.onBeginTurn.connect(&this.onGameStateBeginTurn);
+        this.match.gs.onEndGame.connect(&this.onGameStateEndGame);
     }
 
     // Link up gamestate to various things
