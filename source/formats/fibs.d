@@ -155,12 +155,31 @@ BackgammonMatch parseFibsMatch(string s) {
         }
     }
 
-    // -1 is X's turn
+    // Current turn. -1 is X's turn
     m.gs._currentPlayer = sSplit[32] == "-1" ? Player.P1 : Player.P2;
     if (!p1isX) m.gs._currentPlayer = m.gs.currentPlayer.opposite;
     if (sSplit[32] == "0") m.gs._currentPlayer = Player.NONE;
 
     // 33,34,35,36 are dice rolls...
+    if (m.gs._currentPlayer == Player.P1) {
+        uint die1 = sSplit[33].to!int;
+        uint die2 = sSplit[34].to!int;
+        if (die1 && die2) {
+            m.gs.turnState = TurnState.DiceRoll;
+            m.gs.rollDice(die1, die2);
+        } else {
+            m.gs.turnState = TurnState.DiceRoll;
+        }
+    } else {
+        uint die1 = sSplit[35].to!int;
+        uint die2 = sSplit[36].to!int;
+        if (die1 && die2) {
+            m.gs.turnState = TurnState.DiceRoll;
+            m.gs.rollDice(die1, die2);
+        } else {
+            m.gs.turnState = TurnState.DiceRoll;
+        }
+    }
     return m;
 }
 

@@ -245,7 +245,7 @@ class GameState {
      */
     TurnState turnState () { return _turnState; }
 
-    private void turnState (TurnState t) {
+    void turnState (TurnState t) {
         _turnState = t;
     }
 
@@ -260,8 +260,13 @@ class GameState {
      * Generate random values for the dice roll
      */
     void rollDice() {
-        assert(currentPlayer != Player.NONE);
-        assert(turnState == TurnState.DiceRoll);
+        if (currentPlayer != Player.NONE) {
+            throw new Exception("Tried to roll dice when it isn't a players turn");
+        }
+
+        if (turnState != TurnState.DiceRoll) {
+            throw new Exception("Tried to roll dice when it isn't time to roll dice");
+        }
 
         import std.random : uniform;
         _diceValues[0] = uniform(1, 7);
@@ -279,13 +284,18 @@ class GameState {
      *     die2 = The second dice value. Must be between values of 1 and 6
      */
     void rollDice(uint die1, uint die2) {
-        assert(1 <= die1 && die1 <= 6);
-        assert(1 <= die2 && die2 <= 6);
+        if (!(1 <= die1 && die1 <= 6 && 1 <= die2 && die2 <= 6)) {
+            throw new Exception(format!"Tried to roll dice values %d-%d"(die1, die2));
+        }
+
+        if (turnState != TurnState.DiceRoll) {
+            import std.conv : to;
+            throw new Exception("Tried to roll dice when turnState is " ~ turnState.to!string);
+        }
 
         _diceValues[0] = die1;
         _diceValues[1] = die2;
 
-        assert(turnState == TurnState.DiceRoll);
         turnState = TurnState.MoveSelection;
 
         onDiceRolled.emit(this, diceValues[0], diceValues[1]);
