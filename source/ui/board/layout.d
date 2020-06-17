@@ -152,7 +152,10 @@ class BoardLayout {
     }
 
     ScreenPoint getTakenPipPosition(Player player, uint pipNum) {
-        assert(pipNum && pipNum <= 20);
+        if(!(pipNum && pipNum <= 20)) {
+            import std.format : format;
+            throw new Exception(format!"Tried to get taken pipNum %d"(pipNum));
+        }
         float pointX = style.boardWidth / 2;
         float pointY = style.boardHeight / 2 - (pipNum+1)*style.pipRadius;
         if (player == Player.P2) pointY = style.boardHeight - pointY;

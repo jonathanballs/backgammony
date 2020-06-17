@@ -50,7 +50,7 @@ string toFibsString(BackgammonMatch m, Player perspective = Player.NONE) {
         gs.points.array
             .map!(p => (p.owner == Player.P2 ? "-" : "") ~ p.numPieces.to!string ~ ":")
             .reduce!((a,b) => a ~ b)[0..$-1], // Board
-        gs.takenPieces[Player.P2], // P2 bar
+        -gs.takenPieces[Player.P2], // P2 bar
         gs.currentPlayer == Player.P1 ? 1 : -1, // Who's turn
         format!"%d:%d:%d:%d"(gs.diceValues[0], gs.diceValues[1], gs.diceValues[0], gs.diceValues[1]), // Dice
         "1", // Doubling cube
@@ -127,8 +127,20 @@ BackgammonMatch parseFibsMatch(string s) {
     m.length = sSplit[3].to!int;
     m.p1score = sSplit[4].to!int;
     m.p2score = sSplit[5].to!int;
-    m.gs.takenPieces[Player.P1] = sSplit[6].to!int;
-    m.gs.takenPieces[Player.P2] = sSplit[31].to!int;
+
+    if (sSplit[6].to!int < 0) { // X's pieces
+        if (p1isX) {
+            m.gs.takenPieces[Player.P1] = abs(sSplit[6].to!int);
+        } else {
+            m.gs.takenPieces[Player.P2] = abs(sSplit[6].to!int);
+        }
+    } else if (sSplit[6].to!int > 0) {
+        if (!p1isX) { // O's Pieces
+            m.gs.takenPieces[Player.P1] = abs(sSplit[31].to!int);
+        } else {
+            m.gs.takenPieces[Player.P2] = abs(sSplit[31].to!int);
+        }
+    }
 
     // Board
     string[] boardState = p1moveDown ? sSplit[7..31] : sSplit[7..31].reverse;
@@ -170,4 +182,15 @@ unittest {
         assert(ms.parseFibsMovement == testMovements[ms]);
         assert(ms.parseFibsMovement.toFibsString == ms);
     }
+
+    string testString = "board:GammonBot_XVII:Pirlanta:5:4:2:-1:0:0:2:0:-2:6:0:3:0:0:0:-4"
+         ~ ":2:0:0:0:-2:-2:-4:2:0:0:0:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:1:2:3:0:0";
+    BackgammonMatch m = testString.parseFibsMatch();
+    assert(m.player1.name == "GammonBot_XVII");
+    assert(m.player2.name == "Pirlanta");
+    assert(m.length == 5);
+    assert(m.p1score == 4);
+    assert(m.p2score == 2);
+    assert(m.gs.takenPieces[Player.P1] == 0);
+    assert(m.gs.takenPieces[Player.P2] == 1);
 }
