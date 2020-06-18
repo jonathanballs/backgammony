@@ -5,6 +5,7 @@ import std.array;
 import std.conv;
 import std.format;
 import std.math;
+import std.regex;
 import std.stdio;
 import std.string;
 import gameplay.gamestate;
@@ -85,7 +86,7 @@ string toFibsString(PipMovement pipMovement) {
  * Parse a FIBS movement. Tries to be lenient in what it accepts. Will throw
  * Exception if it can't parse
  */
-PipMovement parseFibsMovement(string fibsString){
+PipMovement parseFibsMovementCommand(string fibsString){
     PipMoveType moveType = PipMoveType.Movement;
     uint startPoint = 0;
     uint endPoint = 0;
@@ -109,6 +110,40 @@ PipMovement parseFibsMovement(string fibsString){
         moveType = PipMoveType.BearingOff;
     } else {
         endPoint = fibsStringSplit[2].to!uint;
+    }
+
+    return PipMovement(moveType, startPoint, endPoint);
+}
+
+/**
+ * Parse a FIBS style movement e.g. "3-5" or "bar-22" or "2-off"
+ */
+PipMovement parseFibsMovement(string fibsString) {
+    string movementRegex = "([0-9]+|bar)-([0-9]|off)+";
+    if (!fibsString.match(movementRegex)) {
+        throw new Exception("Invalid fibs move: " ~ fibsString);
+    }
+
+    PipMoveType moveType = PipMoveType.Movement;
+    uint startPoint = 0;
+    uint endPoint = 0;
+
+    auto fibsStringSplit = fibsString.split('-');
+
+    // From
+    if (fibsStringSplit[0] == "bar") {
+        moveType = PipMoveType.Entering;
+    } else {
+        startPoint = fibsStringSplit[0].to!uint;
+    }
+
+    // To
+    if (fibsStringSplit[1] == "off") {
+        if (moveType == PipMoveType.Entering) // Can't go from bar to home
+            throw new Exception("Couldn't parse '" ~ fibsString ~ "'");
+        moveType = PipMoveType.BearingOff;
+    } else {
+        endPoint = fibsStringSplit[1].to!uint;
     }
 
     return PipMovement(moveType, startPoint, endPoint);
@@ -197,9 +232,10 @@ unittest {
     ];
 
     foreach(ms; testMovements.byKey()) {
-        // writeln(ms.parseFibsMovement);
-        assert(ms.parseFibsMovement == testMovements[ms]);
-        assert(ms.parseFibsMovement.toFibsString == ms);
+        // writeln(ms.parseFibsMovementCommand);
+        assert(ms.parseFibsMovementCommand == testMovements[ms]);
+        assert(ms.parseFibsMovementCommand.toFibsString == ms);
+        assert("3-6".parseFibsMovement() == PipMovement(PipMoveType.Movement, 3, 6));
     }
 
     string testString = "board:GammonBot_XVII:Pirlanta:5:4:2:-1:0:0:2:0:-2:6:0:3:0:0:0:-4"

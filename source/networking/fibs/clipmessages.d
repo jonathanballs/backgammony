@@ -3,6 +3,7 @@ import std.conv : to;
 import std.format;
 import std.datetime;
 import gameplay.match;
+import gameplay.gamestate;
 
 /// This is the very first line you'll see after a successful standard login in
 /// client mode.
@@ -225,6 +226,11 @@ struct CLIPYouKibitz {
 
 struct CLIPMatchState {
     BackgammonMatch match;
+}
+
+struct CLIPMatchMovement {
+    string username;
+    PipMovement[] moves;
 }
 
 struct FIBSRequestDisconnect {

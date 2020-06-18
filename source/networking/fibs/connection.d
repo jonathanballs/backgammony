@@ -1,5 +1,6 @@
 module networking.fibs.connection;
 
+import formats.fibs;
 import core.time;
 import std.algorithm : startsWith;
 import std.array;
@@ -11,6 +12,7 @@ import std.variant;
 import networking.connection;
 import networking.fibs.clipmessages;
 public import networking.connection : TimeoutException;
+import gameplay.gamestate;
 
 /**
  * Handles connection with FIBS server as well as formatting requests and parsing
@@ -143,17 +145,25 @@ class FIBSConnection : Connection {
                 v = CLIPYouKibitz(lines[0]); break;
             default:
                 // It's not a CLIP message, we'll have to try some REGEX
-                if (lines[0].match(regex("board:.*"))) {
-                    import formats.fibs;
+                if (lines[0].match(regex("^board:.*"))) {
                     v = CLIPMatchState(lines[0].parseFibsMatch());
                     break;
                 }
 
-                string movementRegex = "([0-9]+|bar)-[0-9]+";
-                auto turnRegex = regex(format!".* moves? %s %s( %s %s)?"(
+                string movementRegex = "([0-9]+|bar)-([0-9]|off)+";
+                auto turnRegex = regex(format!"^.* moves? %s %s( %s %s)?"(
                     movementRegex, movementRegex, movementRegex, movementRegex));
                 if (lines[0].match(turnRegex)) {
-                    writeln("Movement");
+                    PipMovement[] moves;
+                    foreach (m; lines[0].split()[2..$-1]) {
+                        moves ~= parseFibsMovement(m);
+                    }
+                    v = CLIPMatchMovement(lines[0].split()[0], moves);
+                    break;
+                }
+
+                if (lines[0].match("^[a-zA-Z_<>]+ can't move")) {
+                    v = CLIPMatchMovement(lines[0].split()[0], []);
                 }
 
                 v = "====> " ~ lines[0];
