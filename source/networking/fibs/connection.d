@@ -164,6 +164,14 @@ class FIBSConnection : Connection {
 
                 if (lines[0].match("^[a-zA-Z_<>]+ can't move")) {
                     v = CLIPMatchMovement(lines[0].split()[0], []);
+                    break;
+                }
+
+                if (lines[0].match(regex("^[a-zA-Z_<>]+ rolls? [1-6] and [1-6]."))) {
+                    auto sSplit = lines[0].split();
+                    import std.conv;
+                    v = CLIPMatchRoll(sSplit[0], sSplit[2].to!uint, sSplit[4][0..$-1].to!uint);
+                    break;
                 }
 
                 v = "====> " ~ lines[0];

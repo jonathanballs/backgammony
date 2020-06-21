@@ -233,6 +233,12 @@ struct CLIPMatchMovement {
     PipMovement[] moves;
 }
 
+struct CLIPMatchRoll {
+    string username;
+    uint die1;
+    uint die2;
+}
+
 struct FIBSRequestDisconnect {
 }
 
