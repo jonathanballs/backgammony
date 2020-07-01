@@ -65,6 +65,7 @@ struct FIBSPlayer {
     }
 }
 
+/// A private or shoutbox message
 struct FIBSMessage {
     SysTime timestamp;
     string from;
@@ -78,7 +79,11 @@ class FIBSController {
     private:
     Tid networkingThread;
 
+    // When the current match is changed
     public Signal!(BackgammonMatch) onUpdateMatchState;
+
+    // The current match being watched/played
+    BackgammonMatch currentMatch;
 
     FIBSConnectionStatus fibsConnectionStatus;
     string fibsConnectionStatusMessage;
@@ -87,6 +92,7 @@ class FIBSController {
     string username;
     string password;
 
+    // The shoutbox
     public FIBSMessage[] shoutBox;
 
     /** Map usernames to fibs players **/
@@ -193,6 +199,20 @@ class FIBSController {
                 },
                 (CLIPMatchState ms) {
                     this.onUpdateMatchState.emit(ms.match);
+                    if (this.currentMatch)
+                        writeln("equal: ", this.currentMatch.gs.equals(ms.match.gs));
+
+                    this.currentMatch = ms.match;
+                },
+                (CLIPMatchMovement mv) {
+                    if (this.currentMatch) {
+                        this.currentMatch.gs.applyTurn(mv.moves);
+                    }
+                },
+                (CLIPMatchRoll mr) {
+                    if (this.currentMatch) {
+                        this.currentMatch.gs.rollDice(mr.die1, mr.die2);
+                    }
                 }
             )) {}
         }
