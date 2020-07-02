@@ -10,6 +10,7 @@ import std.stdio;
 import std.string;
 import gameplay.gamestate;
 import gameplay.match;
+import gameplay.player;
 
 /**
  * Contains functions and methods for handling FIBS encoded games and moves
@@ -157,28 +158,32 @@ BackgammonMatch parseFibsMatch(string s) {
     bool p1isX = sSplit[41] == "-1"; // Is player 1 X
     bool p1moveDown = sSplit[42] == "-1"; // Does player 1 move down the board
 
-    m.player1.name = sSplit[1];
-    m.player2.name = sSplit[2];
+    auto p1 = PlayerMeta(sSplit[1], sSplit[1], PlayerType.FIBS);
+    auto p2 = PlayerMeta(sSplit[2], sSplit[2], PlayerType.FIBS);
+    if (p1moveDown) {
+        m.player1 = p1;
+        m.player2 = p2;
+    } else {
+        m.player1 = p2;
+        m.player2 = p1;
+        p1isX = !p1isX;
+    }
+
     m.length = sSplit[3].to!int;
     m.p1score = sSplit[4].to!int;
     m.p2score = sSplit[5].to!int;
 
-    if (sSplit[6].to!int < 0) { // X's pieces
-        if (p1isX) {
-            m.gs.takenPieces[Player.P1] = abs(sSplit[6].to!int);
-        } else {
-            m.gs.takenPieces[Player.P2] = abs(sSplit[6].to!int);
-        }
-    } else if (sSplit[6].to!int > 0) {
-        if (!p1isX) { // O's Pieces
-            m.gs.takenPieces[Player.P1] = abs(sSplit[31].to!int);
-        } else {
-            m.gs.takenPieces[Player.P2] = abs(sSplit[31].to!int);
-        }
+    if (p1moveDown) {
+        m.gs.takenPieces[Player.P1] = abs(sSplit[47].to!int);
+        m.gs.takenPieces[Player.P2] = abs(sSplit[48].to!int);
+    } else {
+        m.gs.takenPieces[Player.P1] = abs(sSplit[48].to!int);
+        m.gs.takenPieces[Player.P2] = abs(sSplit[47].to!int);
     }
 
     // Board
-    string[] boardState = p1moveDown ? sSplit[7..31] : sSplit[7..31].reverse;
+    // string[] boardState = p1moveDown ? sSplit[7..31] : sSplit[7..31].reverse;
+    string[] boardState = sSplit[7..31];
     foreach (long i, p; boardState) {
         int pVal = p.to!int;
         if (pVal == 0) {

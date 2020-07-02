@@ -118,7 +118,7 @@ class BackgammonWindow : MainWindow {
             /**
              * Is this a network game? Should this be on a signal listener?
              */
-            if (match.gs.isNetworkGame) {
+            if (match.isNetworkGame) {
                 auto netThread = match.gs.players[match.gs.currentPlayer.opposite].config.peek!Tid;
                 auto moves = backgammonBoard.getSelectedMoves();
                 auto msg = NetworkThreadNewMove(cast(uint) moves.length);
@@ -271,13 +271,18 @@ class BackgammonWindow : MainWindow {
 
     // Link up gamestate to various things
     // How are dice rolls handled?
+    // TODO: This shouldn't be here at all. Move this kind of thing away!!
     void onGameStateBeginTurn(GameState _gs, Player p) {
         header.setSubtitle(p == Player.P1 ? "Black to play" : "White to play");
         finishTurnBtn.setSensitive(false);
 
+        if (match && match.player1.type == PlayerType.FIBS) {
+            return;
+        }
+
         // Local games we can just roll the dice automatically. Otherwise,
         // we will wait for a dice roll from the network thread.
-        if (!_gs.isNetworkGame) {
+        if (match && !match.isNetworkGame) {
             if (_gs.equals(_gs.dup.newGame())) {
                 backgammonBoard.displayMessage(_gs.players[p].name ~ " starts", () {
                     _gs.rollDice();
@@ -340,7 +345,7 @@ class BackgammonWindow : MainWindow {
             backgammonBoard.finishTurn();
         }
 
-        if (match && match.gs && match.gs.isNetworkGame) {
+        if (match && match.isNetworkGame) {
             receiveTimeout(0.msecs,
                 (NetworkThreadNewMove moves) {
                     assert(match.gs.turnState == TurnState.MoveSelection);

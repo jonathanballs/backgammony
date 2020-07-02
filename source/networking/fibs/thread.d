@@ -198,15 +198,30 @@ class FIBSController {
                     shoutBox ~= FIBSMessage(Clock.currTime, s.name, s.message);
                 },
                 (CLIPMatchState ms) {
-                    this.onUpdateMatchState.emit(ms.match);
-                    if (this.currentMatch)
-                        writeln("equal: ", this.currentMatch.gs.equals(ms.match.gs));
+                    if (this.currentMatch) {
+                        if (!this.currentMatch.gs.equals(ms.match.gs)) {
+                            writeln(ms);
+                            this.currentMatch.prettyPrint();
+                            writeln("Received match state update which doesn't correspond to local state");
 
-                    this.currentMatch = ms.match;
+                            this.currentMatch = ms.match;
+                            this.onUpdateMatchState.emit(ms.match);
+                        }
+                    } else {
+                        this.currentMatch = ms.match;
+                        this.onUpdateMatchState.emit(ms.match);
+                    }
+
                 },
                 (CLIPMatchMovement mv) {
                     if (this.currentMatch) {
-                        this.currentMatch.gs.applyTurn(mv.moves);
+                        try {
+                            this.currentMatch.gs.applyTurn(mv.moves);
+                        } catch (Exception e) {
+                            writeln(e);
+                            writeln(mv);
+                            this.currentMatch.prettyPrint();
+                        }
                     }
                 },
                 (CLIPMatchRoll mr) {

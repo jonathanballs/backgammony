@@ -226,6 +226,7 @@ struct CLIPYouKibitz {
 
 struct CLIPMatchState {
     BackgammonMatch match;
+    string source;
 }
 
 struct CLIPMatchMovement {

@@ -72,4 +72,14 @@ class BackgammonMatch {
 
         foreach (l; board) writeln(l);
     }
+
+    /**
+     * Is this a network game?
+     */
+    bool isNetworkGame() {
+        return player1.type == PlayerType.Network
+            || player2.type == PlayerType.Network
+            || player1.type == PlayerType.FIBS
+            || player2.type == PlayerType.FIBS;
+    }
 }

@@ -146,13 +146,12 @@ class FIBSConnection : Connection {
             default:
                 // It's not a CLIP message, we'll have to try some REGEX
                 if (lines[0].match(regex("^board:.*"))) {
-                    v = CLIPMatchState(lines[0].parseFibsMatch());
+                    v = CLIPMatchState(lines[0].parseFibsMatch(), lines[0]);
                     break;
                 }
 
                 string movementRegex = "([0-9]+|bar)-([0-9]|off)+";
-                auto turnRegex = regex(format!"^.* moves? %s %s( %s %s)?"(
-                    movementRegex, movementRegex, movementRegex, movementRegex));
+                auto turnRegex = regex(format!"^.* moves? (%s )+"(movementRegex));
                 if (lines[0].match(turnRegex)) {
                     PipMovement[] moves;
                     foreach (m; lines[0].split()[2..$-1]) {

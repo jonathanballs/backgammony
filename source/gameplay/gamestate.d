@@ -608,7 +608,20 @@ class GameState {
                 return;
             }
         }
-        throw new Exception("Your turn is not a valid one.");
+
+        // Else one of the moves must be illegal. Try to find out which one
+        auto d = this.dup();
+        foreach (m; turn) {
+            try {
+                d.validateMovement(m);
+                d.applyMovement(m);
+            } catch (Exception e) {
+                import std.conv : to;
+                throw new Exception("Illegal turn: " ~ e.message.to!string);
+            }
+        }
+
+        assert(0);
     }
 
     bool canBearOff(Player player) {
@@ -642,13 +655,6 @@ class GameState {
         return Player.NONE;
     }
 
-    /**
-     * Is this a network game?
-     */
-    bool isNetworkGame() {
-        return players[Player.P1].type == PlayerType.Network
-            || players[Player.P2].type == PlayerType.Network;
-    }
 
     /**
      * Duplicate the current gamestate. Does not copy signals. Use for exploring
