@@ -12,17 +12,29 @@ if (Handlers.length > 0)
 {
     auto handle(Variant)(Variant variant)
     {
-        static foreach (dgidx, dg; Handlers) {
+        void function(Variant) defaultHandler;
+
+        foreach (dgidx, dg; Handlers) {
             alias Params = Parameters!dg;
             if (!isSomeFunction!dg)
                 assert(false, "handlers must be a function");
-            if (Params.length != 1)
+
+            if (Params.length != 1) {
                 assert(false, "handlers must take a single parameter");
+            }
             
             if (typeid(Params[0]) == variant.type) {
                 auto v = variant.get!(Params[0]);
                 return dg(v);
             }
+            
+            static if (is(Params[0] == Variant)) {
+                defaultHandler = dg;
+            }
+        }
+
+        if (defaultHandler) {
+            return defaultHandler(variant);
         }
 
         throw new Exception("No handler for variant: ", variant.to!string);

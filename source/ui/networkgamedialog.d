@@ -278,8 +278,6 @@ class FIBSLoginForm : Box {
      * Handle connection events
      */
     bool onTick(Widget w, FrameClock f) {
-        import networking.fibs.messages;
-
         if (this.fibsController) {
             const auto connStatus = fibsController.connectionStatus();
 

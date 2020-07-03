@@ -1,5 +1,8 @@
 module networking.fibs.thread;
 
+import core.thread;
+import core.time;
+import std.array : split;
 import std.concurrency;
 import std.conv;
 import std.datetime;
@@ -7,97 +10,51 @@ import std.format;
 import std.socket;
 import std.stdio;
 import std.typecons;
-import core.thread;
-import core.time;
-import std.array : split;
+import std.variant;
 import url;
 
 import gameplay.match;
 import networking.fibs.connection;
-import networking.fibs.messages;
 import networking.fibs.clipmessages;
 import utils.signals;
+import utils.varianthandle;
+public import networking.fibs.user;
 
-enum FIBSConnectionStatus {
-    Disconnected, Connecting, Connected, Failed, Crashed
-}
-
-struct FIBSPlayer {
-    string name;
-    string opponent;
-    string watching;
-    bool ready;
-    bool away;
-    float rating;
-    uint experience;
-    uint idle;
-    SysTime login;
-    string hostname;
-    string client;
-    string email;
-
-    string status() {
-        if (opponent != "-") {
-            return "Playing against " ~ opponent;
-        } else if (watching != "-") {
-            return "Watching " ~ watching;
-        } else if (away) {
-            return "Away";
-        } else if (ready) {
-            return "Ready";
-        } else {
-            return "Online";
-        }
-    }
-
-    /**
-     * The 2 letter country code of the player or blank if unknown. Currently
-     * just checks according to the player profile protocol defined in the FIBS
-     * standard. TODO: Use geo-ip.
-     */
-    string country() {
-        if (client.length > 4) {
-            if (client[0].to!byte >> 2 == 0b1111) {
-                return client[1..3];
-            }
-        }
-        return "";
-    }
-}
-
-/// A private or shoutbox message
-struct FIBSMessage {
-    SysTime timestamp;
-    string from;
-    string message;
-}
 
 /**
- * Communication with the FIBS thread.
+ * Wrapper and controller for communication with FIBS server. All FIBS
+ * networking is managed here.
  */
 class FIBSController {
-    private:
-    Tid networkingThread;
-
-    // When the current match is changed
+    /// When the current match is changed
     public Signal!(BackgammonMatch) onUpdateMatchState;
 
-    // The current match being watched/played
+    private:
+    FIBSConnection conn;
+
+    /// The current match being watched/played
     BackgammonMatch currentMatch;
 
+    // Meta status info to be displayed to the user
     FIBSConnectionStatus fibsConnectionStatus;
     string fibsConnectionStatusMessage;
 
+    // Auth details
     string serverAddress;
     string username;
     string password;
 
-    // The shoutbox
+    /// The shoutbox
     public FIBSMessage[] shoutBox;
 
     /** Map usernames to fibs players **/
     public FIBSPlayer[string] players;
 
+    /**
+     * Create a new FIBS Controller. This will automatically create a connection
+     * and attempt to login with the given username and password. Connection
+     * status can be monitored through FIBSController.connectionStatus().
+     */
     public this(string serverAddress, string username, string password) {
         this.serverAddress = serverAddress;
         this.username = username;
@@ -105,72 +62,15 @@ class FIBSController {
         this.fibsConnectionStatus = FIBSConnectionStatus.Connecting;
         this.onUpdateMatchState = new Signal!(BackgammonMatch);
 
-        // Validate the server address
-        URL url;
-        if (!tryParseURL(serverAddress, url)) {
-            this.fibsConnectionStatus = FIBSConnectionStatus.Failed;
-            this.fibsConnectionStatusMessage = "Could not parse FIBS host: " ~ serverAddress;
-            return;
-        } else {
-            try {
-                // Ensure that IP can be resolved
-                getAddress(parseURL(serverAddress).host, parseURL(serverAddress).port);
-            } catch (Exception e) {
-                fibsConnectionStatus = FIBSConnectionStatus.Failed;
-                fibsConnectionStatusMessage = format!"Couldn't connect to FIBS server (%s)"
-                    (cast(string) e.message);
-                return;
-            }
-        }
-
-        networkingThread = spawn((shared string serverAddress,
-                            shared string username, shared string password) {
-                new FIBSNetworkingThread(
-                    getAddress(parseURL(serverAddress).host, parseURL(serverAddress).port)[0],
-                    username,
-                    password
-                ).run();
-        }, cast(immutable) serverAddress, cast(immutable) username, cast(immutable) password);
-
-        // Register to check status later
-        register("fibsNetworkingThread", networkingThread);
+        auto addr = getAddress(parseURL(serverAddress).host, parseURL(serverAddress).port)[0];
+        conn = new FIBSConnection(addr, username, password);
     }
 
     /**
-     * Request to watch a particular user
-     */
-    public void requestWatch(string username) {
-        send(networkingThread, FIBSRequestCommand("watch " ~ username));
-        send(networkingThread, FIBSRequestCommand("board"));
-    }
-
-    /**
-     * Get the current connection status of the FIBS thread
+     * Get the current connection status of the FIBS thread.
      */
     public Tuple!(FIBSConnectionStatus, "status", string, "message") connectionStatus() {
-        if (this.networkingThread != Tid.init) {
-            receiveTimeout(0.msecs,
-                (FIBSConnectionSuccess _) {
-                    this.fibsConnectionStatus = FIBSConnectionStatus.Connected;
-                    // Successful connection. Close window and reveal sidebar
-                },
-                (FIBSConnectionFailure e) {
-                    this.fibsConnectionStatus = FIBSConnectionStatus.Connected;
-                    this.fibsConnectionStatusMessage = e.message;
-                }
-            );
-        }
-
-        // Detect crashed
-        // if (locate("fibsNetworkingThread") != Tid.init) {
-        // }
-        if (fibsConnectionStatus != FIBSConnectionStatus.Disconnected) {
-            if (locate("fibsNetworkingThread") == Tid.init) {
-                return tuple!("status", "message")
-                    (FIBSConnectionStatus.Crashed, "");
-            }
-        }
-
+        this.processMessages();
         return tuple!("status", "message")(fibsConnectionStatus, fibsConnectionStatusMessage);
     }
 
@@ -178,127 +78,100 @@ class FIBSController {
      * Receive new CLIP messages and update data structures.
      */
     public void processMessages() {
-                // Receive events for up to 50ms
-        if (networkingThread != Tid.init) {
-            auto startTime = MonoTime.currTime;
-            import std.variant;
-            while((MonoTime.currTime - startTime) < 50.msecs && receiveTimeout(-1.msecs,
-                (CLIPWho w) {
-                    FIBSPlayer p = FIBSPlayer(w.name, w.opponent, w.watching,
-                        w.ready, w.away, w.rating, w.experience, w.idle, w.login,
-                        w.hostname, w.client, w.email);
-                    players[w.name] = p;
-                },
-                (CLIPLogout l) {
-                    // Remove players that logout.
-                    // TODO: Move to offline list? This data could still be useful
-                    players.remove(l.name);
-                },
-                (CLIPShouts s) {
-                    shoutBox ~= FIBSMessage(Clock.currTime, s.name, s.message);
-                },
-                (CLIPMatchState ms) {
-                    if (this.currentMatch) {
-                        if (!this.currentMatch.gs.equals(ms.match.gs)) {
-                            writeln(ms);
-                            writeln("Received match state update which doesn't correspond to local state");
-                            writeln("============================ OLD =========================");
-                            this.currentMatch.prettyPrint();
-                            writeln("============================ RECEIVED =========================");
-                            ms.match.prettyPrint();
+        const auto startTime = MonoTime.currTime;
 
-                            this.currentMatch = ms.match;
-                            this.onUpdateMatchState.emit(ms.match);
-                        }
-                    } else {
+        while(MonoTime.currTime < startTime + 5.msecs) {
+            Variant m;
+            try {
+                m = conn.readMessage(1.msecs);
+            } catch (Exception e) {
+                break;
+            }
+
+            m.handle!(
+            (CLIPWelcome w) {
+                this.fibsConnectionStatus = FIBSConnectionStatus.Connected;
+            },
+            (CLIPWho w) {
+                FIBSPlayer p = FIBSPlayer(w.name, w.opponent, w.watching,
+                    w.ready, w.away, w.rating, w.experience, w.idle, w.login,
+                    w.hostname, w.client, w.email);
+                players[w.name] = p;
+            },
+            (CLIPLogout l) {
+                // TODO: Move to offline list? This data could still be useful
+                players.remove(l.name);
+            },
+            (CLIPShouts s) {
+                shoutBox ~= FIBSMessage(Clock.currTime, s.name, s.message);
+            },
+            (CLIPMatchState ms) {
+                if (this.currentMatch) {
+                    if (!this.currentMatch.gs.equals(ms.match.gs)) {
+                        writeln(ms);
+                        writeln("Received match state update which doesn't correspond to local state");
+                        writeln("============================ OLD =========================");
+                        this.currentMatch.prettyPrint();
+                        writeln("============================ RECEIVED =========================");
+                        ms.match.prettyPrint();
                         this.currentMatch = ms.match;
                         this.onUpdateMatchState.emit(ms.match);
                     }
-
-                },
-                (CLIPMatchMovement mv) {
-                    if (this.currentMatch) {
-                        try {
-                            this.currentMatch.gs.applyTurn(mv.moves);
-                        } catch (Exception e) {
-                            writeln(e);
-                            writeln(mv);
-                            this.currentMatch.prettyPrint();
-                        }
-                    }
-                },
-                (CLIPMatchRoll mr) {
-                    if (this.currentMatch) {
-                        this.currentMatch.gs.rollDice(mr.die1, mr.die2);
+                } else {
+                    this.currentMatch = ms.match;
+                    this.onUpdateMatchState.emit(ms.match);
+                }
+            },
+            (CLIPMatchMovement mv) {
+                if (this.currentMatch) {
+                    try {
+                        this.currentMatch.gs.applyTurn(mv.moves);
+                    } catch (Exception e) {
+                        writeln(e);
+                        writeln(mv);
+                        this.currentMatch.prettyPrint();
                     }
                 }
-            )) {}
+            },
+            (CLIPMatchRoll mr) {
+                if (this.currentMatch) {
+                    this.currentMatch.gs.rollDice(mr.die1, mr.die2);
+                }
+            },
+            (Variant v) {
+                writeln(v, " (UNHANDLED)");
+            }
+            )();
         }
     }
-    
+
+    /**
+     * Request to watch a particular user.
+     */
+    public void requestWatch(string username) {
+        conn.writeline("watch " ~ username);
+        conn.writeline("board");
+    }
+
     /**
      * Request disconnection
      */
     public void disconnect() {
-        if (networkingThread != Tid.init) {
-            send(networkingThread, FIBSRequestDisconnect());
-        }
+        conn.writeline("adios");
+        conn.close();
     }
 }
 
-private class FIBSNetworkingThread {
-    FIBSConnection conn;
-    Address serverAddress;
-    string username;
-    string password;
+/// A private or shoutbox message
+/// TODO: Make this FIBS non specific
+struct FIBSMessage {
+    SysTime timestamp;
+    string from;
+    string message;
+}
 
-    public this(Address serverAddress, string username, string password) {
-        this.serverAddress = serverAddress;
-        this.username = username;
-        this.password = password;
-    }
-
-    public void run() {
-        FIBSConnection conn;
-        try {
-            conn = new FIBSConnection(serverAddress, username, password);
-        } catch (Exception e) {
-            // Send connection failure information and exit thread
-            send(ownerTid, FIBSConnectionFailure(e.msg, e.info.to!string));
-            return;
-        }
-
-        send(ownerTid, FIBSConnectionSuccess());
-
-        while(true) {
-            try {
-                bool requestExit;
-                receiveTimeout(0.msecs,
-                    (FIBSRequestCommand c) {
-                        conn.writeline(c.command);
-                    },
-                    (FIBSRequestDisconnect d) {
-                        requestExit = true;
-                    },
-                );
-
-                if (requestExit) {
-                    conn.writeline("adios");
-                    // TODO: Send confirm to main thread
-                    return;
-                }
-                
-                send(ownerTid, conn.readMessage(25.msecs));
-            } 
-            catch (TimeoutException e) {
-                continue;
-            }
-            catch (Exception e) {
-                writeln("NETWORKING THREAD CRASHED");
-                writeln("==================================================");
-                writeln(e);
-                return;
-            }
-        }
-    }
+/// Status of connection with FIBS server
+/// TODO: Put this in the connection module!
+enum FIBSConnectionStatus {
+    Disconnected, Connecting, Connected, Failed, Crashed
 }
