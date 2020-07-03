@@ -1,0 +1,1668 @@
+
+WELCOME TO THE
+            _______   _          ______            _____
+           |  _____| | |        |  __  \          / ____|
+           | |___    | |        | |__|  |        | |____
+           |  ___|   | |        |  __  <          \____ \
+           | |       | |        | |__|  |          ____| |
+           |_|irst   |_|nternet |______/ackgammon |_____/erver
+
+         If something unexpected happens please send mail to:
+                 pattib@fibs.com (Patti Beadles)
+                      Bug reports are welcome.
+
+       This server is on the net to meet people from all countries.
+     All sorts of racists and fascists are not allowed to login here!
+        Rude language will not be tolerated on this server. Be nice.
+ 
+              LOGIN AS guest IF YOU ARE NEW TO THIS SERVER! 
+		     One account per person only!
+
+Friday, July 03 18:04:27 MEST   ( Fri Jul  3 16:04:27 2020 UTC )
+login: 
+1 jonathanballs 1593791615 host109-151-213-145.range109-151.btcentralplus.com
+2 jonathanballs 1 1 0 0 0 0 1 1 0 0 1 0 1 1500.00 0 0 0 1 0 UTC
+3
++--------------------------------------------------------------------+
+|                                                                    |
+|  FIBS news/announcements at http://twitter.com/fibsdotcom          |
+|                                                                    |
+|  Remember: you are only allowed to have one FIBS account.          |
+|                                                                    |
+|  FIBS has been down due to a challenging hardware failure.  I      |
+|  am working to restore old data.  In the meantime, this is a       |
+|  temporary FIBS instance.  It may not be stable.                   |
+|                                                                    |
+|                                                                    |
++--------------------------------------------------------------------+
+
+4
+
+5 udacity_capstone - - 1 0 2029.82 115956 33 1576189109 li1829-102.members.linode.com bot_1p_matches_only bot_____oysteijo@gmail.com
+5 MonteCarlo - - 1 0 2010.81 1704330 46 1572505835 246.234.223.199.bc.googleusercontent.com - ComputerPlayer___MonteCarlo@gamercafe.com
+5 TourneyBot - - 0 0 1500.00 0 107 1590025056 47.199.55.93 =NTTourney1rganizer2 bots@moulton.us
+5 RepBotNG - - 0 0 1500.00 0 7 1590800728 47.199.55.93 - inimfibs@gmail.com
+5 bonehead Noah_temporarily - 1 0 2093.33 316317 139 1591321090 grid9.quadspeedi.net - ComputerPlayer___bonehead_fibs@yahoo.com
+5 oddsR amerkel - 0 0 1766.61 12968 0 1593781870 c-24-22-182-164.hsd1.wa.comcast.net 3DFiBs4.0.79 -
+5 GammonBot_IV ilgattopardo - 1 0 2051.64 1345123 4 1593777885 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_VI pipcat - 1 0 2026.77 1229928 4 1593778125 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_XVIII Davies - 1 0 2141.95 1110162 1 1593778365 47.199.55.93 ParlorBot bots@moulton.us
+5 BlunderBot_IV gengiskan - 1 0 1550.12 1209139 10 1593777765 47.199.55.93 ParlorBot bots@moulton.us
+5 BlunderBot_II martillo - 1 0 1507.67 1227686 0 1593778605 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_XX - - 1 0 2090.36 1248490 0 1593777885 47.199.55.93 ParlorBot bots@moulton.us
+5 BlunderBot_X tawlis - 1 0 1470.48 1143715 3 1593777765 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot - - 1 0 2053.60 1348614 22 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_III - - 1 0 2010.19 1348332 82 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_V - - 1 0 2014.01 1305700 11 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_IX - - 1 0 2013.53 1210610 11 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_XI NICK_L - 1 0 2160.34 1034159 4 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_XVII - - 1 0 2022.97 1073089 77 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_XV - - 1 0 2068.71 1028955 42 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_XIX Heffe - 1 0 2009.88 1074111 13 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 BlunderBot truxtun - 1 0 1624.79 1209636 3 1593781485 47.199.55.93 ParlorBot bots@moulton.us
+5 BlunderBot_IX talvi - 1 0 1531.73 1145765 11 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 amerkel oddsR - 0 0 1741.52 11340 2 1593713954 HSI-KBW-46-223-212-63.hsi.kabel-badenwuerttemberg.de 3DFiBs4.0.79 -
+5 BlunderBot_XI - - 1 0 1508.70 902461 16 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 notverylucky PullMyFinger - 0 0 1690.56 109749 5 1593734854 cpe-66-66-14-2.rochester.res.rr.com FIBzilla5.0.50 -
+5 GammonBot_VII - - 1 0 2033.88 1208954 33 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_XIII - - 1 0 2074.27 1068926 105 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 BlunderBot_VII - - 1 0 1542.04 1131173 104 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 BlunderBot_III nena - 1 0 1498.92 1222380 1 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+5 BlunderBot_V - - 1 0 1586.06 1206428 42 1593782565 47.199.55.93 ParlorBot bots@moulton.us
+5 mischa - - 0 0 1640.61 18448 266 1593783585 tmo-086-63.customers.d1-online.com Padgammon_v3.2.1 -
+5 Geooooo - - 0 0 1421.20 29999 583 1593778751 catv-78-139-3-162.catv.broadband.hu Padgammon_v3.2.1 -
+5 Barger - - 0 0 1841.68 21205 711 1593785756 109.78.63.103 FIBzilla5.0.50 -
+5 BoxCars Brazilsdk - 0 0 1800.79 3398 0 1593783810 ool-4350a4bc.dyn.optonline.net 3DFiBs4.0.79 Fifthstreet
+5 playtime BlunderBot_VIII - 1 0 1715.56 26800 1 1593787659 cpe-1-121-125-3.bpw3-r-962.woo.qld.bigpond.net.au MGOnline_v1.4.2 -
+5 talvi BlunderBot_IX - 1 0 1450.42 3143 74 1593710581 ip-176-198-41-79.hsi05.unitymediagroup.de ?NT________________! -
+5 truxtun BlunderBot - 1 0 1550.13 89699 3 1593756177 c-67-188-249-80.hsd1.ca.comcast.net ?NT________________! -
+5 pipcat GammonBot_VI - 1 0 1726.46 10305 2 1593788553 165.red-81-43-241.staticip.rima-tde.net ?AD________________! -
+5 PullMyFinger notverylucky - 1 0 1667.38 32854 4 1593756212 97-127-133-229.cdrr.qwest.net CocoaFIBSBeta0.5 -
+5 Noah_temporarily bonehead - 1 0 1767.89 29957 144 1593791063 ip-217-103-62-10.ip.prioritytelecom.net <NL________________$ TheProblem,Sir,that-remains@MSM.com
+5 jhoff NaKh - 1 0 1466.24 38899 1 1593789195 50.29.221.62.res-cmts.dlh2.ptd.net Padgammon_v3.2.1 -
+5 ilgattopardo GammonBot_IV - 1 0 1586.84 43776 2 1593789597 user-177-70-145-15.inova.net.br Padgammon_v3.2.1 -
+5 tawlis BlunderBot_X - 1 0 1512.97 16845 0 1593789775 modemcable195.247-162-184.mc.videotron.ca MGOnline_v1.4.2 -
+5 buttzilla meat_man - 0 0 1565.23 2676 0 1593771434 213.169.154.156 FIBzilla5.0.49 -
+5 gengiskan BlunderBot_IV - 1 0 1457.40 25705 8 1593717271 net-2-38-244-80.cust.vodafonedsl.it Padgammon_v3.2.1 -
+5 caspar_sixteen hierdenn - 1 0 1656.64 6534 1 1587587067 78-134-78-9.v4.ngi.it ?NT________________! -
+5 Mr_Tubbly emiliani - 0 0 1496.29 76 7 1592769369 cpc1-whit5-2-0-cust387.know.cable.virginm.net FIBzilla5.0.50 -
+5 nena BlunderBot_III - 1 0 891.29 10004 0 1593784072 bd3c60ef.virtua.com.br Padgammon_v3.2.1 -
+5 emiliani Mr_Tubbly - 1 0 1403.26 196 4 1593782889 ppp-94-67-156-26.home.otenet.gr MGOnline_v1.4.2 -
+5 Heffe GammonBot_XIX - 0 0 1448.27 485 3 1593705529 host1845321616.direcway.com 3DFiBs4.0.79 -
+5 Brazilsdk BoxCars - 1 0 1873.46 32188 9 1593768455 89-23-232-68.ip4.fiberby.net ?WF________________! -
+5 NICK_L GammonBot_XI - 1 0 1825.61 33646 3 1593791467 5.183.92.86 FIBzilla5.0.50 -
+5 martillo BlunderBot_II - 1 0 1512.02 32749 2 1593223278 097-083-253-035.res.spectrum.com ?NT________________! no_pissant_1pointers@whiners.com
+5 dorbel - - 0 0 1859.28 72800 141 1593789975 60.red-83-57-211.dynamicip.rima-tde.net ?ES________________! OfficerDibble@TopCat.com
+5 burton - - 0 0 1674.83 130437 108 1593761222 50.38.78.105 FIBzilla5.0.50 none
+5 Davies GammonBot_XVIII - 1 0 1793.08 31203 0 1593791273 82-71-20-117.dsl.in-addr.zen.co.uk C4FIBS_0.6.9.102 -
+5 meat_man buttzilla - 1 0 1636.44 44613 0 1593789667 174-28-239-253.albq.qwest.net Padgammon_v3.2.1 -
+5 GammonBot_II - - 1 0 2119.81 1339969 102 1593785204 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_VIII - - 1 0 2030.83 1205912 102 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_X - - 1 0 2077.18 1187290 102 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_XII - - 1 0 2042.86 1051661 102 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_XIV - - 1 0 2004.70 1033329 101 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+5 GammonBot_XVI - - 1 0 2025.41 1045847 101 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+5 BlunderBot_VIII playtime - 1 0 1533.90 1134273 2 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+5 BlunderBot_XII - - 1 0 1408.32 895140 101 1593785570 47.199.55.93 ParlorBot bots@moulton.us
+5 hierdenn caspar_sixteen - 1 0 1686.28 21124 1 1593783342 p54872314.dip0.t-ipconnect.de ?NT________________! -
+5 NaKh jhoff - 1 0 1466.15 99 4 1593748668 78-83-19-0.spectrumnet.bg OdesysMobileR322L -
+5 jonathanballs - - 0 0 1500.00 0 0 1593791615 109.151.213.145 ?NT________________! jonathanballs@protonmail.com
+6
+
+Value of 'boardstyle' set to 3.
+7 HALIS HALIS logs in.
+5 HALIS - - 1 0 1543.89 227096 0 1593764530 78.83.19.0 OdesysMobileR315 -
+6
+5 GammonBot_XX HALIS - 1 0 2090.36 1248490 1 1593777885 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 HALIS GammonBot_XX - 1 0 1543.89 227096 1 1593764530 78.83.19.0 OdesysMobileR315 -
+6
+
+GammonBot_XX and HALIS are resuming their 13-point match.
+
+BlunderBot_III wins a 1 point match against nena  1-0 .
+5 BlunderBot_III - - 1 0 1500.25 1222381 0 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 nena - - 1 0 889.96 10005 0 1593784072 bd3c60ef.virtua.com.br Padgammon_v3.2.1 -
+6
+8 HALIS HALIS drops connection.
+
+GammonBot_VI wins a 5 point match against pipcat  5-2 .
+5 GammonBot_VI - - 1 0 2029.60 1229933 0 1593778125 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 pipcat - - 1 0 1723.63 10310 0 1593788553 165.red-81-43-241.staticip.rima-tde.net ?AD________________! -
+6
+8 GammonBot_VI GammonBot_VI logs out.
+You're now watching GammonBot_VII.
+GammonBot_VII is not doing anything interesting.
+5 jonathanballs - GammonBot_VII 0 0 1500.00 0 11 1593791615 host109-151-213-145.range109-151.btcentralplus.com ?NT________________! jonathanballs@protonmail.com
+6
+** GammonBot_VII is not playing.
+5 GammonBot_VII pipcat - 1 0 2033.88 1208954 0 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 pipcat GammonBot_VII - 1 0 1723.63 10310 2 1593788553 165.red-81-43-241.staticip.rima-tde.net ?AD________________! -
+6
+
+GammonBot_VII and pipcat start a 5 point match.
+
+Starting a new game with pipcat.
+
+GammonBot_VII rolled 6, pipcat rolled 6
+
+GammonBot_VII rolled 1, pipcat rolled 5
+
+pipcat makes the first move.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:0:0:0:5:0:3:0:0:0:-5:5:0:0:0:-3:0:-5:0:0:0:0:2:0:1:0:0:5:1:1:1:1:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+15 GammonBot_VII Hi, I am a computer program. Enjoy your match. If I stop responding, please send 'move' in kibitz.
+7 GammonBot_VI GammonBot_VI logs in.
+5 GammonBot_VI - - 1 0 2029.60 1229933 0 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+6
+
+pipcat moves 24-23 23-18 .
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:0:0:0:5:0:3:0:0:0:-5:5:0:0:0:-3:1:-5:0:0:0:0:1:0:-1:0:0:0:0:1:1:1:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+GammonBot_VII rolls 6 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:0:0:0:5:0:3:0:0:0:-5:5:0:0:0:-3:1:-5:0:0:0:0:1:0:-1:6:4:0:0:1:1:1:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+7 BlunderBot_VI BlunderBot_VI logs in.
+5 BlunderBot_VI - - 1 0 1525.80 1130879 0 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+6
+
+GammonBot_VII moves 12-18 1-5 .
+board:GammonBot_VII:pipcat:5:0:0:0:-1:0:0:0:-1:5:0:3:0:0:0:-4:5:0:0:0:-3:-1:-5:0:0:0:0:1:1:1:0:0:0:0:1:1:1:0:-1:1:25:0:0:0:0:1:2:1:0:0
+15 GammonBot_VII If that does not help, try sending 'join' or 'roll' as a FIBS Command.
+
+pipcat rolls 4 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-1:0:0:0:-1:5:0:3:0:0:0:-4:5:0:0:0:-3:-1:-5:0:0:0:0:1:1:1:0:0:4:1:1:1:1:0:-1:1:25:0:0:0:0:1:2:1:0:0
+
+15 GammonBot_VII If you leave the match with a FIBS LEAVE command, I will not resume for 5 minutes.
+
+pipcat moves bar-21 6-5 .
+board:GammonBot_VII:pipcat:5:0:0:-1:-1:0:0:0:1:4:0:3:0:0:0:-4:5:0:0:0:-3:-1:-5:0:1:0:0:1:0:-1:0:0:0:0:1:1:1:0:-1:1:25:0:0:0:1:0:2:1:0:0
+
+GammonBot_VII rolls 3 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:-1:0:0:0:1:4:0:3:0:0:0:-4:5:0:0:0:-3:-1:-5:0:1:0:0:1:0:-1:3:2:0:0:1:1:1:0:-1:1:25:0:0:0:1:0:2:1:0:0
+
+
+GammonBot_VII moves bar-3 3-5 .
+board:GammonBot_VII:pipcat:5:0:0:0:-1:0:0:0:-1:4:0:3:0:0:0:-4:5:0:0:0:-3:-1:-5:0:1:0:0:1:1:1:0:0:0:0:1:1:1:0:-1:1:25:0:0:0:0:1:2:1:0:0
+
+pipcat rolls 2 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-1:0:0:0:-1:4:0:3:0:0:0:-4:5:0:0:0:-3:-1:-5:0:1:0:0:1:1:1:0:0:2:3:1:1:1:0:-1:1:25:0:0:0:0:1:2:1:0:0
+
+
+pipcat moves bar-23 21-18 .
+board:GammonBot_VII:pipcat:5:0:0:-1:-1:0:0:0:-1:4:0:3:0:0:0:-4:5:0:0:0:-3:1:-5:0:0:0:1:1:0:-1:0:0:0:0:1:1:1:0:-1:1:25:0:0:0:1:0:2:1:0:0
+
+GammonBot_VII rolls 1 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:-1:0:0:0:-1:4:0:3:0:0:0:-4:5:0:0:0:-3:1:-5:0:0:0:1:1:0:-1:1:3:0:0:1:1:1:0:-1:1:25:0:0:0:1:0:2:1:0:0
+
+
+GammonBot_VII moves bar-3 17-18 .
+board:GammonBot_VII:pipcat:5:0:0:0:-1:0:-1:0:-1:4:0:3:0:0:0:-4:5:0:0:0:-2:-1:-5:0:0:0:1:1:1:1:0:0:0:0:1:1:1:0:-1:1:25:0:0:0:0:1:2:1:0:0
+
+pipcat rolls 3 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-1:0:-1:0:-1:4:0:3:0:0:0:-4:5:0:0:0:-2:-1:-5:0:0:0:1:1:1:1:0:0:3:3:1:1:1:0:-1:1:25:0:0:0:0:1:2:1:0:0
+
+
+pipcat moves bar-22 8-5 8-5 6-3 .
+board:GammonBot_VII:pipcat:5:0:0:-2:-1:0:1:0:2:3:0:1:0:0:0:-4:5:0:0:0:-2:-1:-5:0:0:1:1:1:0:-1:0:0:0:0:1:1:1:0:-1:1:25:0:0:0:2:0:2:1:0:0
+
+GammonBot_VII rolls 1 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:-2:-1:0:1:0:2:3:0:1:0:0:0:-4:5:0:0:0:-2:-1:-5:0:0:1:1:1:0:-1:1:3:0:0:1:1:1:0:-1:1:25:0:0:0:2:0:2:1:0:0
+
+
+GammonBot_VII moves bar-1 bar-3 .
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:-1:0:2:3:0:1:0:0:0:-4:5:0:0:0:-2:-1:-5:0:0:1:1:1:1:1:0:0:0:0:1:1:1:0:-1:1:25:0:0:0:0:1:2:1:0:0
+
+pipcat doubles.
+7 HALIS HALIS logs in.
+5 HALIS - - 1 0 1543.89 227096 1 1593792268 78.83.19.0 OdesysMobileR315 -
+6
+5 GammonBot_XX HALIS - 1 0 2090.36 1248490 29 1593777885 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 HALIS GammonBot_XX - 1 0 1543.89 227096 0 1593792268 78.83.19.0 OdesysMobileR315 -
+6
+
+GammonBot_XX and HALIS are resuming their 13-point match.
+
+GammonBot_VII accepts the double.
+5 BlunderBot_XII nena - 1 0 1408.32 895140 0 1593785570 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 nena BlunderBot_XII - 1 0 889.96 10005 1 1593784072 bd3c60ef.virtua.com.br Padgammon_v3.2.1 -
+6
+
+BlunderBot_XII and nena start a 1 point match.
+
+pipcat rolls 2 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:-1:0:2:3:0:1:0:0:0:-4:5:0:0:0:-2:-1:-5:0:0:1:1:1:1:1:0:0:2:3:2:1:0:0:-1:1:25:0:0:0:0:1:2:1:0:0
+
+5 mischa - - 1 0 1640.61 18448 4 1593783585 tmo-086-63.customers.d1-online.com Padgammon_v3.2.1 -
+6
+5 GammonBot_V mischa - 1 0 2014.01 1305700 0 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 mischa GammonBot_V - 1 0 1640.61 18448 2 1593783585 tmo-086-63.customers.d1-online.com Padgammon_v3.2.1 -
+6
+
+GammonBot_V and mischa start a 5 point match.
+
+pipcat moves bar-23 6-3 .
+board:GammonBot_VII:pipcat:5:0:0:-1:-2:0:1:0:2:2:0:1:0:0:0:-4:5:0:0:0:-2:-1:-5:0:0:1:2:1:0:-1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:1:0:2:1:0:0
+
+GammonBot_VII rolls 5 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:-2:0:1:0:2:2:0:1:0:0:0:-4:5:0:0:0:-2:-1:-5:0:0:1:2:1:0:-1:5:4:0:0:2:1:0:0:-1:1:25:0:0:0:1:0:2:1:0:0
+
+
+GammonBot_VII moves bar-4 12-17 .
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:1:-1:2:2:0:1:0:0:0:-3:5:0:0:0:-3:-1:-5:0:0:1:2:1:0:1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+pipcat rolls 2 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:1:-1:2:2:0:1:0:0:0:-3:5:0:0:0:-3:-1:-5:0:0:1:2:1:0:1:0:0:2:3:2:1:0:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+5 TourneyBot - - 1 0 1500.00 0 155 1590025056 47.199.55.93 =NTTourney1rganizer2 bots@moulton.us
+6
+5 TourneyBot - - 0 0 1500.00 0 0 1590025056 47.199.55.93 =NTTourney1rganizer2 bots@moulton.us
+6
+
+pipcat moves 23-20 20-18 .
+board:GammonBot_VII:pipcat:5:0:0:-1:-2:0:1:-1:2:2:0:1:0:0:0:-3:5:0:0:0:-3:1:-5:0:0:1:1:1:0:-1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:1:0:2:1:0:0
+
+GammonBot_VII rolls 1 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:-2:0:1:-1:2:2:0:1:0:0:0:-3:5:0:0:0:-3:1:-5:0:0:1:1:1:0:-1:1:1:0:0:2:1:0:0:-1:1:25:0:0:0:1:0:4:1:0:0
+
+
+GammonBot_VII moves bar-1 17-18 19-20 19-20 .
+board:GammonBot_VII:pipcat:5:0:0:0:-3:0:1:-1:2:2:0:1:0:0:0:-3:5:0:0:0:-2:-1:-3:-2:0:1:1:1:1:1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:0:1:4:1:0:0
+
+pipcat rolls 6 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-3:0:1:-1:2:2:0:1:0:0:0:-3:5:0:0:0:-2:-1:-3:-2:0:1:1:1:1:1:0:0:6:3:2:1:0:0:-1:1:25:0:0:0:0:1:4:1:0:0
+
+7 leontine leontine logs in.
+5 leontine - - 0 0 1426.98 89159 0 1593780195 79.11.178.53 3DFiBs4.0.79 -
+6
+
+pipcat moves bar-22 24-18 .
+board:GammonBot_VII:pipcat:5:0:0:-1:-3:0:1:-1:2:2:0:1:0:0:0:-3:5:0:0:0:-2:1:-3:-2:0:2:1:0:0:-1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:1:0:4:1:0:0
+
+GammonBot_VII rolls 4 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:-3:0:1:-1:2:2:0:1:0:0:0:-3:5:0:0:0:-2:1:-3:-2:0:2:1:0:0:-1:4:6:0:0:2:1:0:0:-1:1:25:0:0:0:1:0:2:1:0:0
+
+
+GammonBot_VII moves bar-4 12-18 .
+board:GammonBot_VII:pipcat:5:0:0:0:-3:0:1:-2:2:2:0:1:0:0:0:-2:5:0:0:0:-2:-1:-3:-2:0:2:1:0:1:1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:0:1:2:1:0:0
+
+pipcat rolls 3 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-3:0:1:-2:2:2:0:1:0:0:0:-2:5:0:0:0:-2:-1:-3:-2:0:2:1:0:1:1:0:0:3:3:2:1:0:0:-1:1:25:0:0:0:0:1:2:1:0:0
+
+
+pipcat moves bar-22 13-10 13-10 8-5 .
+board:GammonBot_VII:pipcat:5:0:0:0:-3:0:1:-2:3:2:0:0:0:2:0:-2:3:0:0:0:-2:-1:-3:-2:0:3:1:0:0:-1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+GammonBot_VII rolls 2 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-3:0:1:-2:3:2:0:0:0:2:0:-2:3:0:0:0:-2:-1:-3:-2:0:3:1:0:0:-1:2:4:0:0:2:1:0:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+
+GammonBot_VII moves 12-14 14-18 .
+board:GammonBot_VII:pipcat:5:0:0:0:-3:0:1:-2:3:2:0:0:0:2:0:-1:3:0:0:0:-2:-2:-3:-2:0:3:1:0:0:1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+pipcat rolls 4 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-3:0:1:-2:3:2:0:0:0:2:0:-1:3:0:0:0:-2:-2:-3:-2:0:3:1:0:0:1:0:0:4:1:2:1:0:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+
+playtime wins a 1 point match against BlunderBot_VIII  1-0 .
+5 playtime - - 1 0 1717.35 26801 2 1593787659 cpe-1-121-125-3.bpw3-r-962.woo.qld.bigpond.net.au MGOnline_v1.4.2 -
+6
+5 BlunderBot_VIII - - 1 0 1532.11 1134274 2 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+6
+
+pipcat moves 13-12 12-8 .
+board:GammonBot_VII:pipcat:5:0:0:-1:-3:0:1:-2:3:2:0:1:0:2:0:0:2:0:0:0:-2:-2:-3:-2:0:3:1:0:0:-1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:1:0:2:1:0:0
+
+GammonBot_VII rolls 3 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:-3:0:1:-2:3:2:0:1:0:2:0:0:2:0:0:0:-2:-2:-3:-2:0:3:1:0:0:-1:3:2:0:0:2:1:0:0:-1:1:25:0:0:0:1:0:2:1:0:0
+
+
+GammonBot_VII moves bar-3 1-3 .
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:-2:-2:3:2:0:1:0:2:0:0:2:0:0:0:-2:-2:-3:-2:0:3:1:0:1:1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:0:1:2:1:0:0
+
+pipcat rolls 1 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:-2:-2:3:2:0:1:0:2:0:0:2:0:0:0:-2:-2:-3:-2:0:3:1:0:1:1:0:0:1:2:2:1:0:0:-1:1:25:0:0:0:0:1:2:1:0:0
+
+7 Akvavitix Akvavitix logs in.
+5 Akvavitix - - 0 0 1465.86 22366 3 1593781343 89-27-62-182.bb.dnainternet.fi FIBzilla5.0.50 -
+6
+8 leontine leontine drops connection.
+
+pipcat moves bar-23 22-21 .
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:-2:-2:3:2:0:1:0:2:0:0:2:0:0:0:-2:-2:-3:-2:1:2:2:0:0:-1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+GammonBot_VII rolls 4 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:-2:-2:3:2:0:1:0:2:0:0:2:0:0:0:-2:-2:-3:-2:1:2:2:0:0:-1:4:4:0:0:2:1:0:0:-1:1:25:0:0:0:0:0:4:1:0:0
+
+
+GammonBot_VII moves 3-7 4-8 17-21 17-21 .
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:-1:-1:3:2:-1:-1:0:2:0:0:2:0:0:0:0:-2:-3:-2:-2:2:2:0:2:1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:0:2:4:1:0:0
+
+pipcat rolls 2 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:-1:-1:3:2:-1:-1:0:2:0:0:2:0:0:0:0:-2:-3:-2:-2:2:2:0:2:1:0:0:2:1:2:1:0:0:-1:1:25:0:0:0:0:2:4:1:0:0
+
+
+pipcat moves bar-23 bar-24 .
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:-1:-1:3:2:-1:-1:0:2:0:0:2:0:0:0:0:-2:-3:-2:-2:2:3:1:0:-1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:0:0:4:1:0:0
+
+GammonBot_VII rolls 5 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-2:0:-1:-1:3:2:-1:-1:0:2:0:0:2:0:0:0:0:-2:-3:-2:-2:2:3:1:0:-1:5:1:0:0:2:1:0:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+
+GammonBot_VII moves 3-8 1-2 .
+board:GammonBot_VII:pipcat:5:0:0:0:-1:-1:0:-1:3:2:-1:-2:0:2:0:0:2:0:0:0:0:-2:-3:-2:-2:2:3:1:0:1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+pipcat rolls 1 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:0:-1:-1:0:-1:3:2:-1:-2:0:2:0:0:2:0:0:0:0:-2:-3:-2:-2:2:3:1:0:1:0:0:1:1:2:1:0:0:-1:1:25:0:0:0:0:0:2:1:0:0
+
+5 BlunderBot_V playtime - 1 0 1586.06 1206428 0 1593782565 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 playtime BlunderBot_V - 1 0 1717.35 26801 0 1593787659 cpe-1-121-125-3.bpw3-r-962.woo.qld.bigpond.net.au MGOnline_v1.4.2 -
+6
+
+BlunderBot_V and playtime start a 1 point match.
+
+pipcat moves 5-4 4-3 3-2 2-1 .
+board:GammonBot_VII:pipcat:5:0:0:-3:1:0:0:0:2:2:-1:-2:0:2:0:0:2:0:0:0:0:-2:-3:-2:-2:2:3:1:0:-1:0:0:0:0:2:1:0:0:-1:1:25:0:0:0:3:0:2:1:0:0
+
+GammonBot_VII doubles.
+
+ilgattopardo wins a 5 point match against GammonBot_IV  5-4 .
+5 ilgattopardo - - 1 0 1593.71 43781 2 1593789597 user-177-70-145-15.inova.net.br Padgammon_v3.2.1 -
+6
+5 GammonBot_IV - - 1 0 2044.77 1345128 4 1593777885 47.199.55.93 ParlorBot bots@moulton.us
+6
+8 GammonBot_IV GammonBot_IV logs out.
+
+pipcat accepts the double.
+
+GammonBot_VII rolls 5 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:-3:1:0:0:0:2:2:-1:-2:0:2:0:0:2:0:0:0:0:-2:-3:-2:-2:2:3:1:0:-1:5:6:0:0:4:0:1:0:-1:1:25:0:0:0:3:0:0:1:0:0
+
+GammonBot_VII can't move.
+
+
+pipcat rolls 3 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:-3:1:0:0:0:2:2:-1:-2:0:2:0:0:2:0:0:0:0:-2:-3:-2:-2:2:3:1:0:1:0:0:3:6:4:0:1:0:-1:1:25:0:0:0:3:0:0:1:0:0
+
+
+amerkel wins a 7 point match against oddsR  7-4 .
+5 amerkel - - 0 0 1747.02 11347 7 1593713954 HSI-KBW-46-223-212-63.hsi.kabel-badenwuerttemberg.de 3DFiBs4.0.79 -
+6
+5 oddsR - - 0 0 1761.11 12975 1 1593781870 c-24-22-182-164.hsd1.wa.comcast.net 3DFiBs4.0.79 -
+6
+5 ilgattopardo - - 0 0 1593.71 43781 5 1593789597 user-177-70-145-15.inova.net.br Padgammon_v3.2.1 -
+6
+13 TourneyBot *** F3 (#19309) Registered 2 (Max 32) Players: dorbel, burton *** Starts at 16:30UTC (in 22 minutes) *** Register with: tell TourneyBot register F3 ***
+8 ilgattopardo ilgattopardo drops connection.
+5 amerkel - - 1 0 1747.02 11347 3 1593713954 HSI-KBW-46-223-212-63.hsi.kabel-badenwuerttemberg.de 3DFiBs4.0.79 -
+6
+8 oddsR oddsR drops connection.
+
+pipcat moves 10-7 7-1 .
+board:GammonBot_VII:pipcat:5:0:0:-4:2:0:0:0:2:2:0:-2:0:1:0:0:2:0:0:0:0:-2:-3:-2:-2:2:3:1:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:4:0:0:1:0:0
+
+GammonBot_VII rolls 5 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:-4:2:0:0:0:2:2:0:-2:0:1:0:0:2:0:0:0:0:-2:-3:-2:-2:2:3:1:0:-1:5:1:0:0:4:0:1:0:-1:1:25:0:0:0:4:0:0:1:0:0
+
+GammonBot_VII can't move.
+
+5 Akvavitix - - 1 0 1465.86 22366 2 1593781343 89-27-62-182.bb.dnainternet.fi FIBzilla5.0.50 -
+6
+
+pipcat rolls 5 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:-4:2:0:0:0:2:2:0:-2:0:1:0:0:2:0:0:0:0:-2:-3:-2:-2:2:3:1:0:1:0:0:5:4:4:0:1:0:-1:1:25:0:0:0:4:0:0:1:0:0
+
+5 amerkel - - 0 0 1747.02 11347 4 1593713954 HSI-KBW-46-223-212-63.hsi.kabel-badenwuerttemberg.de 3DFiBs4.0.79 -
+6
+5 BlunderBot_XI Akvavitix - 1 0 1508.70 902461 1 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 Akvavitix BlunderBot_XI - 1 0 1465.86 22366 2 1593781343 89-27-62-182.bb.dnainternet.fi FIBzilla5.0.50 -
+6
+
+BlunderBot_XI and Akvavitix start a 1 point match.
+5 Akvavitix BlunderBot_XI - 0 0 1465.86 22366 0 1593781343 89-27-62-182.bb.dnainternet.fi FIBzilla5.0.50 -
+6
+
+pipcat moves 22-17 17-13 .
+board:GammonBot_VII:pipcat:5:0:0:-4:2:0:0:0:2:2:0:-2:0:1:0:0:3:0:0:0:0:-2:-3:-2:-2:1:3:1:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:4:0:0:1:0:0
+5 Akvavitix BlunderBot_XI - 1 0 1465.86 22366 1 1593781343 89-27-62-182.bb.dnainternet.fi FIBzilla5.0.50 -
+6
+
+GammonBot_VII rolls 2 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:-4:2:0:0:0:2:2:0:-2:0:1:0:0:3:0:0:0:0:-2:-3:-2:-2:1:3:1:0:-1:2:3:0:0:4:0:1:0:-1:1:25:0:0:0:4:0:2:1:0:0
+
+
+GammonBot_VII moves bar-2 bar-3 .
+board:GammonBot_VII:pipcat:5:0:0:-2:2:-1:-1:0:2:2:0:-2:0:1:0:0:3:0:0:0:0:-2:-3:-2:-2:1:3:1:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:2:0:2:1:0:0
+
+pipcat rolls 6 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:-2:2:-1:-1:0:2:2:0:-2:0:1:0:0:3:0:0:0:0:-2:-3:-2:-2:1:3:1:0:1:0:0:6:2:4:0:1:0:-1:1:25:0:0:0:2:0:2:1:0:0
+
+5 Akvavitix BlunderBot_XI - 0 0 1465.86 22366 1 1593781343 89-27-62-182.bb.dnainternet.fi FIBzilla5.0.50 -
+6
+8 amerkel amerkel drops connection.
+
+pipcat moves 23-17 24-22 .
+board:GammonBot_VII:pipcat:5:0:0:-2:2:-1:-1:0:2:2:0:-2:0:1:0:0:3:0:0:0:1:-2:-3:-2:-2:2:2:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:2:0:2:1:0:0
+
+NICK_L wins a 1 point match against GammonBot_XI  1-0 .
+5 NICK_L - - 1 0 1827.99 33647 2 1593791467 5.183.92.86 FIBzilla5.0.50 -
+6
+5 GammonBot_XI - - 1 0 2157.96 1034160 2 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+
+GammonBot_VII rolls 2 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:-2:2:-1:-1:0:2:2:0:-2:0:1:0:0:3:0:0:0:1:-2:-3:-2:-2:2:2:0:0:-1:2:5:0:0:4:0:1:0:-1:1:25:0:0:0:2:0:1:2:0:0
+
+
+GammonBot_VII moves bar-2 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:-2:-1:0:2:2:0:-2:0:1:0:0:3:0:0:0:1:-2:-3:-2:-2:2:2:0:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:1:2:0:0
+
+pipcat rolls 1 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:-2:-1:0:2:2:0:-2:0:1:0:0:3:0:0:0:1:-2:-3:-2:-2:2:2:0:0:1:0:0:1:1:4:0:1:0:-1:1:25:0:0:0:1:0:1:2:0:0
+
+
+pipcat moves 5-4 5-4 4-3 4-3 .
+board:GammonBot_VII:pipcat:5:0:0:-2:2:-2:2:0:0:2:0:-2:0:1:0:0:3:0:0:0:1:-2:-3:-2:-2:2:2:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:2:0:1:2:0:0
+
+GammonBot_VII rolls 1 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:-2:2:-2:2:0:0:2:0:-2:0:1:0:0:3:0:0:0:1:-2:-3:-2:-2:2:2:0:0:-1:1:5:0:0:4:0:1:0:-1:1:25:0:0:0:2:0:1:5:0:0
+
+
+GammonBot_VII moves bar-5 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:-2:2:0:-1:2:0:-2:0:1:0:0:3:0:0:0:1:-2:-3:-2:-2:2:2:0:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:1:5:0:0
+
+pipcat rolls 6 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:-2:2:0:-1:2:0:-2:0:1:0:0:3:0:0:0:1:-2:-3:-2:-2:2:2:0:0:1:0:0:6:2:4:0:1:0:-1:1:25:0:0:0:1:0:1:5:0:0
+
+5 GammonBot_XI NICK_L - 1 0 2157.96 1034160 1 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 NICK_L GammonBot_XI - 1 0 1827.99 33647 2 1593791467 5.183.92.86 FIBzilla5.0.50 -
+6
+
+GammonBot_XI and NICK_L start a 1 point match.
+
+pipcat moves 23-17 17-15 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:-2:2:0:-1:2:0:-2:0:1:0:0:3:0:1:0:1:-2:-3:-2:-2:2:1:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:1:5:0:0
+
+GammonBot_VII rolls 4 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:-2:2:0:-1:2:0:-2:0:1:0:0:3:0:1:0:1:-2:-3:-2:-2:2:1:0:0:-1:4:6:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+
+GammonBot_VII moves bar-4 4-10 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:-2:2:0:-1:2:0:-2:0:-1:0:0:3:0:1:0:1:-2:-3:-2:-2:2:1:0:1:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+pipcat rolls 3 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:-2:2:0:-1:2:0:-2:0:-1:0:0:3:0:1:0:1:-2:-3:-2:-2:2:1:0:1:1:0:0:3:6:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+7 seadog seadog logs in.
+5 seadog - - 1 0 1545.01 94883 0 1593774313 209.173.27.184 ?NT________________! 5ormore@fibs.com
+6
+
+pipcat moves bar-22 23-17 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:-2:2:0:-1:2:0:-2:0:-1:0:0:3:0:1:0:2:-2:-3:-2:-2:3:0:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 6 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:-2:2:0:-1:2:0:-2:0:-1:0:0:3:0:1:0:2:-2:-3:-2:-2:3:0:0:0:-1:6:6:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:4:5:0:0
+
+
+GammonBot_VII moves 2-8 2-8 8-14 8-14 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:0:2:0:-1:2:0:-2:0:-1:0:0:3:-2:1:0:2:-2:-3:-2:-2:3:0:0:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:4:5:0:0
+
+pipcat rolls 3 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:0:2:0:-1:2:0:-2:0:-1:0:0:3:-2:1:0:2:-2:-3:-2:-2:3:0:0:0:1:0:0:3:3:4:0:1:0:-1:1:25:0:0:0:0:0:4:5:0:0
+
+
+Noah_temporarily wins a 1 point match against bonehead  1-0 .
+5 Noah_temporarily - - 1 0 1770.26 29958 10 1593791063 ip-217-103-62-10.ip.prioritytelecom.net <NL________________$ TheProblem,Sir,that-remains@MSM.com
+6
+5 bonehead - - 1 0 2090.96 316318 2 1591321090 grid9.quadspeedi.net - ComputerPlayer___bonehead_fibs@yahoo.com
+6
+7 GammonBot_IV GammonBot_IV logs in.
+5 GammonBot_IV - - 1 0 2044.77 1345128 1 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+6
+
+pipcat moves 13-10 13-10 13-10 15-12 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:0:2:0:-1:2:0:-2:0:3:0:1:0:-2:0:0:2:-2:-3:-2:-2:3:0:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:4:5:0:0
+
+GammonBot_VII rolls 6 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:0:2:0:-1:2:0:-2:0:3:0:1:0:-2:0:0:2:-2:-3:-2:-2:3:0:0:0:-1:6:2:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+
+GammonBot_VII moves bar-2 2-8 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:0:2:0:-1:2:0:-3:0:3:0:1:0:-2:0:0:2:-2:-3:-2:-2:3:0:0:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+pipcat rolls 5 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:0:2:0:-1:2:0:-3:0:3:0:1:0:-2:0:0:2:-2:-3:-2:-2:3:0:0:0:1:0:0:5:4:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+nena wins a 1 point match against BlunderBot_XII  1-0 .
+5 nena - - 1 0 892.54 10006 1 1593784072 bd3c60ef.virtua.com.br Padgammon_v3.2.1 -
+6
+5 BlunderBot_XII - - 1 0 1405.74 895141 6 1593785570 47.199.55.93 ParlorBot bots@moulton.us
+6
+
+pipcat moves 22-17 10-6 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:0:2:0:-1:3:0:-3:0:2:0:1:0:-2:0:0:3:-2:-3:-2:-2:2:0:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 6 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:0:2:0:-1:3:0:-3:0:2:0:1:0:-2:0:0:3:-2:-3:-2:-2:2:0:0:0:-1:6:2:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 8-14 19-21 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:0:2:0:-1:3:0:-2:0:2:0:1:0:-3:0:0:3:-2:-2:-2:-3:2:0:0:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+pipcat rolls 4 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:0:2:0:-1:3:0:-2:0:2:0:1:0:-3:0:0:3:-2:-2:-2:-3:2:0:0:0:1:0:0:4:3:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+pipcat moves 12-9 9-5 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:0:2:0:1:3:0:-2:0:2:0:0:0:-3:0:0:3:-2:-2:-2:-3:2:0:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+GammonBot_VII rolls 5 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:0:2:0:1:3:0:-2:0:2:0:0:0:-3:0:0:3:-2:-2:-2:-3:2:0:0:0:-1:5:5:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:4:5:0:0
+
+
+GammonBot_VII moves bar-5 8-13 8-13 14-19 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:0:2:0:-1:3:0:0:0:2:0:0:-2:-2:0:0:3:-2:-3:-2:-3:2:0:0:1:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:1:4:5:0:0
+
+pipcat rolls 4 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:0:2:0:-1:3:0:0:0:2:0:0:-2:-2:0:0:3:-2:-3:-2:-3:2:0:0:1:1:0:0:4:2:4:0:1:0:-1:1:25:0:0:0:0:1:4:5:0:0
+
+
+pipcat moves bar-23 6-2 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:1:2:0:-1:2:0:0:0:2:0:0:-2:-2:0:0:3:-2:-3:-2:-3:2:1:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:4:5:0:0
+
+GammonBot_VII rolls 2 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:1:2:0:-1:2:0:0:0:2:0:0:-2:-2:0:0:3:-2:-3:-2:-3:2:1:0:0:-1:2:4:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 21-23 19-23 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:1:2:0:-1:2:0:0:0:2:0:0:-2:-2:0:0:3:-2:-2:-2:-2:2:-2:0:1:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+pipcat rolls 4 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:1:2:0:-1:2:0:0:0:2:0:0:-2:-2:0:0:3:-2:-2:-2:-2:2:-2:0:1:1:0:0:4:3:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+
+pipcat moves bar-22 6-2 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:2:2:0:-1:1:0:0:0:2:0:0:-2:-2:0:0:3:-2:-2:-2:-2:3:-2:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 4 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:2:2:0:-1:1:0:0:0:2:0:0:-2:-2:0:0:3:-2:-2:-2:-2:3:-2:0:0:-1:4:1:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 14-18 5-6 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:2:2:0:0:-1:0:0:0:2:0:0:-2:-1:0:0:3:-3:-2:-2:-2:3:-2:0:1:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+pipcat rolls 3 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:2:2:0:0:-1:0:0:0:2:0:0:-2:-1:0:0:3:-3:-2:-2:-2:3:-2:0:1:1:0:0:3:5:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+
+pipcat moves bar-22 22-17 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:2:2:0:0:-1:0:0:0:2:0:0:-2:-1:0:0:4:-3:-2:-2:-2:3:-2:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 1 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:2:2:0:0:-1:0:0:0:2:0:0:-2:-1:0:0:4:-3:-2:-2:-2:3:-2:0:0:-1:1:5:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 6-7 14-19 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:2:2:0:0:0:-1:0:0:2:0:0:-2:0:0:0:4:-3:-3:-2:-2:3:-2:0:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+pipcat rolls 4 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:2:2:0:0:0:-1:0:0:2:0:0:-2:0:0:0:4:-3:-3:-2:-2:3:-2:0:0:1:0:0:4:4:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+5 BlunderBot_XII nena - 1 0 1405.74 895141 0 1593785570 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 nena BlunderBot_XII - 1 0 892.54 10006 1 1593784072 bd3c60ef.virtua.com.br Padgammon_v3.2.1 -
+6
+
+BlunderBot_XII and nena start a 1 point match.
+
+pipcat moves 10-6 10-6 6-2 6-2 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:-1:0:0:0:0:0:-2:0:0:0:4:-3:-3:-2:-2:3:-2:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 1 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:-1:0:0:0:0:0:-2:0:0:0:4:-3:-3:-2:-2:3:-2:0:0:-1:1:3:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 7-8 18-21 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:-1:0:0:0:0:-2:0:0:0:4:-2:-3:-2:-3:3:-2:0:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+pipcat rolls 5 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:-1:0:0:0:0:-2:0:0:0:4:-2:-3:-2:-3:3:-2:0:0:1:0:0:5:4:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+8 caspar_sixteen Closed old connection with user caspar_sixteen.
+7 caspar_sixteen caspar_sixteen logs in again.
+5 caspar_sixteen - - 1 0 1656.64 6534 1 1593791633 78.134.78.9 ?NT________________! -
+6
+5 hierdenn caspar_sixteen - 1 0 1686.28 21124 11 1593783342 p54872314.dip0.t-ipconnect.de ?NT________________! -
+6
+5 caspar_sixteen hierdenn - 1 0 1656.64 6534 0 1593791633 78.134.78.9 ?NT________________! -
+6
+
+hierdenn and caspar_sixteen are resuming their 5-point match.
+
+pipcat moves 17-12 12-8 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:0:0:1:0:0:0:0:-2:0:0:0:3:-2:-3:-2:-3:3:-2:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+GammonBot_VII rolls 1 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:0:0:1:0:0:0:0:-2:0:0:0:3:-2:-3:-2:-3:3:-2:0:0:-1:1:3:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:0:5:0:0
+
+GammonBot_VII can't move.
+
+7 oscar oscar logs in.
+5 oscar - - 0 0 1500.00 0 0 1593791865 66.254.101.1 - -
+6
+
+pipcat rolls 6 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:0:0:1:0:0:0:0:-2:0:0:0:3:-2:-3:-2:-3:3:-2:0:0:1:0:0:6:2:4:0:1:0:-1:1:25:0:0:0:1:0:0:5:0:0
+
+8 oscar oscar drops connection.
+
+pipcat moves 22-16 16-14 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:0:0:1:0:0:0:0:-2:1:0:0:3:-2:-3:-2:-3:2:-2:0:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:0:5:0:0
+
+GammonBot_VII rolls 5 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:0:0:1:0:0:0:0:-2:1:0:0:3:-2:-3:-2:-3:2:-2:0:0:-1:5:1:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+
+GammonBot_VII moves bar-5 13-14 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:-1:0:0:1:0:0:0:0:-1:-1:0:0:3:-2:-3:-2:-3:2:-2:0:1:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+pipcat rolls 2 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:-1:0:0:1:0:0:0:0:-1:-1:0:0:3:-2:-3:-2:-3:2:-2:0:1:1:0:0:2:5:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+pipcat can't move.
+
+
+
+GammonBot_VII rolls 5 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:-1:0:0:1:0:0:0:0:-1:-1:0:0:3:-2:-3:-2:-3:2:-2:0:1:-1:5:3:0:0:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+
+GammonBot_VII moves 13-18 5-8 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:-1:0:0:0:0:0:-1:0:0:3:-3:-3:-2:-3:2:-2:0:2:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:2:2:5:0:0
+
+pipcat rolls 5 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:-1:0:0:0:0:0:-1:0:0:3:-3:-3:-2:-3:2:-2:0:2:1:0:0:5:5:4:0:1:0:-1:1:25:0:0:0:0:2:2:5:0:0
+
+pipcat can't move.
+
+
+
+GammonBot_VII rolls 3 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:-1:0:0:0:0:0:-1:0:0:3:-3:-3:-2:-3:2:-2:0:2:-1:3:1:0:0:4:0:1:0:-1:1:25:0:0:0:0:2:2:5:0:0
+
+
+GammonBot_VII moves 14-15 15-18 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:-1:0:0:0:0:0:0:0:0:3:-4:-3:-2:-3:2:-2:0:2:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:2:2:5:0:0
+
+pipcat rolls 1 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:-1:0:0:0:0:0:0:0:0:3:-4:-3:-2:-3:2:-2:0:2:1:0:0:1:1:4:0:1:0:-1:1:25:0:0:0:0:2:2:5:0:0
+
+
+GammonBot_XI wins a 1 point match against NICK_L  1-0 .
+5 GammonBot_XI - - 1 0 2159.59 1034161 0 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 NICK_L - - 1 0 1826.36 33648 2 1593791467 5.183.92.86 FIBzilla5.0.50 -
+6
+8 NICK_L NICK_L drops connection.
+
+pipcat moves bar-24 bar-24 17-16 17-16 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:-1:0:0:0:0:0:0:0:2:1:-4:-3:-2:-3:2:-2:2:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 1 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:-1:0:0:0:0:0:0:0:2:1:-4:-3:-2:-3:2:-2:2:0:-1:1:5:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 19-20 8-13 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:0:0:0:0:0:-1:0:0:2:1:-4:-2:-3:-3:2:-2:2:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+pipcat rolls 1 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:0:0:0:0:0:-1:0:0:2:1:-4:-2:-3:-3:2:-2:2:0:1:0:0:1:1:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+7 Rockfile Rockfile logs in.
+5 Rockfile - - 1 0 1669.25 1005 0 1593791523 208.185.219.2 ?NT________________! -
+6
+13 martillo I don't really see a difference between cocanut picking monkies and horses or oxen plowing fields
+5 GammonBot_XI Rockfile - 1 0 2159.59 1034161 0 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 Rockfile GammonBot_XI - 1 0 1669.25 1005 2 1593791523 208.185.219.2.T01741-01.above.net ?NT________________! -
+6
+
+GammonBot_XI and Rockfile start a 5 point match.
+
+pipcat moves 16-15 15-14 14-13 16-15 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:0:0:0:0:0:0:0:1:0:1:0:1:-4:-2:-3:-3:2:-2:2:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+GammonBot_VII rolls 4 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:0:0:0:0:0:0:0:1:0:1:0:1:-4:-2:-3:-3:2:-2:2:0:-1:4:6:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+
+GammonBot_VII moves bar-4 4-10 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:0:0:-1:0:0:1:0:1:0:1:-4:-2:-3:-3:2:-2:2:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+pipcat rolls 4 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:0:0:-1:0:0:1:0:1:0:1:-4:-2:-3:-3:2:-2:2:0:1:0:0:4:3:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+pipcat moves 13-10 17-13 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:0:0:0:0:1:0:0:1:0:1:0:0:-4:-2:-3:-3:2:-2:2:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+GammonBot_VII rolls 2 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:0:0:0:0:1:0:0:1:0:1:0:0:-4:-2:-3:-3:2:-2:2:0:-1:2:6:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+
+GammonBot_VII moves bar-6 6-8 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:-1:0:1:0:0:1:0:1:0:0:-4:-2:-3:-3:2:-2:2:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+pipcat rolls 6 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:0:0:-1:0:1:0:0:1:0:1:0:0:-4:-2:-3:-3:2:-2:2:0:1:0:0:6:4:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+Akvavitix wins a 1 point match against BlunderBot_XI  1-0 .
+5 Akvavitix - - 0 0 1467.91 22367 5 1593781343 89-27-62-182.bb.dnainternet.fi FIBzilla5.0.50 -
+6
+5 BlunderBot_XI - - 1 0 1506.65 902462 2 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 TourneyBot - - 1 0 1500.00 0 107 1590025056 47.199.55.93 =NTTourney1rganizer2 bots@moulton.us
+6
+5 TourneyBot - - 0 0 1500.00 0 0 1590025056 47.199.55.93 =NTTourney1rganizer2 bots@moulton.us
+6
+
+pipcat moves 13-7 10-6 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:1:1:-1:0:0:0:0:0:0:1:0:0:-4:-2:-3:-3:2:-2:2:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 1 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:1:1:-1:0:0:0:0:0:0:1:0:0:-4:-2:-3:-3:2:-2:2:0:-1:1:1:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:4:5:0:0
+
+
+GammonBot_VII moves 8-9 18-19 18-19 19-20 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:1:1:0:-1:0:0:0:0:0:1:0:0:-2:-3:-4:-3:2:-2:2:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:4:5:0:0
+
+pipcat rolls 6 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:1:1:0:-1:0:0:0:0:0:1:0:0:-2:-3:-4:-3:2:-2:2:0:1:0:0:6:2:4:0:1:0:-1:1:25:0:0:0:0:0:4:5:0:0
+
+
+pipcat moves 15-9 9-7 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:1:2:0:0:0:0:0:0:0:0:0:0:-2:-3:-4:-3:2:-2:2:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:4:5:0:0
+
+GammonBot_VII rolls 1 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:1:2:0:0:0:0:0:0:0:0:0:0:-2:-3:-4:-3:2:-2:2:0:-1:1:5:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+
+GammonBot_VII moves bar-5 20-21 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:-1:1:2:0:0:0:0:0:0:0:0:0:0:-2:-3:-3:-4:2:-2:2:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+pipcat rolls 5 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:-1:1:2:0:0:0:0:0:0:0:0:0:0:-2:-3:-3:-4:2:-2:2:0:1:0:0:5:6:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+pipcat moves 22-16 22-17 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:-1:1:2:0:0:0:0:0:0:0:0:1:1:-2:-3:-3:-4:0:-2:2:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 3 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:-1:1:2:0:0:0:0:0:0:0:0:1:1:-2:-3:-3:-4:0:-2:2:0:-1:3:6:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 5-8 8-14 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:1:2:0:0:0:0:0:0:-1:0:1:1:-2:-3:-3:-4:0:-2:2:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+pipcat rolls 2 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:4:2:0:0:1:2:0:0:0:0:0:0:-1:0:1:1:-2:-3:-3:-4:0:-2:2:0:1:0:0:2:4:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+pipcat moves 16-14 17-13 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:1:2:0:0:0:0:0:1:1:0:0:0:-2:-3:-3:-4:0:-2:2:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+GammonBot_VII rolls 2 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:1:2:0:0:0:0:0:1:1:0:0:0:-2:-3:-3:-4:0:-2:2:0:-1:2:1:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:0:5:0:0
+
+GammonBot_VII can't move.
+
+
+pipcat rolls 4 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:4:2:0:0:1:2:0:0:0:0:0:1:1:0:0:0:-2:-3:-3:-4:0:-2:2:0:1:0:0:4:2:4:0:1:0:-1:1:25:0:0:0:1:0:0:5:0:0
+
+
+pipcat moves 24-22 6-2 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:5:2:0:0:0:2:0:0:0:0:0:1:1:0:0:0:-2:-3:-3:-4:1:-2:1:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:0:5:0:0
+
+GammonBot_VII rolls 5 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:5:2:0:0:0:2:0:0:0:0:0:1:1:0:0:0:-2:-3:-3:-4:1:-2:1:0:-1:5:6:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+
+GammonBot_VII moves bar-6 19-24 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:5:2:0:0:-1:2:0:0:0:0:0:1:1:0:0:0:-2:-2:-3:-4:1:-2:-1:1:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+pipcat rolls 5 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:5:2:0:0:-1:2:0:0:0:0:0:1:1:0:0:0:-2:-2:-3:-4:1:-2:-1:1:1:0:0:5:2:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+pipcat can't move.
+
+
+13 Noah_temporarily Thailand has been raising and training pigtailed macaques to pick coconuts for around 400 years.
+
+playtime wins a 1 point match against BlunderBot_V  1-0 .
+5 playtime - - 1 0 1719.20 26802 3 1593787659 cpe-1-121-125-3.bpw3-r-962.woo.qld.bigpond.net.au MGOnline_v1.4.2 -
+6
+5 BlunderBot_V - - 1 0 1584.21 1206429 5 1593782565 47.199.55.93 ParlorBot bots@moulton.us
+6
+
+GammonBot_VII rolls 1 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:5:2:0:0:-1:2:0:0:0:0:0:1:1:0:0:0:-2:-2:-3:-4:1:-2:-1:1:-1:1:5:0:0:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+
+GammonBot_VII moves 18-19 19-24 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:5:2:0:0:-1:2:0:0:0:0:0:1:1:0:0:0:-1:-2:-3:-4:1:-2:-2:1:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+pipcat rolls 3 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:5:2:0:0:-1:2:0:0:0:0:0:1:1:0:0:0:-1:-2:-3:-4:1:-2:-2:1:1:0:0:3:3:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+
+Davies wins a 5 point match against GammonBot_XVIII  6-1 .
+5 Davies - - 1 0 1799.44 31208 8 1593791273 82-71-20-117.dsl.in-addr.zen.co.uk C4FIBS_0.6.9.102 -
+6
+5 GammonBot_XVIII - - 1 0 2135.60 1110167 2 1593778365 47.199.55.93 ParlorBot bots@moulton.us
+6
+8 GammonBot_XVIII GammonBot_XVIII logs out.
+8 playtime playtime drops connection.
+5 GammonBot_XX - - 1 0 2090.36 1248490 64 1593777885 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 HALIS - - 1 0 1543.89 227096 245 1593792268 78-83-19-0.spectrumnet.bg OdesysMobileR315 -
+6
+
+GammonBot_XX has left the game with HALIS.
+
+8 GammonBot_XX GammonBot_XX logs out.
+8 Davies Davies logs out.
+
+pipcat moves bar-22 13-10 10-7 7-4 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:5:2:1:0:-1:2:0:0:0:0:0:0:1:0:0:0:-1:-2:-3:-4:2:-2:-2:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 4 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:5:2:1:0:-1:2:0:0:0:0:0:0:1:0:0:0:-1:-2:-3:-4:2:-2:-2:0:-1:4:1:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 19-23 18-19 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:5:2:1:0:-1:2:0:0:0:0:0:0:1:0:0:0:0:-2:-3:-4:2:-3:-2:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+pipcat rolls 1 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:5:2:1:0:-1:2:0:0:0:0:0:0:1:0:0:0:0:-2:-3:-4:2:-3:-2:0:1:0:0:1:3:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+pipcat moves 7-4 7-6 .
+board:GammonBot_VII:pipcat:5:0:0:-1:2:5:2:2:0:1:0:0:0:0:0:0:0:1:0:0:0:0:-2:-3:-4:2:-3:-2:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+7 Linus Linus logs in.
+5 Linus - - 0 0 1780.50 56102 0 1593789213 198.174.108.202 ?NT________________! 7ptsormoreplease@FIBS.com
+6
+
+GammonBot_VII rolls 5 and 1.
+
+board:GammonBot_VII:pipcat:5:0:0:-1:2:5:2:2:0:1:0:0:0:0:0:0:0:1:0:0:0:0:-2:-3:-4:2:-3:-2:0:-1:5:1:0:0:4:0:1:0:-1:1:25:0:0:0:1:0:2:5:0:0
+
+
+GammonBot_VII moves bar-5 5-6 .
+board:GammonBot_VII:pipcat:5:0:0:0:2:5:2:2:0:-1:0:0:0:0:0:0:0:1:0:0:0:0:-2:-3:-4:2:-3:-2:1:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+pipcat rolls 1 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:2:5:2:2:0:-1:0:0:0:0:0:0:0:1:0:0:0:0:-2:-3:-4:2:-3:-2:1:1:0:0:1:3:4:0:1:0:-1:1:25:0:0:0:0:1:2:5:0:0
+
+
+pipcat moves bar-22 2-1 .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:-1:0:0:0:0:0:0:0:1:0:0:0:0:-2:-3:-4:3:-3:-2:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+nena wins a 1 point match against BlunderBot_XII  1-0 .
+5 nena - - 1 0 895.12 10007 0 1593784072 bd3c60ef.virtua.com.br Padgammon_v3.2.1 -
+6
+5 BlunderBot_XII - - 1 0 1403.16 895142 0 1593785570 47.199.55.93 ParlorBot bots@moulton.us
+6
+
+GammonBot_VII rolls 6 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:-1:0:0:0:0:0:0:0:1:0:0:0:0:-2:-3:-4:3:-3:-2:0:-1:6:4:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 6-12 12-16 .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:0:0:0:0:0:0:0:0:1:0:-1:0:0:-2:-3:-4:3:-3:-2:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+pipcat rolls 1 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:0:0:0:0:0:0:0:0:1:0:-1:0:0:-2:-3:-4:3:-3:-2:0:1:0:0:1:2:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+pipcat moves 14-12 12-11 .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:0:0:0:0:0:1:0:0:0:0:-1:0:0:-2:-3:-4:3:-3:-2:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 1 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:0:0:0:0:0:1:0:0:0:0:-1:0:0:-2:-3:-4:3:-3:-2:0:-1:1:4:0:0:4:0:1:0:-1:1:25:0:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 16-20 24-off .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:0:0:0:0:0:1:0:0:0:0:0:0:0:-2:-4:-4:3:-3:-1:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:1:0:0:0:2:5:0:0
+
+pipcat rolls 3 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:0:0:0:0:0:1:0:0:0:0:0:0:0:-2:-4:-4:3:-3:-1:0:1:0:0:3:5:4:0:1:0:-1:1:25:0:1:0:0:0:2:5:0:0
+
+
+pipcat moves 22-17 17-14 .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:0:0:0:0:0:1:0:0:1:0:0:0:0:-2:-4:-4:2:-3:-1:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:1:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 4 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:0:0:0:0:0:1:0:0:1:0:0:0:0:-2:-4:-4:2:-3:-1:0:-1:4:5:0:0:4:0:1:0:-1:1:25:0:1:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 20-off 21-off .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:0:0:0:0:0:1:0:0:1:0:0:0:0:-2:-3:-3:2:-3:-1:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:3:0:0:0:2:5:0:0
+
+pipcat rolls 5 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:0:0:0:0:0:1:0:0:1:0:0:0:0:-2:-3:-3:2:-3:-1:0:1:0:0:5:4:4:0:1:0:-1:1:25:0:3:0:0:0:2:5:0:0
+
+
+pipcat moves 11-6 14-10 .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:1:0:0:0:1:0:0:0:0:0:0:0:0:-2:-3:-3:2:-3:-1:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:3:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 5 and 2.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:1:0:0:0:1:0:0:0:0:0:0:0:0:-2:-3:-3:2:-3:-1:0:-1:5:2:0:0:4:0:1:0:-1:1:25:0:3:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 20-off 23-off .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:1:0:0:0:1:0:0:0:0:0:0:0:0:-2:-2:-3:2:-2:-1:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:5:0:0:0:2:5:0:0
+
+pipcat rolls 5 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:1:0:0:0:1:0:0:0:0:0:0:0:0:-2:-2:-3:2:-2:-1:0:1:0:0:5:6:4:0:1:0:-1:1:25:0:5:0:0:0:2:5:0:0
+
+7 indigob indigob logs in.
+5 indigob - - 0 0 1705.19 39453 1 1593786858 83.201.151.97 Padgammon_v3.2.1 -
+6
+7 Coldcase Coldcase logs in.
+5 Coldcase - - 0 0 1508.76 71982 0 1593744937 5.199.155.152 BGOnline_v3.2.1 -
+6
+
+pipcat moves 22-16 22-17 .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:1:0:0:0:1:0:0:0:0:0:1:1:0:-2:-2:-3:0:-2:-1:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:5:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 3 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:1:0:0:0:1:0:0:0:0:0:1:1:0:-2:-2:-3:0:-2:-1:0:-1:3:5:0:0:4:0:1:0:-1:1:25:0:5:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 19-22 20-off .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:1:0:0:0:1:0:0:0:0:0:1:1:0:-1:-1:-3:-1:-2:-1:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:6:0:0:0:2:5:0:0
+
+pipcat rolls 2 and 6.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:1:0:0:0:1:0:0:0:0:0:1:1:0:-1:-1:-3:-1:-2:-1:0:1:0:0:2:6:4:0:1:0:-1:1:25:0:6:0:0:0:2:5:0:0
+
+5 BlunderBot_XII nena - 1 0 1403.16 895142 1 1593785570 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 nena BlunderBot_XII - 1 0 895.12 10007 2 1593784072 bd3c60ef.virtua.com.br Padgammon_v3.2.1 -
+6
+
+BlunderBot_XII and nena start a 1 point match.
+
+pipcat moves 17-11 16-14 .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:1:0:0:0:1:1:0:0:1:0:0:0:0:-1:-1:-3:-1:-2:-1:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:6:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 5 and 3.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:1:0:0:0:1:1:0:0:1:0:0:0:0:-1:-1:-3:-1:-2:-1:0:-1:5:3:0:0:4:0:1:0:-1:1:25:0:6:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 20-off 22-off .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:1:0:0:0:1:1:0:0:1:0:0:0:0:-1:0:-3:0:-2:-1:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:8:0:0:0:2:5:0:0
+7 Paled Paled logs in.
+5 Paled - - 0 0 1389.37 582 0 1593790715 174.194.10.70 Padgammon_v3.2.1 -
+6
+
+pipcat rolls 5 and 5.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:2:0:1:0:0:0:1:1:0:0:1:0:0:0:0:-1:0:-3:0:-2:-1:0:1:0:0:5:5:4:0:1:0:-1:1:25:0:8:0:0:0:2:5:0:0
+
+
+pipcat moves 14-9 11-6 10-5 9-4 .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:3:1:2:0:0:0:0:0:0:0:0:0:0:0:0:-1:0:-3:0:-2:-1:0:-1:0:0:0:0:4:0:1:0:-1:1:25:0:8:0:0:0:2:5:0:0
+5 Paled - - 1 0 1389.37 582 2 1593790715 70.sub-174-194-10.myvzw.com Padgammon_v3.2.1 -
+6
+5 indigob - - 1 0 1705.19 39453 4 1593786858 anice-652-1-128-97.w83-201.abo.wanadoo.fr Padgammon_v3.2.1 -
+6
+
+GammonBot_VII rolls 4 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:3:1:2:0:0:0:0:0:0:0:0:0:0:0:0:-1:0:-3:0:-2:-1:0:-1:4:4:0:0:4:0:1:0:-1:1:25:0:8:0:0:0:4:5:0:0
+
+
+GammonBot_VII moves 19-23 21-off 21-off 21-off .
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:3:1:2:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:-3:-1:0:1:0:0:0:0:4:0:1:0:-1:1:25:0:11:0:0:0:4:5:0:0
+
+pipcat rolls 6 and 4.
+
+board:GammonBot_VII:pipcat:5:0:0:0:3:4:2:3:1:2:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:-3:-1:0:1:0:0:6:4:4:0:1:0:-1:1:25:0:11:0:0:0:4:5:0:0
+
+
+BlunderBot_IV wins a 3 point match against gengiskan  3-2 .
+5 BlunderBot_IV - - 1 0 1553.26 1209142 0 1593777765 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 gengiskan - - 1 0 1454.25 25708 0 1593717271 net-2-38-244-80.cust.vodafonedsl.it Padgammon_v3.2.1 -
+6
+8 BlunderBot_IV BlunderBot_IV logs out.
+
+pipcat wants to resign. GammonBot_VII will win 4 points.
+
+GammonBot_VII accepts and wins 4 points.
+
+score in 5 point match: GammonBot_VII-4 pipcat-0
+
+Starting a new game with pipcat.
+
+pipcat rolled 2, GammonBot_VII rolled 6
+
+GammonBot_VII makes the first move.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:0:0:0:5:0:3:0:0:0:-5:5:0:0:0:-3:0:-5:0:0:0:0:2:0:1:6:2:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 24-18 13-11 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:0:0:0:5:0:3:0:0:1:-5:4:0:0:0:-3:1:-5:0:0:0:0:1:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+pipcat rolls 1 and 2.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:0:0:0:5:0:3:0:0:1:-5:4:0:0:0:-3:1:-5:0:0:0:0:1:0:-1:0:0:1:2:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+pipcat moves 17-18 12-14 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:0:0:0:5:0:3:0:0:1:-4:4:-1:0:0:-2:-1:-5:0:0:0:0:1:1:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:1:0:2:5:0:0
+
+GammonBot_VII rolls 3 and 4.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:0:0:0:5:0:3:0:0:1:-4:4:-1:0:0:-2:-1:-5:0:0:0:0:1:1:1:3:4:0:0:1:1:1:0:1:-1:0:25:0:0:1:0:2:5:0:0
+
+
+GammonBot_VII moves bar-22 22-18 .
+board:GammonBot_VII:pipcat:5:4:0:-1:-2:0:0:0:0:5:0:3:0:0:1:-4:4:-1:0:0:-2:1:-5:0:0:0:0:1:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:1:2:5:0:0
+
+pipcat rolls 5 and 4.
+
+board:GammonBot_VII:pipcat:5:4:0:-1:-2:0:0:0:0:5:0:3:0:0:1:-4:4:-1:0:0:-2:1:-5:0:0:0:0:1:0:-1:0:0:5:4:1:1:1:0:1:-1:0:25:0:0:0:1:2:5:0:0
+
+5 seadog Paled - 1 0 1545.01 94883 209 1593774313 209.173.27.184.olt.eph.ptd.net ?NT________________! 5ormore@fibs.com
+6
+5 Paled seadog - 1 0 1389.37 582 1 1593790715 70.sub-174-194-10.myvzw.com Padgammon_v3.2.1 -
+6
+
+seadog and Paled start a 3 point match.
+
+pipcat moves bar-5 14-18 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:0:0:-1:5:0:3:0:0:1:-4:4:0:0:0:-2:-1:-5:0:0:0:0:1:1:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:1:0:2:5:0:0
+
+truxtun wins a 7 point match against BlunderBot  10-0 .
+5 truxtun - - 1 0 1556.02 89706 3 1593756177 c-67-188-249-80.hsd1.ca.comcast.net ?NT________________! -
+6
+5 BlunderBot - - 1 0 1618.90 1209643 3 1593781485 47.199.55.93 ParlorBot bots@moulton.us
+6
+
+GammonBot_VII rolls 1 and 1.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:0:0:-1:5:0:3:0:0:1:-4:4:0:0:0:-2:-1:-5:0:0:0:0:1:1:1:1:1:0:0:1:1:1:0:1:-1:0:25:0:0:1:0:4:5:0:0
+
+
+GammonBot_VII moves bar-24 24-23 6-5 6-5 .
+board:GammonBot_VII:pipcat:5:4:0:-1:-2:0:0:0:2:3:0:3:0:0:1:-4:4:0:0:0:-2:-1:-5:0:0:0:1:1:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:1:4:5:0:0
+
+pipcat rolls 1 and 2.
+
+board:GammonBot_VII:pipcat:5:4:0:-1:-2:0:0:0:2:3:0:3:0:0:1:-4:4:0:0:0:-2:-1:-5:0:0:0:1:1:0:-1:0:0:1:2:1:1:1:0:1:-1:0:25:0:0:0:1:4:5:0:0
+
+
+pipcat moves bar-2 17-18 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:-1:0:0:2:3:0:3:0:0:1:-4:4:0:0:0:-1:-2:-5:0:0:0:1:1:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:4:5:0:0
+
+GammonBot_VII rolls 4 and 6.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:-1:0:0:2:3:0:3:0:0:1:-4:4:0:0:0:-1:-2:-5:0:0:0:1:1:0:1:4:6:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 11-7 13-7 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:-1:0:0:2:3:2:3:0:0:0:-4:3:0:0:0:-1:-2:-5:0:0:0:1:1:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+pipcat rolls 3 and 6.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:-1:0:0:2:3:2:3:0:0:0:-4:3:0:0:0:-1:-2:-5:0:0:0:1:1:0:-1:0:0:3:6:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+5 BlunderBot truxtun - 1 0 1618.90 1209643 0 1593781485 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 truxtun BlunderBot - 1 0 1556.02 89706 1 1593756177 c-67-188-249-80.hsd1.ca.comcast.net ?NT________________! -
+6
+
+BlunderBot and truxtun start a 7 point match.
+
+pipcat moves 1-4 4-10 .
+board:GammonBot_VII:pipcat:5:4:0:0:-1:-1:0:0:2:3:2:3:0:-1:0:-4:3:0:0:0:-1:-2:-5:0:0:0:1:1:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 2 and 1.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-1:-1:0:0:2:3:2:3:0:-1:0:-4:3:0:0:0:-1:-2:-5:0:0:0:1:1:0:1:2:1:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 13-11 11-10 .
+board:GammonBot_VII:pipcat:5:4:0:-1:-1:-1:0:0:2:3:2:3:0:1:0:-4:2:0:0:0:-1:-2:-5:0:0:0:1:1:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:1:2:5:0:0
+
+pipcat rolls 1 and 1.
+
+board:GammonBot_VII:pipcat:5:4:0:-1:-1:-1:0:0:2:3:2:3:0:1:0:-4:2:0:0:0:-1:-2:-5:0:0:0:1:1:0:-1:0:0:1:1:1:1:1:0:1:-1:0:25:0:0:0:1:2:5:0:0
+
+5 BlunderBot_XI gengiskan - 1 0 1506.65 902462 0 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 gengiskan BlunderBot_XI - 1 0 1454.25 25708 2 1593717271 net-2-38-244-80.cust.vodafonedsl.it Padgammon_v3.2.1 -
+6
+
+BlunderBot_XI and gengiskan start a 3 point match.
+5 Noah_temporarily - - 0 0 1770.26 29958 87 1593791063 ip-217-103-62-10.ip.prioritytelecom.net <NL________________$ TheProblem,Sir,that-remains@MSM.com
+6
+
+pipcat moves bar-1 19-20 19-20 17-18 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:-1:0:0:2:3:2:3:0:1:0:-4:2:0:0:0:0:-3:-3:-2:0:0:1:1:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 5 and 1.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:-1:0:0:2:3:2:3:0:1:0:-4:2:0:0:0:0:-3:-3:-2:0:0:1:1:0:1:5:1:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 10-5 24-23 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:-1:0:0:3:3:2:3:0:0:0:-4:2:0:0:0:0:-3:-3:-2:0:0:2:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+pipcat rolls 6 and 1.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:-1:0:0:3:3:2:3:0:0:0:-4:2:0:0:0:0:-3:-3:-2:0:0:2:0:0:-1:0:0:6:1:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+7 linda linda logs in.
+5 linda - - 0 0 1462.80 5387 0 1593789231 146.255.110.240 Padgammon_v3.2.1 -
+6
+7 NICK_L NICK_L logs in.
+5 NICK_L - - 1 0 1826.36 33648 1 1593791792 5.183.92.86 FIBzilla5.0.50 -
+6
+
+pipcat moves 2-3 3-9 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:0:0:3:3:2:3:-1:0:0:-4:2:0:0:0:0:-3:-3:-2:0:0:2:0:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 5 and 3.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:0:0:3:3:2:3:-1:0:0:-4:2:0:0:0:0:-3:-3:-2:0:0:2:0:0:1:5:3:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 8-3 6-3 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:2:-1:0:0:-4:2:0:0:0:0:-3:-3:-2:0:0:2:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+5 Geooooo - - 1 0 1421.20 29999 3 1593778751 catv-78-139-3-162.catv.broadband.hu Padgammon_v3.2.1 -
+6
+
+pipcat rolls 3 and 6.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:2:-1:0:0:-4:2:0:0:0:0:-3:-3:-2:0:0:2:0:0:-1:0:0:3:6:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+5 BlunderBot_VI Geooooo - 1 0 1525.80 1130879 0 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 Geooooo BlunderBot_VI - 1 0 1421.20 29999 1 1593778751 catv-78-139-3-162.catv.broadband.hu Padgammon_v3.2.1 -
+6
+
+BlunderBot_VI and Geooooo start a 13 point match.
+
+pipcat moves 9-15 12-15 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:2:0:0:0:-3:2:0:-2:0:0:-3:-3:-2:0:0:2:0:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 3 and 6.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:2:0:0:0:-3:2:0:-2:0:0:-3:-3:-2:0:0:2:0:0:1:3:6:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 23-17 17-14 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:2:0:0:0:-3:2:1:-2:0:0:-3:-3:-2:0:0:1:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+pipcat rolls 6 and 2.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:2:0:0:0:-3:2:1:-2:0:0:-3:-3:-2:0:0:1:0:0:-1:0:0:6:2:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+5 linda - - 1 0 1462.80 5387 1 1593789231 240.110.255.146.boundlesscomms.net Padgammon_v3.2.1 -
+6
+5 BlunderBot_VIII linda - 1 0 1532.11 1134274 0 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 linda BlunderBot_VIII - 1 0 1462.80 5387 2 1593789231 240.110.255.146.boundlesscomms.net Padgammon_v3.2.1 -
+6
+
+BlunderBot_VIII and linda start a 1 point match.
+
+pipcat moves 12-14 14-20 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:2:0:0:0:-2:2:0:-2:0:0:-3:-3:-3:0:0:1:0:1:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:1:0:2:5:0:0
+
+GammonBot_VII rolls 1 and 4.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:2:0:0:0:-2:2:0:-2:0:0:-3:-3:-3:0:0:1:0:1:1:1:4:0:0:1:1:1:0:1:-1:0:25:0:0:1:0:2:5:0:0
+
+5 GammonBot_II NICK_L - 1 0 2119.81 1339969 1 1593785204 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 NICK_L GammonBot_II - 1 0 1826.36 33648 2 1593791792 5.183.92.86 FIBzilla5.0.50 -
+6
+
+GammonBot_II and NICK_L start a 1 point match.
+
+GammonBot_VII moves bar-21 23-22 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:2:0:0:0:-2:2:0:-2:0:0:-3:-3:-3:1:1:0:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+pipcat rolls 6 and 1.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:2:0:0:0:-2:2:0:-2:0:0:-3:-3:-3:1:1:0:0:0:-1:0:0:6:1:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+5 GammonBot_XIII indigob - 1 0 2074.27 1068926 1 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 indigob GammonBot_XIII - 1 0 1705.19 39453 2 1593786858 anice-652-1-128-97.w83-201.abo.wanadoo.fr Padgammon_v3.2.1 -
+6
+
+GammonBot_XIII and indigob start a 3 point match.
+
+pipcat moves 15-21 20-21 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:2:0:0:0:-2:2:0:-1:0:0:-3:-3:-2:-2:1:0:0:1:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:1:0:2:5:0:0
+
+GammonBot_VII rolls 3 and 5.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:2:0:0:0:-2:2:0:-1:0:0:-3:-3:-2:-2:1:0:0:1:1:3:5:0:0:1:1:1:0:1:-1:0:25:0:0:1:0:2:5:0:0
+
+
+GammonBot_VII moves bar-22 13-8 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:3:0:0:0:-2:1:0:-1:0:0:-3:-3:-2:-2:2:0:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+7 GammonBot_XVIII GammonBot_XVIII logs in.
+5 GammonBot_XVIII - - 1 0 2135.60 1110167 0 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+6
+7 GammonBot_XX GammonBot_XX logs in.
+5 GammonBot_XX - - 1 0 2090.36 1248490 0 1593785085 47.199.55.93 ParlorBot bots@moulton.us
+6
+7 BlunderBot_IV BlunderBot_IV logs in.
+5 BlunderBot_IV - - 1 0 1553.26 1209142 0 1593784965 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 HALIS GammonBot_XX - 1 0 1543.89 227096 96 1593792268 78-83-19-0.spectrumnet.bg OdesysMobileR315 -
+6
+5 GammonBot_XX HALIS - 1 0 2090.36 1248490 0 1593785085 47.199.55.93 ParlorBot bots@moulton.us
+6
+
+HALIS and GammonBot_XX are resuming their 13-point match.
+
+pipcat rolls 5 and 4.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:3:0:0:0:-2:1:0:-1:0:0:-3:-3:-2:-2:2:0:0:0:-1:0:0:5:4:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+BlunderBot_IX wins a 3 point match against talvi  3-2 .
+5 BlunderBot_IX - - 1 0 1534.92 1145768 8 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 talvi - - 1 0 1447.24 3146 2 1593710581 ip-176-198-41-79.hsi05.unitymediagroup.de ?NT________________! -
+6
+
+pipcat moves 18-23 19-23 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:3:0:0:0:-2:1:0:-1:0:0:-2:-2:-2:-2:2:-2:0:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 2 and 2.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:0:3:2:2:3:0:0:0:-2:1:0:-1:0:0:-2:-2:-2:-2:2:-2:0:0:1:2:2:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:4:5:0:0
+
+13 dorbel Monkies, macaques in this case, are intelligent and sociable animals, who exhibit distress when chained up 24 hours a day. Horeses and oxen, when not ploughing, are in a field, strolling around.
+
+GammonBot_VII moves 8-6 8-6 6-4 6-4 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:2:3:2:2:1:0:0:0:-2:1:0:-1:0:0:-2:-2:-2:-2:2:-2:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:4:5:0:0
+
+pipcat rolls 4 and 3.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:2:3:2:2:1:0:0:0:-2:1:0:-1:0:0:-2:-2:-2:-2:2:-2:0:0:-1:0:0:4:3:1:1:1:0:1:-1:0:25:0:0:0:0:4:5:0:0
+
+5 BlunderBot_IX talvi - 1 0 1534.92 1145768 0 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 talvi BlunderBot_IX - 1 0 1447.24 3146 2 1593710581 ip-176-198-41-79.hsi05.unitymediagroup.de ?NT________________! -
+6
+
+BlunderBot_IX and talvi start a 3 point match.
+
+pipcat moves 15-19 12-15 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:2:3:2:2:1:0:0:0:-1:1:0:-1:0:0:-2:-3:-2:-2:2:-2:0:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:4:5:0:0
+
+GammonBot_VII rolls 4 and 3.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:2:3:2:2:1:0:0:0:-1:1:0:-1:0:0:-2:-3:-2:-2:2:-2:0:0:1:4:3:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 13-9 9-6 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:2:3:3:2:1:0:0:0:-1:0:0:-1:0:0:-2:-3:-2:-2:2:-2:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+pipcat rolls 4 and 2.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:2:3:3:2:1:0:0:0:-1:0:0:-1:0:0:-2:-3:-2:-2:2:-2:0:0:-1:0:0:4:2:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+13 TourneyBot *** F3 - Fri 3/5 Tournament will start at 16:30UTC (in 17 minutes) Type: tell TourneyBot tourney 19309  for details. Register with: tell TourneyBot register F3 ***
+
+pipcat moves 12-16 16-18 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:2:3:3:2:1:0:0:0:0:0:0:-1:0:0:-3:-3:-2:-2:2:-2:0:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 2 and 5.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:2:3:3:2:1:0:0:0:0:0:0:-1:0:0:-3:-3:-2:-2:2:-2:0:0:1:2:5:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 22-17 17-15 .
+board:GammonBot_VII:pipcat:5:4:0:-1:-2:0:2:2:3:3:2:1:0:0:0:0:0:0:1:0:0:-3:-3:-2:-2:1:-2:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:1:2:5:0:0
+
+pipcat rolls 6 and 6.
+
+board:GammonBot_VII:pipcat:5:4:0:-1:-2:0:2:2:3:3:2:1:0:0:0:0:0:0:1:0:0:-3:-3:-2:-2:1:-2:0:0:-1:0:0:6:6:1:1:1:0:1:-1:0:25:0:0:0:1:2:5:0:0
+
+pipcat can't move.
+
+
+
+GammonBot_VII rolls 6 and 2.
+
+board:GammonBot_VII:pipcat:5:4:0:-1:-2:0:2:2:3:3:2:1:0:0:0:0:0:0:1:0:0:-3:-3:-2:-2:1:-2:0:0:1:6:2:0:0:1:1:1:0:1:-1:0:25:0:0:0:1:2:5:0:0
+
+
+GammonBot_VII moves 22-16 15-13 .
+board:GammonBot_VII:pipcat:5:4:0:-1:-2:0:2:2:3:3:2:1:0:0:0:0:1:0:0:1:0:-3:-3:-2:-2:0:-2:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:1:2:5:0:0
+
+pipcat rolls 6 and 4.
+
+board:GammonBot_VII:pipcat:5:4:0:-1:-2:0:2:2:3:3:2:1:0:0:0:0:1:0:0:1:0:-3:-3:-2:-2:0:-2:0:0:-1:0:0:6:4:1:1:1:0:1:-1:0:25:0:0:0:1:2:5:0:0
+
+pipcat can't move.
+
+
+
+GammonBot_VII rolls 6 and 1.
+
+board:GammonBot_VII:pipcat:5:4:0:-1:-2:0:2:2:3:3:2:1:0:0:0:0:1:0:0:1:0:-3:-3:-2:-2:0:-2:0:0:1:6:1:0:0:1:1:1:0:1:-1:0:25:0:0:0:1:2:5:0:0
+
+
+GammonBot_VII moves 16-10 8-7 .
+board:GammonBot_VII:pipcat:5:4:0:-1:-2:0:2:2:3:3:3:0:0:1:0:0:1:0:0:0:0:-3:-3:-2:-2:0:-2:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:1:2:5:0:0
+
+pipcat rolls 5 and 2.
+
+board:GammonBot_VII:pipcat:5:4:0:-1:-2:0:2:2:3:3:3:0:0:1:0:0:1:0:0:0:0:-3:-3:-2:-2:0:-2:0:0:-1:0:0:5:2:1:1:1:0:1:-1:0:25:0:0:0:1:2:5:0:0
+
+
+pipcat moves bar-2 18-23 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:-1:2:2:3:3:3:0:0:1:0:0:1:0:0:0:0:-2:-3:-2:-2:0:-3:0:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 2 and 4.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:-1:2:2:3:3:3:0:0:1:0:0:1:0:0:0:0:-2:-3:-2:-2:0:-3:0:0:1:2:4:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 10-8 8-4 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:-1:2:3:3:3:3:0:0:0:0:0:1:0:0:0:0:-2:-3:-2:-2:0:-3:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+pipcat rolls 2 and 6.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:-1:2:3:3:3:3:0:0:0:0:0:1:0:0:0:0:-2:-3:-2:-2:0:-3:0:0:-1:0:0:2:6:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+pipcat moves 2-8 19-21 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:3:3:3:3:-1:0:0:0:0:1:0:0:0:0:-2:-2:-2:-3:0:-3:0:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 5 and 3.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:3:3:3:3:-1:0:0:0:0:1:0:0:0:0:-2:-2:-2:-3:0:-3:0:0:1:5:3:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 13-10 10-5 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:3:4:3:3:-1:0:0:0:0:0:0:0:0:0:-2:-2:-2:-3:0:-3:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+pipcat rolls 2 and 4.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:3:4:3:3:-1:0:0:0:0:0:0:0:0:0:-2:-2:-2:-3:0:-3:0:0:-1:0:0:2:4:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+pipcat moves 8-12 12-14 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:3:4:3:3:0:0:0:0:0:0:-1:0:0:0:-2:-2:-2:-3:0:-3:0:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 3 and 5.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:0:2:3:4:3:3:0:0:0:0:0:0:-1:0:0:0:-2:-2:-2:-3:0:-3:0:0:1:3:5:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 5-2 7-2 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:2:2:3:3:3:2:0:0:0:0:0:0:-1:0:0:0:-2:-2:-2:-3:0:-3:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+pipcat rolls 2 and 6.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:2:2:3:3:3:2:0:0:0:0:0:0:-1:0:0:0:-2:-2:-2:-3:0:-3:0:0:-1:0:0:2:6:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+pipcat moves 14-20 20-22 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:2:2:3:3:3:2:0:0:0:0:0:0:0:0:0:0:-2:-2:-2:-3:-1:-3:0:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 1 and 5.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:2:2:3:3:3:2:0:0:0:0:0:0:0:0:0:0:-2:-2:-2:-3:-1:-3:0:0:1:1:5:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 7-6 7-2 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:3:2:3:3:4:0:0:0:0:0:0:0:0:0:0:0:-2:-2:-2:-3:-1:-3:0:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+Brazilsdk wins a 7 point match against BoxCars  7-1 .
+5 Brazilsdk - - 1 0 1878.17 32195 2 1593768455 89-23-232-68.ip4.fiberby.net ?WF________________! -
+6
+5 BoxCars - - 0 0 1796.09 3405 0 1593783810 ool-4350a4bc.dyn.optonline.net 3DFiBs4.0.79 Fifthstreet
+6
+
+pipcat rolls 1 and 1.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:3:2:3:3:4:0:0:0:0:0:0:0:0:0:0:0:-2:-2:-2:-3:-1:-3:0:0:-1:0:0:1:1:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+pipcat moves 21-22 23-24 18-19 19-20 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:3:2:3:3:4:0:0:0:0:0:0:0:0:0:0:0:-1:-2:-3:-2:-2:-2:-1:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 3 and 1.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:3:2:3:3:4:0:0:0:0:0:0:0:0:0:0:0:-1:-2:-3:-2:-2:-2:-1:0:1:3:1:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 6-3 6-5 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:3:3:3:4:2:0:0:0:0:0:0:0:0:0:0:0:-1:-2:-3:-2:-2:-2:-1:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+pipcat rolls 3 and 5.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:3:3:3:4:2:0:0:0:0:0:0:0:0:0:0:0:-1:-2:-3:-2:-2:-2:-1:0:-1:0:0:3:5:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+5 BoxCars - - 1 0 1796.09 3405 6 1593783810 ool-4350a4bc.dyn.optonline.net 3DFiBs4.0.79 Fifthstreet
+6
+5 TourneyBot - - 1 0 1500.00 0 26 1590025056 47.199.55.93 =NTTourney1rganizer2 bots@moulton.us
+6
+5 TourneyBot - - 0 0 1500.00 0 0 1590025056 47.199.55.93 =NTTourney1rganizer2 bots@moulton.us
+6
+
+BlunderBot_XII wins a 1 point match against nena  2-0 .
+5 BlunderBot_XII - - 1 0 1404.59 895143 0 1593785570 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 nena - - 1 0 893.68 10008 0 1593784072 bd3c60ef.virtua.com.br Padgammon_v3.2.1 -
+6
+7 smokesingdance smokesingdance logs in.
+5 smokesingdance - - 0 0 1650.23 34355 1 1593780056 109.145.108.155 FIBzilla5.0.49 -
+6
+
+pipcat moves 18-23 20-23 .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:3:3:3:4:2:0:0:0:0:0:0:0:0:0:0:0:0:-2:-2:-2:-2:-4:-1:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 6 and 6.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:3:3:3:4:2:0:0:0:0:0:0:0:0:0:0:0:0:-2:-2:-2:-2:-4:-1:0:1:6:6:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:4:5:0:0
+
+
+GammonBot_VII moves 6-off 6-off 5-off 5-off .
+board:GammonBot_VII:pipcat:5:4:0:0:-2:3:3:3:2:0:0:0:0:0:0:0:0:0:0:0:0:0:-2:-2:-2:-2:-4:-1:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:4:0:0:0:4:5:0:0
+
+pipcat rolls 2 and 6.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-2:3:3:3:2:0:0:0:0:0:0:0:0:0:0:0:0:0:-2:-2:-2:-2:-4:-1:0:-1:0:0:2:6:1:1:1:0:1:-1:0:25:4:0:0:0:4:5:0:0
+
+8 Brazilsdk Brazilsdk drops connection.
+
+pipcat moves 1-7 7-9 .
+board:GammonBot_VII:pipcat:5:4:0:0:-1:3:3:3:2:0:0:0:-1:0:0:0:0:0:0:0:0:0:-2:-2:-2:-2:-4:-1:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:4:0:0:0:4:5:0:0
+
+GammonBot_VII rolls 6 and 5.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-1:3:3:3:2:0:0:0:-1:0:0:0:0:0:0:0:0:0:-2:-2:-2:-2:-4:-1:0:1:6:5:0:0:1:1:1:0:1:-1:0:25:4:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 5-off 5-off .
+board:GammonBot_VII:pipcat:5:4:0:0:-1:3:3:3:0:0:0:0:-1:0:0:0:0:0:0:0:0:0:-2:-2:-2:-2:-4:-1:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:6:0:0:0:2:5:0:0
+
+pipcat rolls 6 and 1.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-1:3:3:3:0:0:0:0:-1:0:0:0:0:0:0:0:0:0:-2:-2:-2:-2:-4:-1:0:-1:0:0:6:1:1:1:1:0:1:-1:0:25:6:0:0:0:2:5:0:0
+
+8 Barger Connection with Barger timed out.
+
+pipcat moves 9-15 23-24 .
+board:GammonBot_VII:pipcat:5:4:0:0:-1:3:3:3:0:0:0:0:0:0:0:0:0:0:-1:0:0:0:-2:-2:-2:-2:-3:-2:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:6:0:0:0:2:5:0:0
+
+GammonBot_VII rolls 5 and 5.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-1:3:3:3:0:0:0:0:0:0:0:0:0:0:-1:0:0:0:-2:-2:-2:-2:-3:-2:0:1:5:5:0:0:1:1:1:0:1:-1:0:25:6:0:0:0:4:5:0:0
+
+5 smokesingdance - - 1 0 1650.23 34355 8 1593780056 host109-145-108-155.range109-145.btcentralplus.com FIBzilla5.0.49 -
+6
+
+GammonBot_VII moves 4-off 4-off 4-off 3-off .
+board:GammonBot_VII:pipcat:5:4:0:0:-1:3:2:0:0:0:0:0:0:0:0:0:0:0:-1:0:0:0:-2:-2:-2:-2:-3:-2:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:10:0:0:0:4:5:0:0
+
+pipcat rolls 1 and 1.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-1:3:2:0:0:0:0:0:0:0:0:0:0:0:-1:0:0:0:-2:-2:-2:-2:-3:-2:0:-1:0:0:1:1:1:1:1:0:1:-1:0:25:10:0:0:0:4:5:0:0
+
+
+pipcat moves 15-16 16-17 17-18 18-19 .
+board:GammonBot_VII:pipcat:5:4:0:0:-1:3:2:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:-3:-2:-2:-2:-3:-2:0:1:0:0:0:0:1:1:1:0:1:-1:0:25:10:0:0:0:4:5:0:0
+
+GammonBot_VII rolls 2 and 6.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-1:3:2:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:-3:-2:-2:-2:-3:-2:0:1:2:6:0:0:1:1:1:0:1:-1:0:25:10:0:0:0:2:5:0:0
+
+
+GammonBot_VII moves 3-off 2-off .
+board:GammonBot_VII:pipcat:5:4:0:0:-1:2:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:-3:-2:-2:-2:-3:-2:0:-1:0:0:0:0:1:1:1:0:1:-1:0:25:12:0:0:0:2:5:0:0
+
+pipcat rolls 5 and 6.
+
+board:GammonBot_VII:pipcat:5:4:0:0:-1:2:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:-3:-2:-2:-2:-3:-2:0:-1:0:0:5:6:1:1:1:0:1:-1:0:25:12:0:0:0:2:5:0:0
+
+13 dorbel Moreover, draught animals are highly domesticated, macaques are wild animals, usually captured as babies.
+
+pipcat wants to resign. GammonBot_VII will win 1 point.
+
+GammonBot_VII accepts and wins 1 point.
+
+GammonBot_VII wins the 5 point match 5-0 .
+5 GammonBot_VII - - 1 0 2036.66 1208959 4 1593781365 47.199.55.93 ParlorBot bots@moulton.us
+6
+5 pipcat - - 1 0 1720.86 10315 0 1593788553 165.red-81-43-241.staticip.rima-tde.net ?AD________________! -
+6
+8 pipcat pipcat drops connection.
+5 BoxCars smokesingdance - 1 0 1796.09 3405 7 1593783810 ool-4350a4bc.dyn.optonline.net 3DFiBs4.0.79 Fifthstreet
+6
+5 smokesingdance BoxCars - 1 0 1650.23 34355 7 1593780056 host109-145-108-155.range109-145.btcentralplus.com FIBzilla5.0.49 -
+6
+
+BoxCars and smokesingdance start a 5 point match.
+5 smokesingdance BoxCars - 0 0 1650.23 34355 8 1593780056 host109-145-108-155.range109-145.btcentralplus.com FIBzilla5.0.49 -
+6
+5 BoxCars smokesingdance - 0 0 1796.09 3405 0 1593783810 ool-4350a4bc.dyn.optonline.net 3DFiBs4.0.79 Fifthstreet
+6
