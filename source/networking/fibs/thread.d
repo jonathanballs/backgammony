@@ -201,8 +201,11 @@ class FIBSController {
                     if (this.currentMatch) {
                         if (!this.currentMatch.gs.equals(ms.match.gs)) {
                             writeln(ms);
-                            this.currentMatch.prettyPrint();
                             writeln("Received match state update which doesn't correspond to local state");
+                            writeln("============================ OLD =========================");
+                            this.currentMatch.prettyPrint();
+                            writeln("============================ RECEIVED =========================");
+                            ms.match.prettyPrint();
 
                             this.currentMatch = ms.match;
                             this.onUpdateMatchState.emit(ms.match);

@@ -174,9 +174,13 @@ BackgammonMatch parseFibsMatch(string s) {
     m.p2score = sSplit[5].to!int;
 
     if (p1moveDown) {
+        m.gs.borneOffPieces[Player.P1] = abs(sSplit[45].to!int);
+        m.gs.borneOffPieces[Player.P2] = abs(sSplit[46].to!int);
         m.gs.takenPieces[Player.P1] = abs(sSplit[47].to!int);
         m.gs.takenPieces[Player.P2] = abs(sSplit[48].to!int);
     } else {
+        m.gs.borneOffPieces[Player.P1] = abs(sSplit[46].to!int);
+        m.gs.borneOffPieces[Player.P2] = abs(sSplit[45].to!int);
         m.gs.takenPieces[Player.P1] = abs(sSplit[48].to!int);
         m.gs.takenPieces[Player.P2] = abs(sSplit[47].to!int);
     }
@@ -201,25 +205,21 @@ BackgammonMatch parseFibsMatch(string s) {
     if (sSplit[32] == "0") m.gs._currentPlayer = Player.NONE;
 
     // 33,34,35,36 are dice rolls...
-    if (m.gs._currentPlayer == Player.P1) {
-        uint die1 = sSplit[33].to!int;
-        uint die2 = sSplit[34].to!int;
-        if (die1 && die2) {
-            m.gs.turnState = TurnState.DiceRoll;
-            m.gs.rollDice(die1, die2);
-        } else {
-            m.gs.turnState = TurnState.DiceRoll;
-        }
+    uint die1 = sSplit[33].to!int;
+    uint die2 = sSplit[34].to!int;
+    uint die3 = sSplit[35].to!int;
+    uint die4 = sSplit[36].to!int;
+
+    if (die1 && die2) {
+        m.gs.turnState = TurnState.DiceRoll;
+        m.gs.rollDice(die1, die2);
+    } else if (die3 && die4) {
+        m.gs.turnState = TurnState.DiceRoll;
+        m.gs.rollDice(die3, die4);
     } else {
-        uint die1 = sSplit[35].to!int;
-        uint die2 = sSplit[36].to!int;
-        if (die1 && die2) {
-            m.gs.turnState = TurnState.DiceRoll;
-            m.gs.rollDice(die1, die2);
-        } else {
-            m.gs.turnState = TurnState.DiceRoll;
-        }
+        m.gs.turnState = TurnState.DiceRoll;
     }
+
     return m;
 }
 

@@ -157,7 +157,7 @@ class GameState {
      */
     OneIndexedStaticArray!(Point, 24) points;
     EnumIndexStaticArray!(Player, uint) takenPieces;
-    EnumIndexStaticArray!(Player, uint) borneOffPieces;
+    public EnumIndexStaticArray!(Player, uint) borneOffPieces;
     Player _currentPlayer;
     private TurnState _turnState;
     private uint[2] _diceValues;

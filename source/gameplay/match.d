@@ -48,9 +48,12 @@ class BackgammonMatch {
                    "     |                  |   |                   |",
             format!"     +12-11-10--9--8--7--------6--5--4--3--2--1-+ O: %s - score: %d"(player1.name, p1score),
                    "",
-            format!"     BAR: O-%d X-%d   OFF: O-%d X-%d   Cube: 1  %s rolled %d %d"(
+            format!"     BAR: O-%d X-%d   OFF: O-%d X-%d   Cube: %d  %s rolled %d %d"(
                 gs.takenPieces[Player.P1], gs.takenPieces[Player.P2],
-                0, 0, gs.currentPlayer == Player.P2 ? player2.name : player1.name, gs.diceValues[0], gs.diceValues[1])
+                gs.borneOffPieces[Player.P1], gs.borneOffPieces[Player.P2],
+                1, // TODO: Cube value
+                gs.currentPlayer == Player.P2 ? player2.name : player1.name,
+                gs.diceValues[0], gs.diceValues[1])
                 ];
 
         // Fill in the piece values
