@@ -119,7 +119,7 @@ class BackgammonWindow : MainWindow {
              * Is this a network game? Should this be on a signal listener?
              */
             if (match.isNetworkGame) {
-                auto netThread = match.gs.players[match.gs.currentPlayer.opposite].config.peek!Tid;
+                auto netThread = match.oppositeTurn().config.peek!Tid;
                 auto moves = backgammonBoard.getSelectedMoves();
                 auto msg = NetworkThreadNewMove(cast(uint) moves.length);
                 foreach (i, PipMovement m; moves) {
@@ -139,7 +139,7 @@ class BackgammonWindow : MainWindow {
             undoMoveBtn.setSensitive(false);
             finishTurnBtn.setSensitive(false);
 
-            if (match.gs.players[match.gs.currentPlayer].type == PlayerType.User) {
+            if (match.currentTurn().type == PlayerType.User) {
 
                 undoMoveBtn.setSensitive(!!backgammonBoard.getSelectedMoves().length);
                 if (match.gs.turnState == TurnState.MoveSelection) {
@@ -156,7 +156,7 @@ class BackgammonWindow : MainWindow {
             // If it's a network player then we await their movement
             // TODO: Perhaps this should be triggered when a user finishes and
             // can't move...
-            if (match.gs.players[match.gs.currentPlayer].type == PlayerType.User) {
+            if (match.currentTurn().type == PlayerType.User) {
                 if (match.gs.turnState == TurnState.MoveSelection
                         && match.gs.generatePossibleTurns().length == 0) {
                     backgammonBoard.finishTurn();
@@ -249,7 +249,7 @@ class BackgammonWindow : MainWindow {
 
         // Update the backgammon board
         backgammonBoard.setGameState(match.gs);
-        if (match.gs.players[Player.P1].type == PlayerType.User) {
+        if (match.player1.type == PlayerType.User) {
             backgammonBoard.setPlayerCorner(Player.P1, Corner.BR);
         } else {
             backgammonBoard.setPlayerCorner(Player.P2, Corner.BR);
@@ -280,35 +280,37 @@ class BackgammonWindow : MainWindow {
             return;
         }
 
+        auto pm = p == Player.P1 ? match.player1 : match.player2;
+
         // Local games we can just roll the dice automatically. Otherwise,
         // we will wait for a dice roll from the network thread.
         if (match && !match.isNetworkGame) {
             if (_gs.equals(_gs.dup.newGame())) {
-                backgammonBoard.displayMessage(_gs.players[p].name ~ " starts", () {
+                backgammonBoard.displayMessage(pm.name ~ " starts", () {
                     _gs.rollDice();
                 });
             } else {
                 _gs.rollDice();
             }
         } else {
-            if (_gs.players[p].type == PlayerType.User) {
-                auto netThread = match.gs.players[match.gs.currentPlayer.opposite].config.peek!Tid;
+            if (pm.type == PlayerType.User) {
+                auto netThread = match.oppositeTurn().config.peek!Tid;
                 send(*netThread, NetworkTurnDiceRoll());
             }
         }
     }
 
     void onGameStateDiceRolled(GameState gs, uint die1, uint die2) {
-        if (gs.players[gs.currentPlayer].type == PlayerType.User) {
+        if (match.currentTurn().type == PlayerType.User) {
             if (!gs.generatePossibleTurns.length) {
                 finishTurnBtn.setSensitive(true);
             }
         }
 
         // Start an AI request if necessary
-        if (gs.players[gs.currentPlayer].type == PlayerType.AI) {
-            aiGetTurn = task!gnubgGetTurn(gs,
-                *gs.players[gs.currentPlayer].config.peek!GnubgEvalContext);
+        if (match.currentTurn().type == PlayerType.AI) {
+            GnubgEvalContext context = *match.currentTurn().config.peek!GnubgEvalContext;
+            aiGetTurn = task!gnubgGetTurn(gs, context);
             aiGetTurn.executeInNewThread();
         }
     }

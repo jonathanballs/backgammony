@@ -25,7 +25,37 @@ class BackgammonMatch {
     }
 
     /**
-     * Pretty print the current match state to the console
+     * Return the PlayerMeta of the player who's turn it is or an empty PlayerMeta
+     * if it's nobody's turn.
+     */
+    PlayerMeta currentTurn() {
+        switch (gs._currentPlayer) {
+            case Player.P1:
+                return player1;
+            case Player.P2:
+                return player2;
+            default:
+                return PlayerMeta();
+        }
+    }
+
+    /**
+     * Return the PlayerMeta of the player who's turn it is or an empty PlayerMeta
+     * if it's nobody's turn.
+     */
+    PlayerMeta oppositeTurn() {
+        switch (gs._currentPlayer) {
+            case Player.P1:
+                return player2;
+            case Player.P2:
+                return player1;
+            default:
+                return PlayerMeta();
+        }
+    }
+
+    /**
+     * Pretty print the current match state to the console.
      */
     void prettyPrint() {
         import std.stdio : writeln;
