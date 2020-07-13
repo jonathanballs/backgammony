@@ -18,7 +18,7 @@ void main(string[] args)
     // Read config file
     Config.read();
     if (!Config.couldReadAtStartup) {
-        writeln("Could not read config file: " ~ Config.startupErrorMessage);
+        writeln("Could not load config file: " ~ Config.startupErrorMessage);
     }
 
     Main.init(args);

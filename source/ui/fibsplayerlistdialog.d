@@ -203,7 +203,7 @@ class FIBSPlayerListDialog : Dialog {
             if (c in flagManager.flags) {
                 listStore.setValue(iters[$-1], 0, flagManager.flags[c]);
             } else {
-                listStore.setValue(iters[$-1], 0, flagManager.flags["_unknown"]);
+                listStore.setValue(iters[$-1], 0, flagManager.getUnknownFlag());
             }
             listStore.setValue(iters[$-1], 1, player.name);
             listStore.setValue(iters[$-1], 2, cast(int) player.rating);

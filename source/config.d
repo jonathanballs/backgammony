@@ -26,6 +26,9 @@ class Config {
     static void read() {
         // TODO: Location by environment variable or command line arg
         try {
+            // resources location
+            resourcesLocation = buildPath(dirName(thisExePath()), "resources/");
+
             string fileLocation = expandTilde("~/.config/backgammony/backgammony.json");
             string fileContents = readText(fileLocation);
             auto fileJson = parseJSON(fileContents);
@@ -52,8 +55,6 @@ class Config {
             couldReadAtStartup = true;
             startupErrorMessage = "";
 
-            // resources location
-            resourcesLocation = buildPath(dirName(thisExePath()), "resources/");
 
         } catch (Exception e) {
             couldReadAtStartup = false;
