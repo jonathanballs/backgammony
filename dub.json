@@ -11,5 +11,10 @@
 		"urld": "~>2.1.1"
 	},
 	"copyright": "Copyright © 2018, Jonathan Balls",
-	"license": "GPL-3.0"
+	"license": "GPL-3.0",
+	"buildTypes": {
+		"debug": {
+			"buildOptions": ["debugMode", "debugInfo"]
+		}
+	}
 }
