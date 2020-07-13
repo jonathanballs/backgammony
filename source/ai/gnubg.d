@@ -91,10 +91,18 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
     foreach (i; 0..500) {
         if (exists(tmpSock)) break;
         Thread.sleep(10.msecs);
+
+        if (tryWait(process.pid).terminated == true) {
+            throw new Exception("Gnubg appears to have crashed. This shouldn't happen.");
+        }
     }
 
     if (!exists(tmpSock)) {
-        throw new Exception("Could not start gnubg. Can you start it on the command line?");
+        if (tryWait(process.pid).terminated == true) {
+            throw new Exception("Gnubg appears to have crashed. This shouldn't happen.");
+        } else {
+            throw new Exception("Started gnubg but it doesn't appear to be responding");
+        }
     }
 
     auto c = new Connection(tmpSock);
