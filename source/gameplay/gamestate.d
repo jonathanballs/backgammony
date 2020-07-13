@@ -260,7 +260,7 @@ class GameState {
      * Generate random values for the dice roll
      */
     void rollDice() {
-        if (currentPlayer != Player.NONE) {
+        if (currentPlayer == Player.NONE) {
             throw new Exception("Tried to roll dice when it isn't a players turn");
         }
 
