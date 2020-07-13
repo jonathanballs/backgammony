@@ -83,7 +83,7 @@ class FIBSController {
         while(MonoTime.currTime < startTime + 5.msecs) {
             Variant m;
             try {
-                m = conn.readMessage(1.msecs);
+                m = conn.readMessage(Duration.zero);
             } catch (Exception e) {
                 break;
             }

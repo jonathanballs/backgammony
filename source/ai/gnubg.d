@@ -114,7 +114,7 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
             context.nPlies,
             context.usePrune ? "PRUNE" : "",
             "CUBELESS", // No support for cube currently
-            cast(int) (context.noise * 10000),
+            cast(int) (context.noise * 10_000),
             );
         c.writeline(gnubgCommand);
         float[] r = c.readline().split().map!(n => n.to!float).array;

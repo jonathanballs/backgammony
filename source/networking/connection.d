@@ -6,6 +6,7 @@ import std.socket;
 import std.stdio;
 import std.string;
 import std.typecons : tuple;
+import std.datetime.stopwatch : StopWatch, AutoStart;
 
 enum protocolHeader = "TBP/1.0";
 
@@ -57,12 +58,13 @@ class Connection {
         conn.close();
     }
 
-    string recBuffer;
+    protected string recBuffer;
     /**
-     * Fills rec buffer until a new line is found
+     * Fills rec buffer until a new line is found.
+     * Params:
+     *      timeout = How long to wait syncronously for data.
      */
     protected void fillRecBuffer(Duration timeout = Duration.zero) {
-        import std.datetime.stopwatch;
         auto timer = new StopWatch(AutoStart.yes);
 
         do {
@@ -96,21 +98,34 @@ class Connection {
 
             if (recBuffer.indexOf('\n') != -1) break;
 
-            import core.thread;
-            Thread.sleep(15.msecs);
-        } while (timeout == Duration.zero || timer.peek < timeout);
-
-        if (timeout != Duration.zero && timer.peek > timeout) {
-            throw new TimeoutException("Connection readline timeout");
-        }
+            // Always read more if buffer was filled.
+            if (amountRead == buffer.length) {
+                continue;
+            } else {
+                const auto sleepDur = 1.msecs;
+                auto timeleft = timeout - timer.peek;
+                if (timeleft < Duration.zero) {
+                    break;
+                } else {
+                    Thread.sleep(timeleft > sleepDur ? sleepDur : timeleft);
+                }
+            }
+        } while (timer.peek < timeout);
     }
 
     /// Read a line (newline excluded) syncronously from the current connection.
     /// ARGS:
     ///   timeout: How long before throwing timeout exception. Leave for unlimited.
-    string readline(Duration timeout = Duration.zero) {
-
-        this.fillRecBuffer(timeout);
+    string readline(Duration timeout = -1.msecs) {
+        auto timer = new StopWatch(AutoStart.yes);
+        this.fillRecBuffer(Duration.zero);
+        while (recBuffer.indexOf('\n') == -1) {
+            if (timer.peek < timeout || timeout < Duration.zero) {
+                this.fillRecBuffer(1.msecs);
+            } else {
+                break;
+            }
+        }
 
         auto nlIndex = recBuffer.indexOf('\n');
         if (nlIndex != -1) {
@@ -121,7 +136,7 @@ class Connection {
             }
             return ret;
         } else {
-            throw new Exception("No newline is available");
+            throw new TimeoutException("No complete line in buffer.");
         }
     }
 

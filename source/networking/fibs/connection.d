@@ -72,9 +72,9 @@ class FIBSConnection : Connection {
 
         // Throw expception if receive another login prompt otherwise return
         // active connection ready to exchange messages messages. This has funny
-        // behavious. Usually a newline character will _not_ be emitted after the
-        // "login:" prompt but sometimes and a random CLIP message will be printed
-        // after and so a newline is found.
+        // behaviour. Usually a newline character will _not_ be emitted after
+        // the "login:" prompt but sometimes and a random CLIP message will be
+        // printed after and so a newline is found.
         try {
             this.readline(500.msecs); // Server will send a new line first
             auto l = this.readline(500.msecs);
@@ -104,7 +104,7 @@ class FIBSConnection : Connection {
     /**
      * Read and return a CLIP message
      */
-    Variant readMessage(Duration timeout) {
+    Variant readMessage(Duration timeout = Duration.zero) {
         import std.datetime.stopwatch;
         auto timer = new StopWatch(AutoStart.yes);
 

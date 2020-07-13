@@ -361,7 +361,7 @@ class BackgammonWindow : MainWindow {
             dialog.addOnResponse((int i, Dialog d) => dialog.destroy());
         }
 
-        if (match && match.isNetworkGame) {
+        if (match && match.isNetworkGame && match.player1.type != PlayerType.FIBS) {
             receiveTimeout(0.msecs,
                 (NetworkThreadNewMove moves) {
                     assert(match.gs.turnState == TurnState.MoveSelection);
