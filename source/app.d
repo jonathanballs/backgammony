@@ -37,15 +37,18 @@ void main(string[] args)
         import std.variant;
         import gameplay.gamestate;
         import gameplay.player;
+        import gameplay.match;
         import gtk.Widget;
         try {
             if (exists("/usr/bin/gnubg") || exists("/app/bin/gnubg")) {
                 Variant aiConfig = gnubgDefaultEvalContexts[4];
-                auto gs = new GameState(
+                auto match = new BackgammonMatch(
                     PlayerMeta("Player", "gnubg", PlayerType.User),
                     PlayerMeta("AI", "gnubg", PlayerType.AI, aiConfig)
                 );
-                window.setGameState(gs);
+
+                window.setBackgammonMatch(match);
+
                 // Start game 50msecs after first draw
                 import cairo.Context : Context;
                 import gobject.Signals : Signals;
@@ -58,7 +61,7 @@ void main(string[] args)
                     Timeout t;
                     // Wait 100msecs and start a game
                     t = new Timeout(100, () {
-                        gs.newGame();
+                        match.gs.newGame();
                         t.stop();
                         return false;
                     }, false);

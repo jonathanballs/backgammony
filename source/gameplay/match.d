@@ -15,12 +15,26 @@ class BackgammonMatch {
     GameState gs;
 
     /**
-     * Create a new match
+     * Create a new 1-point match between two human players.
      */
     this() {
         player1 = PlayerMeta("Player 1", "p1", PlayerType.User);
         player2 = PlayerMeta("Player 2", "p2", PlayerType.User);
         length = 1;
+        gs = new GameState();
+    }
+
+    /**
+     * Create a new match between two players of a certain length (default 1).
+     * Params:
+     *      p1 = PlayerMeta of player 1
+     *      p2 = PlayerMeta of player 2
+     *      length = The length of the game. Default is a 1 point match.
+     */
+    this(PlayerMeta p1, PlayerMeta p2, int length = 1) {
+        this.player1 = p1;
+        this.player2 = p2;
+        this.length = length;
         gs = new GameState();
     }
 
