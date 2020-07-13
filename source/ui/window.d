@@ -12,12 +12,14 @@ import gio.ThemedIcon;
 import gtk.Box;
 import gtk.Button;
 import gtk.Container;
+import gtk.Dialog;
 import gtk.HeaderBar;
 import gtk.IconTheme;
 import gtk.Image;
 import gtk.Label;
 import gtk.Main;
 import gtk.MainWindow;
+import gtk.MessageDialog;
 import gtk.Revealer;
 import gtk.Widget;
 
@@ -239,7 +241,7 @@ class BackgammonWindow : MainWindow {
 
     public void setGameState(GameState gs) {
         this.aiGetTurn = null;
-        auto _match = new BackgammonMatch();
+        auto _match = new BackgammonMatch(gs.players[Player.P1], gs.players[Player.P2]);
         _match.gs = gs;
         setBackgammonMatch(_match);
     }
@@ -338,13 +340,25 @@ class BackgammonWindow : MainWindow {
             fibsController.processMessages();
         }
 
-        if (aiGetTurn && aiGetTurn.done) {
-            remoteResult = aiGetTurn.yieldForce;
-            aiGetTurn = null;
-            foreach (move; remoteResult) {
-                backgammonBoard.selectMove(move);
+        try {
+            if (aiGetTurn && aiGetTurn.done) {
+                remoteResult = aiGetTurn.yieldForce;
+                aiGetTurn = null;
+                foreach (move; remoteResult) {
+                    backgammonBoard.selectMove(move);
+                }
+                backgammonBoard.finishTurn();
             }
-            backgammonBoard.finishTurn();
+        } catch (Exception e) {
+            aiGetTurn = null;
+            auto dialog = new MessageDialog(this,
+                GtkDialogFlags.DESTROY_WITH_PARENT | GtkDialogFlags.MODAL,
+                GtkMessageType.ERROR,
+                GtkButtonsType.OK,
+                "%s",
+                e.message.idup);
+            dialog.showAll();
+            dialog.addOnResponse((int i, Dialog d) => dialog.destroy());
         }
 
         if (match && match.isNetworkGame) {
@@ -361,8 +375,6 @@ class BackgammonWindow : MainWindow {
                     this.backgammonBoard.getGameState.rollDice(diceRoll.dice1, diceRoll.dice2);
                 },
                 (NetworkThreadUnhandledException e) {
-                    import gtk.MessageDialog;
-                    import gtk.Dialog;
                     auto dialog = new MessageDialog(this,
                         GtkDialogFlags.DESTROY_WITH_PARENT | GtkDialogFlags.MODAL,
                         GtkMessageType.ERROR,

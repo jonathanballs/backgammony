@@ -87,14 +87,14 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
 
     auto process = pipeProcess(["gnubg", "--tty", "-c", tmpFileName]);
 
-    // Wait for up to 2 seconds
-    foreach (i; 0..200) {
+    // Wait for up to 5 seconds
+    foreach (i; 0..500) {
         if (exists(tmpSock)) break;
         Thread.sleep(10.msecs);
     }
 
     if (!exists(tmpSock)) {
-        throw new Exception("Could not start gnubg");
+        throw new Exception("Could not start gnubg. Can you start it on the command line?");
     }
 
     auto c = new Connection(tmpSock);
@@ -133,7 +133,7 @@ PipMovement[] gnubgGetTurn(GameState gs, GnubgEvalContext context) {
 }
 
 unittest {
-    writeln("Testing gnubg");
+    writeln("Testing Gnubg");
     auto gs = new GameState();
     gs.newGame();
     gs.rollDice(3, 3);
