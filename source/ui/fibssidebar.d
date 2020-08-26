@@ -145,7 +145,7 @@ class FIBSSidebar : Box {
             import std.conv : to;
             this.connectionStatus.text.setText(
                             fibsController.connectionStatus.status.to!string);
-            switch (fibsController.connectionStatus.status) {
+            switch (fibsController.conn.status) {
                 case FIBSConnectionStatus.Connecting:
                     contentStack.setVisibleChild(connectingContentBox);
                     break;

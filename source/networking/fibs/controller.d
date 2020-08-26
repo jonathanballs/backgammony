@@ -18,7 +18,9 @@ import networking.fibs.connection;
 import networking.fibs.clipmessages;
 import utils.signals;
 import utils.varianthandle;
+
 public import networking.fibs.user;
+public import networking.fibs.connection : FIBSConnectionStatus;
 
 
 /**
@@ -29,15 +31,12 @@ class FIBSController {
     /// When the current match is changed
     public Signal!(BackgammonMatch) onUpdateMatchState;
 
-    private:
-    FIBSConnection conn;
+    /// Network connection to FIBS server
+    public FIBSConnection conn;
 
+    private:
     /// The current match being watched/played
     BackgammonMatch currentMatch;
-
-    // Meta status info to be displayed to the user
-    FIBSConnectionStatus fibsConnectionStatus;
-    string fibsConnectionStatusMessage;
 
     // Auth details
     string serverAddress;
@@ -59,7 +58,6 @@ class FIBSController {
         this.serverAddress = serverAddress;
         this.username = username;
         this.password = password;
-        this.fibsConnectionStatus = FIBSConnectionStatus.Connecting;
         this.onUpdateMatchState = new Signal!(BackgammonMatch);
 
         auto addr = getAddress(parseURL(serverAddress).host, parseURL(serverAddress).port)[0];
@@ -71,7 +69,7 @@ class FIBSController {
      */
     public Tuple!(FIBSConnectionStatus, "status", string, "message") connectionStatus() {
         this.processMessages();
-        return tuple!("status", "message")(fibsConnectionStatus, fibsConnectionStatusMessage);
+        return tuple!("status", "message")(conn.status, conn.statusMessage);
     }
 
     /**
@@ -89,9 +87,6 @@ class FIBSController {
             }
 
             m.handle!(
-            (CLIPWelcome w) {
-                this.fibsConnectionStatus = FIBSConnectionStatus.Connected;
-            },
             (CLIPWho w) {
                 FIBSPlayer p = FIBSPlayer(w.name, w.opponent, w.watching,
                     w.ready, w.away, w.rating, w.experience, w.idle, w.login,
@@ -168,10 +163,4 @@ struct FIBSMessage {
     SysTime timestamp;
     string from;
     string message;
-}
-
-/// Status of connection with FIBS server
-/// TODO: Put this in the connection module!
-enum FIBSConnectionStatus {
-    Disconnected, Connecting, Connected, Failed, Crashed
 }

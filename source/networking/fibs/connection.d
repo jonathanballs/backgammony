@@ -15,20 +15,33 @@ public import networking.connection : TimeoutException;
 import gameplay.gamestate;
 
 /**
+ * Status of connection with FIBS server
+ */
+enum FIBSConnectionStatus {
+    Disconnected, Connecting, Connected, Failed, Crashed
+}
+
+/**
  * Handles connection with FIBS server as well as formatting requests and parsing
  * responses.
  */
 class FIBSConnection : Connection {
+    /// Meta status info to be displayed to the user
+    FIBSConnectionStatus status;
+    string statusMessage;
+
     /**
      * Create a new connection to a FIBS server and attempt to login
      */
     this(Address serverAddress, string username, string password) {
         super(serverAddress);
 
+        this.status = FIBSConnectionStatus.Connecting;
+
         // Wait for login prompt...
         while (true) {
             try {
-                auto l = this.readline(25.msecs);
+                this.readline(25.msecs);
             } catch (TimeoutException e) {
                 if (this.recBuffer.startsWith("login:")) {
                     this.recBuffer = "";
@@ -110,7 +123,9 @@ class FIBSConnection : Connection {
         switch (lines[0].split()[0]) {
             case "1":
                 assert(lines.length == 1);
-                v = CLIPWelcome(lines[0]); break;
+                v = CLIPWelcome(lines[0]);
+                this.status = FIBSConnectionStatus.Connected;
+                break;
             case "2":
                 assert(lines.length == 1);
                 v = CLIPOwnInfo(lines[0]); break;
