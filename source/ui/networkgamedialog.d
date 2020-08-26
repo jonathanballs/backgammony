@@ -21,7 +21,7 @@ import gtk.Window;
 import gameplay.gamestate;
 import networking.messages;
 import networking;
-import networking.fibs.thread;
+import networking.fibs.controller;
 import gameplay.player;
 import ui.newgamedialog : HumanSelector, setMarginsExpand;
 import ui.fragments;

@@ -28,7 +28,7 @@ import gtk.Window;
 import utils.addtickcallback;
 import utils.signals;
 
-import networking.fibs.thread;
+import networking.fibs.controller;
 
 // TODO:
 //   - Get player flags using geo-ip

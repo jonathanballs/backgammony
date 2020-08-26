@@ -22,7 +22,7 @@ import ui.flagmanager;
 import ui.fragments;
 import utils.addtickcallback;
 
-import networking.fibs.thread;
+import networking.fibs.controller;
 
 enum defaultPadding = 10;
 

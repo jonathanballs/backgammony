@@ -27,7 +27,7 @@ import ai.gnubg;
 import gameplay.gamestate;
 import gameplay.match;
 import gameplay.player;
-import networking.fibs.thread;
+import networking.fibs.controller;
 import networking.messages;
 import networking;
 import ui.board.boardwidget;

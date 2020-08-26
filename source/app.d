@@ -26,7 +26,7 @@ void main(string[] args)
 
     // Connect to fibs or start a ai game
     if (Config.fibsAutoConnect) {
-        import networking.fibs.thread;
+        import networking.fibs.controller;
         window.setFibsController(new FIBSController(
             Config.fibsServer, Config.fibsUsername, Config.fibsPassword));
     } else {

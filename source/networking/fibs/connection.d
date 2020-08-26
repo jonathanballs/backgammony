@@ -14,37 +14,6 @@ import networking.fibs.clipmessages;
 public import networking.connection : TimeoutException;
 import gameplay.gamestate;
 
-/*
-        URL url;
-        if (!tryParseURL(serverAddress, url)) {
-            this.fibsConnectionStatus = FIBSConnectionStatus.Failed;
-            this.fibsConnectionStatusMessage = "Could not parse FIBS host: " ~ serverAddress;
-            return;
-        } else {
-            try {
-                // Ensure that IP can be resolved
-                getAddress(parseURL(serverAddress).host, parseURL(serverAddress).port);
-            } catch (Exception e) {
-                fibsConnectionStatus = FIBSConnectionStatus.Failed;
-                fibsConnectionStatusMessage = format!"Couldn't connect to FIBS server (%s)"
-                    (cast(string) e.message);
-                return;
-            }
-        }
-
-        networkingThread = spawn((shared string serverAddress,
-                            shared string username, shared string password) {
-                new FIBSNetworkingThread(
-                    getAddress(parseURL(serverAddress).host, parseURL(serverAddress).port)[0],
-                    username,
-                    password
-                ).run();
-        }, cast(immutable) serverAddress, cast(immutable) username, cast(immutable) password);
-
-        // Register to check status later
-        register("fibsNetworkingThread", networkingThread);
-*/
-
 /**
  * Handles connection with FIBS server as well as formatting requests and parsing
  * responses.

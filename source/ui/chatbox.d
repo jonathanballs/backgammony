@@ -9,7 +9,7 @@ import gtk.TextView;
 import gtk.Widget;
 
 import utils.addtickcallback;
-import networking.fibs.thread : FIBSMessage;
+import networking.fibs.controller : FIBSMessage;
 
 class ChatBox : Box {
     TextTagTable textTagTable;

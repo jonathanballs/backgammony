@@ -1,4 +1,4 @@
-module networking.fibs.thread;
+module networking.fibs.controller;
 
 import core.thread;
 import core.time;
