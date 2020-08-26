@@ -67,7 +67,8 @@ class FIBSConnection : Connection {
 
             this.recBuffer = l ~ "\r\n" ~ recBuffer;
         } catch (TimeoutException e) {
-            throw new Exception("Authentication Failure");
+            this.status = FIBSConnectionStatus.Failed;
+            this.statusMessage = "Authentication Failure";
         }
 
         writeln("Authenticated successfully to FIBS server ", serverAddress);
