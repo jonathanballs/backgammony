@@ -71,6 +71,8 @@ class FIBSConnection : Connection {
             this.statusMessage = "Authentication Failure";
         }
 
+        this.writeline("set boardstyle 3");
+
         writeln("Authenticated successfully to FIBS server ", serverAddress);
     }
 
