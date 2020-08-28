@@ -73,16 +73,17 @@ class FIBSController {
     }
 
     /**
-     * Receive new CLIP messages and update data structures.
+     * Receive any new CLIP messages and update data structures. Time limited at
+     * five milliseconds.
      */
     public void processMessages() {
         const auto startTime = MonoTime.currTime;
 
-        while(MonoTime.currTime < startTime + 5.msecs) {
+        while(MonoTime.currTime < startTime + 1.msecs) {
             Variant m;
             try {
                 m = conn.readMessage(Duration.zero);
-            } catch (Exception e) {
+            } catch (TimeoutException e) {
                 break;
             }
 
@@ -105,9 +106,9 @@ class FIBSController {
                     if (!this.currentMatch.gs.equals(ms.match.gs)) {
                         writeln(ms);
                         writeln("Received match state update which doesn't correspond to local state");
-                        writeln("============================ OLD =========================");
+                        writeln("========================= OLD ===========================");
                         this.currentMatch.prettyPrint();
-                        writeln("============================ RECEIVED =========================");
+                        writeln("======================= RECEIVED ========================");
                         ms.match.prettyPrint();
                         this.currentMatch = ms.match;
                         this.onUpdateMatchState.emit(ms.match);
@@ -122,6 +123,7 @@ class FIBSController {
                     try {
                         this.currentMatch.gs.applyTurn(mv.moves);
                     } catch (Exception e) {
+                        writeln("Failed to apply CLIPMatchMovement.");
                         writeln(e);
                         writeln(mv);
                         this.currentMatch.prettyPrint();

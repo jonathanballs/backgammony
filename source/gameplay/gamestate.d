@@ -586,21 +586,20 @@ class GameState {
         }
     }
 
+    /**
+     * Validate whether `turn` is a valid move for the current player given the
+     * current dice roll. Throws exception with error if not.
+     */
     void validateTurn(PipMovement[] turn) {
         auto possibleTurns = generatePossibleTurns();
 
-        if (!possibleTurns.length) {
-            if (turn.length) {
-                throw new Exception(format!"The longest turn is %d moves but you tried to validate a turn of %d moves"(0, turn.length));
-            } else {
-                return; // No move is possible
-            }
-        }
-
-        if (turn.length != possibleTurns[0].length) {
+        // Ensure the move is the right length
+        auto validTurnLength = possibleTurns.length ? possibleTurns[0].length : 0;
+        if (turn.length != validTurnLength) {
             throw new Exception(format!"The longest turn is %d moves but you tried to validate a turn of %d moves"(possibleTurns[0].length, turn.length));
         }
 
+        // Check to find a valid move
         import std.algorithm : equal;
         foreach (possibleTurn; possibleTurns) {
             if (possibleTurn.equal(turn)) {
@@ -620,9 +619,16 @@ class GameState {
             }
         }
 
+        // Should never happen
+        this.prettyPrint();
+        writeln(turn);
+        writeln(this.generatePossibleTurns());
         assert(0);
     }
 
+    /**
+     * Returns `true` if `player` can bear off.
+     */
     bool canBearOff(Player player) {
         Point[] nonHomePoints;
         if (player == Player.P1) {
@@ -684,19 +690,18 @@ class GameState {
             && this.points == rhs.points;
     }
 
-    invariant {
-        // Ensure that every player has 15 points
-        // foreach (Player p; [Player.P1, Player.P2]) {
-        //     uint numPieces = takenPieces[p] + borneOffPieces[p];
-        //     foreach (point; points) {
-        //         if (point.owner == p) {
-        //             assert(point.numPieces > 0);
-        //             numPieces += point.numPieces;
-        //         }
-        //     }
-        //     assert(numPieces == 15);
-        // }
-        // assert (_currentPlayer == Player.P1 || _currentPlayer == Player.P2);
+    /**
+     * Pretty print the game state. Warning: this will not include match state
+     * such as match score or player names.
+     */
+    void prettyPrint() {
+        import gameplay.match : BackgammonMatch;
+        auto m = new BackgammonMatch(
+            PlayerMeta("Player 1", "", PlayerType.User),
+            PlayerMeta("Player 2", "", PlayerType.User)
+        );
+        m.gs = this;
+        m.prettyPrint();
     }
 }
 
