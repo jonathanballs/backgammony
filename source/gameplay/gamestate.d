@@ -315,8 +315,7 @@ class GameState {
         if (moveValues.length == 0) return [];
         // First find all possible movements of any length and then prune to
         // only the longest ones.
-        PipMovement[][] ret;
-
+        PipMovement[][] ret = [[]];
 
         /**
          * Enter the board
