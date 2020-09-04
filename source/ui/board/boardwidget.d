@@ -340,11 +340,13 @@ class BackgammonBoardWidget : DrawingArea {
             this._gameState.onBeginTurn.disconnect(&this.onGameStateBeginTurn);
             this._gameState.onEndGame.disconnect(&this.onGameStateEndGame);
             this._gameState.onStartGame.disconnect(&this.onGameStateStartGame);
+            this._gameState.onFinishTurn.disconnect(&this.onGameStateFinishTurn);
         }
         gameState.onDiceRolled.connect(&this.onGameStateDiceRolled);
         gameState.onBeginTurn.connect(&this.onGameStateBeginTurn);
         gameState.onEndGame.connect(&this.onGameStateEndGame);
         gameState.onStartGame.connect(&this.onGameStateStartGame);
+        gameState.onFinishTurn.connect(&this.onGameStateFinishTurn);
 
         this._gameState = gameState;
         this.pipRenderer.setGameState(gameState);
@@ -388,6 +390,10 @@ class BackgammonBoardWidget : DrawingArea {
 
     void onGameStateStartGame(GameState gs) {
         this.showEndGame = false;
+    }
+
+    void onGameStateFinishTurn(GameState gs, PipMovement[] turn) {
+        // Potentially we need to animate these movements.
     }
 
     /**

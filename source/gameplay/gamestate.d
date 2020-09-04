@@ -185,6 +185,11 @@ class GameState {
     Signal!(GameState, uint , uint) onDiceRolled;
 
     /**
+     * Fired when a player finishes their turn with their turn
+     */
+    Signal!(GameState, PipMovement[]) onFinishTurn;
+
+    /**
      * Create a new gamestate. The game will be initalized to the start of P1's
      * turn.
      */
@@ -193,6 +198,7 @@ class GameState {
         onDiceRolled = new Signal!(GameState, uint, uint);
         onEndGame = new Signal!(GameState, Player);
         onStartGame = new Signal!(GameState);
+        onFinishTurn = new Signal!(GameState, PipMovement[]);
 
         players[Player.P1] = PlayerMeta("Player 1");
         players[Player.P2] = PlayerMeta("Player 2");
@@ -488,6 +494,11 @@ class GameState {
         }
 
         winner = calculateWinner();
+
+        if (!partialTurn) {
+            onFinishTurn.emit(this, turn);
+        }
+
         if (winner != Player.NONE) {
             _turnState = TurnState.Finished;
             onEndGame.emit(this, winner);
