@@ -4,6 +4,7 @@ import std.array;
 import std.algorithm;
 import std.conv;
 import std.datetime.systime;
+import std.format;
 import std.stdio;
 import std.typecons;
 import core.time;
@@ -26,15 +27,39 @@ import ui.board.pips;
 import ui.board.style;
 import utils.cairowrappers;
 
+struct Animation {
+    SysTime startTime;
+}
+
+struct DiceRollAnimation {
+    uint dice1;
+    uint dice2;
+}
+
+struct PipMovementAnimation {
+    Player player;
+    uint startPoint;
+    uint endPoint;
+}
+
+struct EndTurnEvent {
+}
+
 /**
  * Widget for rendering a backgammon game state
  */
 class BackgammonBoardWidget : DrawingArea {
+    /// Fired when the user selects or undoes a potential move
+    public Signal!() onChangePotentialMovements;
+    public Signal!() onCompleteDiceAnimation;
+    public Signal!() onCompleteTransitionAnimation;
+
     private:
     /**
      * The gameState gamestate that is being rendered
      */
     GameState _gameState;
+    PipMovement[] _selectedMoves;
 
     /**
      * The current styling. Will be modifiable in the future.
@@ -53,6 +78,7 @@ class BackgammonBoardWidget : DrawingArea {
     bool showEndGame;
     SysTime endGameTransition;
     bool applyTurnAtEndOfAnimation = false;
+    bool displayFPSCounter;
 
     /**
      * Drag and drop
@@ -61,13 +87,12 @@ class BackgammonBoardWidget : DrawingArea {
     ScreenPoint dragStart;
     SysTime dragStartTime;
 
-    PipMovement[] _selectedMoves;
+    /**
+     * FPS monitoring
+     */
+    SysTime lastFrameTime;
+    float framesPerSecond = 60.0;
 
-
-    /// Fired when the user selects or undoes a potential move
-    public Signal!() onChangePotentialMovements;
-    public Signal!() onCompleteDiceAnimation;
-    public Signal!() onCompleteTransitionAnimation;
 
     /**
      * Create a new Backgammon Board widget.
@@ -393,7 +418,8 @@ class BackgammonBoardWidget : DrawingArea {
     }
 
     void onGameStateFinishTurn(GameState gs, PipMovement[] turn) {
-        // Potentially we need to animate these movements.
+        this.pipRenderer.clearTransitions();
+        this._selectedMoves = [];
     }
 
     /**
@@ -507,6 +533,9 @@ class BackgammonBoardWidget : DrawingArea {
     }
 
     bool onDraw(Scoped!Context cr, Widget widget) {
+
+        const auto renderStartTimeStamp = Clock.currTime();
+
         // The default translation matrix comes with a default offset and I am
         // not sure why. This translation needs to be undone in order to 
         auto defaultMatrix = getMatrix(cr);
@@ -537,7 +566,6 @@ class BackgammonBoardWidget : DrawingArea {
 
         drawMessages(cr);
 
-        // TODO: should be it's own method
         if (showEndGame) {
             displayEndGameMessage(cr);
         }
@@ -549,16 +577,42 @@ class BackgammonBoardWidget : DrawingArea {
                     auto pMoves = getSelectedMoves();
                     _selectedMoves = [];
                     pipRenderer.clearTransitions();
-                    getGameState().applyTurn(pMoves);
+                    writeln("Don't apply turn yet");
+                    // getGameState().applyTurn(pMoves);
                 });
             } else {
                 auto pMoves = getSelectedMoves();
                 _selectedMoves = [];
                 pipRenderer.clearTransitions();
-                getGameState().applyTurn(pMoves);
+                writeln("2Don't apply turn yet");
+                // getGameState().applyTurn(pMoves);
             }
         }
 
+        // FPS monitoring
+        if (this.displayFPSCounter) {
+            if (this.lastFrameTime != SysTime.init) {
+                this.framesPerSecond = 0.98*this.framesPerSecond + 
+                    0.02 * (1.seconds / (Clock.currTime() - this.lastFrameTime));
+            }
+            writeln(framesPerSecond, " FPS. \tRender time: ", Clock.currTime() - renderStartTimeStamp);
+
+            cr.selectFontFace("Courier",
+                cairo_font_slant_t.NORMAL,
+                cairo_font_weight_t.NORMAL);
+
+            cr.setSourceRgb(0.0, 0.0, 0.0);
+            cr.rectangle(0, 0, 120, 30);
+            cr.fill();
+
+            cr.setSourceRgb(1.0, 0.0, 0.0);
+            cr.setFontSize(20);
+
+            cr.moveTo(10, 20);
+            cr.showText(format!"%.2fFPS"(framesPerSecond));
+        }
+
+        this.lastFrameTime = Clock.currTime();
         return false;
     }
 
@@ -729,6 +783,13 @@ class BackgammonBoardWidget : DrawingArea {
         cr.setSourceRgba(1.0, 1.0, 1.0, alpha);
         cr.showText(_displayMessage);
         cr.fill();
+    }
+
+    /**
+     * Toggle whether an FPS counter should be drawn over the board.
+     */
+    public void toggleFPSCounter() {
+        this.displayFPSCounter = !this.displayFPSCounter;
     }
 }
 

@@ -43,8 +43,9 @@ void main(string[] args)
             if (exists("/usr/bin/gnubg") || exists("/app/bin/gnubg")) {
                 Variant aiConfig = gnubgDefaultEvalContexts[4];
                 auto match = new BackgammonMatch(
+                    PlayerMeta("AI", "gnubg", PlayerType.AI, aiConfig),
                     PlayerMeta("Player", "gnubg", PlayerType.User),
-                    PlayerMeta("AI", "gnubg", PlayerType.AI, aiConfig)
+                    // PlayerMeta("AI", "gnubg", PlayerType.AI, aiConfig),
                 );
 
                 window.setBackgammonMatch(match);

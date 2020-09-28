@@ -326,7 +326,9 @@ class PipRenderer {
                 // Find the last time that someone landed there
                 if (animate) {
                     auto landed = transitionStack.filter!(t => t.endPoint == move.startPoint).array;
-                    assert(landed.length); // This is failing sometimes bc of drag and drops
+                    if(!landed.length) {
+                        throw new Exception("Tried to land on empty point");
+                    }
                     startTime = landed[$-1].startTime + style.animationSpeed.msecs
                         + transitionStack.length.msecs; // Staggered to fix uitests.doublePipMove()
                 }

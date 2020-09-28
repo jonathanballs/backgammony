@@ -14,7 +14,6 @@ import gtk.Button;
 import gtk.Container;
 import gtk.Dialog;
 import gtk.HeaderBar;
-import gtk.IconTheme;
 import gtk.Image;
 import gtk.Label;
 import gtk.Main;
@@ -129,7 +128,7 @@ class BackgammonWindow : MainWindow {
                 }
                 send(*netThread, msg);
             }
-            backgammonBoard.finishTurn();
+            match.gs.applyTurn(backgammonBoard.getSelectedMoves());
         });
         finishTurnBtn.setSensitive(false);
         header.packEnd(finishTurnBtn);
@@ -198,6 +197,9 @@ class BackgammonWindow : MainWindow {
                 break;
             case Keysyms.GDK_i:
                 this.openNewNetworkGameDialog();
+                break;
+            case Keysyms.GDK_f:
+                this.backgammonBoard.toggleFPSCounter();
                 break;
             default: break;
             }
@@ -344,10 +346,7 @@ class BackgammonWindow : MainWindow {
             if (aiGetTurn && aiGetTurn.done) {
                 remoteResult = aiGetTurn.yieldForce;
                 aiGetTurn = null;
-                foreach (move; remoteResult) {
-                    backgammonBoard.selectMove(move);
-                }
-                backgammonBoard.finishTurn();
+                this.match.gs.applyTurn(remoteResult);
             }
         } catch (Exception e) {
             aiGetTurn = null;
