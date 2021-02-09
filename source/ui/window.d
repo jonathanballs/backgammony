@@ -30,6 +30,7 @@ import networking.fibs.controller;
 import networking.messages;
 import networking;
 import ui.board.boardwidget;
+import ui.boardgl.board;
 import ui.fibssidebar;
 import ui.matchoverviewbox;
 import ui.networkgamedialog;
@@ -61,7 +62,7 @@ class BackgammonWindow : MainWindow {
     // Fibs sidebar
     FIBSSidebar fibsSidebar;
     public Revealer fibsSidebarRevealer;
-    public BackgammonBoardWidget backgammonBoard;
+    public BoardGL board;
 
     // Match sidebar
     MatchOverviewBox matchOverviewBox;
@@ -110,7 +111,7 @@ class BackgammonWindow : MainWindow {
         inetImg.setFromGicon(icon, IconSize.BUTTON);
         undoMoveBtn.add(inetImg);
         undoMoveBtn.addOnClicked((Button b) {
-            backgammonBoard.undoSelectedMove();
+            // backgammonBoard.undoSelectedMove();
         });
         undoMoveBtn.setSensitive(false);
 
@@ -121,49 +122,49 @@ class BackgammonWindow : MainWindow {
              */
             if (match.isNetworkGame) {
                 auto netThread = match.oppositeTurn().config.peek!Tid;
-                auto moves = backgammonBoard.getSelectedMoves();
+                auto moves = [];//backgammonBoard.getSelectedMoves();
                 auto msg = NetworkThreadNewMove(cast(uint) moves.length);
-                foreach (i, PipMovement m; moves) {
-                    msg.moves[i] = m;
-                }
+                // foreach (i, PipMovement m; moves) {
+                //     msg.moves[i] = m;
+                // }
                 send(*netThread, msg);
             }
-            match.gs.applyTurn(backgammonBoard.getSelectedMoves());
+            // match.gs.applyTurn(backgammonBoard.getSelectedMoves());
         });
         finishTurnBtn.setSensitive(false);
         header.packEnd(finishTurnBtn);
         header.packEnd(undoMoveBtn);
 
         // Game board
-        backgammonBoard = new BackgammonBoardWidget();
-        backgammonBoard.onChangePotentialMovements.connect(() {
-            undoMoveBtn.setSensitive(false);
-            finishTurnBtn.setSensitive(false);
+        board = new BoardGL();
+        // backgammonBoard.onChangePotentialMovements.connect(() {
+        //     undoMoveBtn.setSensitive(false);
+        //     finishTurnBtn.setSensitive(false);
 
-            if (match.currentTurn().type == PlayerType.User) {
+        //     if (match.currentTurn().type == PlayerType.User) {
 
-                undoMoveBtn.setSensitive(!!backgammonBoard.getSelectedMoves().length);
-                if (match.gs.turnState == TurnState.MoveSelection) {
-                    try {
-                        backgammonBoard.getGameState().validateTurn(backgammonBoard.getSelectedMoves());
-                        finishTurnBtn.setSensitive(true);
-                    } catch (Exception e) {
-                        finishTurnBtn.setSensitive(false);
-                    }
-                }
-            }
-        });
-        backgammonBoard.onCompleteDiceAnimation.connect(() {
-            // If it's a network player then we await their movement
-            // TODO: Perhaps this should be triggered when a user finishes and
-            // can't move...
-            if (match.currentTurn().type == PlayerType.User) {
-                if (match.gs.turnState == TurnState.MoveSelection
-                        && match.gs.generatePossibleTurns().length == 0) {
-                    backgammonBoard.finishTurn();
-                }
-            }
-        });
+        //         undoMoveBtn.setSensitive(!!backgammonBoard.getSelectedMoves().length);
+        //         if (match.gs.turnState == TurnState.MoveSelection) {
+        //             try {
+        //                 backgammonBoard.getGameState().validateTurn(backgammonBoard.getSelectedMoves());
+        //                 finishTurnBtn.setSensitive(true);
+        //             } catch (Exception e) {
+        //                 finishTurnBtn.setSensitive(false);
+        //             }
+        //         }
+        //     }
+        // });
+        // backgammonBoard.onCompleteDiceAnimation.connect(() {
+        //     // If it's a network player then we await their movement
+        //     // TODO: Perhaps this should be triggered when a user finishes and
+        //     // can't move...
+        //     if (match.currentTurn().type == PlayerType.User) {
+        //         if (match.gs.turnState == TurnState.MoveSelection
+        //                 && match.gs.generatePossibleTurns().length == 0) {
+        //             backgammonBoard.finishTurn();
+        //         }
+        //     }
+        // });
 
         // FIBS sidebar
         fibsSidebar = new FIBSSidebar();
@@ -179,7 +180,7 @@ class BackgammonWindow : MainWindow {
         contentBox = new Box(GtkOrientation.HORIZONTAL, 0);
         gameplayBox = new Box(GtkOrientation.VERTICAL, 0);
         gameplayBox.packStart(matchOverviewBox, false, true, 0);
-        gameplayBox.packStart(backgammonBoard, true, true, 0);
+        gameplayBox.packStart(board, true, true, 0);
         contentBox.packStart(gameplayBox, true, true, 0);
         contentBox.packStart(fibsSidebarRevealer, false, true, 0);
         this.add(contentBox);
@@ -199,7 +200,7 @@ class BackgammonWindow : MainWindow {
                 this.openNewNetworkGameDialog();
                 break;
             case Keysyms.GDK_f:
-                this.backgammonBoard.toggleFPSCounter();
+                // this.backgammonBoard.toggleFPSCounter();
                 break;
             default: break;
             }
@@ -252,12 +253,12 @@ class BackgammonWindow : MainWindow {
         this.match = m;
 
         // Update the backgammon board
-        backgammonBoard.setGameState(match.gs);
-        if (match.player1.type == PlayerType.User) {
-            backgammonBoard.setPlayerCorner(Player.P1, Corner.BR);
-        } else {
-            backgammonBoard.setPlayerCorner(Player.P2, Corner.BR);
-        }
+        // backgammonBoard.setGameState(match.gs);
+        // if (match.player1.type == PlayerType.User) {
+        //     backgammonBoard.setPlayerCorner(Player.P1, Corner.BR);
+        // } else {
+        //     backgammonBoard.setPlayerCorner(Player.P2, Corner.BR);
+        // }
 
         // Update match overview box
         this.matchOverviewBox.setMatch(this.match);
@@ -290,9 +291,9 @@ class BackgammonWindow : MainWindow {
         // we will wait for a dice roll from the network thread.
         if (match && !match.isNetworkGame) {
             if (_gs.equals(_gs.dup.newGame())) {
-                backgammonBoard.displayMessage(pm.name ~ " starts", () {
-                    _gs.rollDice();
-                });
+                // backgammonBoard.displayMessage(pm.name ~ " starts", () {
+                //     _gs.rollDice();
+                // });
             } else {
                 _gs.rollDice();
             }
@@ -365,13 +366,13 @@ class BackgammonWindow : MainWindow {
                 (NetworkThreadNewMove moves) {
                     assert(match.gs.turnState == TurnState.MoveSelection);
                     foreach(move; moves.moves[0..moves.numMoves]) {
-                        backgammonBoard.selectMove(move);
+                        // backgammonBoard.selectMove(move);
                     }
-                    backgammonBoard.finishTurn();
+                    // backgammonBoard.finishTurn();
                 },
                 (NetworkNewDiceRoll diceRoll) {
                     writeln("Received dice roll: ", diceRoll);
-                    this.backgammonBoard.getGameState.rollDice(diceRoll.dice1, diceRoll.dice2);
+                    // this.backgammonBoard.getGameState.rollDice(diceRoll.dice1, diceRoll.dice2);
                 },
                 (NetworkThreadUnhandledException e) {
                     auto dialog = new MessageDialog(this,

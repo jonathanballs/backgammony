@@ -4,8 +4,11 @@ import gtk.Main;
 import ui.window;
 import config;
 
+import derelict.opengl;
+
 void main(string[] args) 
 {
+    DerelictGL3.load();
 
     /**
      * Parse arguments
@@ -54,21 +57,21 @@ void main(string[] args)
                 import cairo.Context : Context;
                 import gobject.Signals : Signals;
                 gulong sigId;
-                sigId = window.backgammonBoard.addOnDraw((Scoped!Context c, Widget w) {
-                    Signals.handlerDisconnect(window.backgammonBoard, sigId);
+                // sigId = window.backgammonBoard.addOnDraw((Scoped!Context c, Widget w) {
+                //     Signals.handlerDisconnect(window.backgammonBoard, sigId);
 
-                    // Timeout
-                    import glib.Timeout : Timeout;
-                    Timeout t;
-                    // Wait 100msecs and start a game
-                    t = new Timeout(100, () {
-                        match.gs.newGame();
-                        t.stop();
-                        return false;
-                    }, false);
+                //     // Timeout
+                //     import glib.Timeout : Timeout;
+                //     Timeout t;
+                //     // Wait 100msecs and start a game
+                //     t = new Timeout(100, () {
+                //         match.gs.newGame();
+                //         t.stop();
+                //         return false;
+                //     }, false);
 
-                    return false;
-                });
+                //     return false;
+                // });
             } else {
                 writeln("GNUBG not installed. Not starting game");
             }
@@ -80,9 +83,9 @@ void main(string[] args)
     window.showAll();
 
     if (uiTests) {
-        import ui.board.tests;
-        auto boardTests = new BoardUITestWindow(window);
-        boardTests.showAll();
+        // import ui.board.tests;
+        // auto boardTests = new BoardUITestWindow(window);
+        // boardTests.showAll();
     }
 
     Main.run();
