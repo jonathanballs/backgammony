@@ -1,4 +1,4 @@
-// module ui.board.tests;
+module ui.board.tests;
 
 // import std.stdio;
 // import std.typecons;

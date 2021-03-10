@@ -48,6 +48,8 @@
 
  /* Function declaration macros - to move into glplatform.h */
 
+module glcore;
+
 public:
 	extern(C):
 
