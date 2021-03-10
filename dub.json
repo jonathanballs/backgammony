@@ -15,5 +15,8 @@
 		"debug": {
 			"buildOptions": ["debugMode", "debugInfo"]
 		}
-	}
+	},
+	"stringImportPaths": [
+		"source/ui/boardgl/shaders"
+	]
 }
