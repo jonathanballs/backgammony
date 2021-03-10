@@ -30,12 +30,13 @@ import networking.fibs.controller;
 import networking.messages;
 import networking;
 import ui.board.boardwidget;
-import ui.boardgl.board;
 import ui.fibssidebar;
 import ui.matchoverviewbox;
 import ui.networkgamedialog;
 import ui.newgamedialog;
 import utils.addtickcallback;
+
+import ui.boardgl.board;
 
 /**
  * The MainWindow of the backgammon game. Also acts as a high level controller

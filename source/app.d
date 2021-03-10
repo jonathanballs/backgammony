@@ -4,12 +4,8 @@ import gtk.Main;
 import ui.window;
 import config;
 
-import derelict.opengl;
-
 void main(string[] args) 
 {
-    DerelictGL3.load();
-
     /**
      * Parse arguments
      */
