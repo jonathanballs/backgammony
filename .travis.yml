@@ -19,6 +19,7 @@ addons:
       - libxtst-dev
       - at-spi2-core
       - openbox
+      - freeglut3-dev
 
 before_script:
   - openbox & # needs a window manager for the tests (to get focus to work)
