@@ -14,6 +14,7 @@ import gtk.Widget;
 
 import glcore;
 import ui.boardgl.shaders : initShaders;
+import ui.boardgl.style : BoardStyle;
 import gl3n.linalg;
 
 class BoardGL : GLArea {
@@ -40,13 +41,13 @@ public:
     GLuint m_Program;
     GLuint m_Mvp;
 
+    GLuint position_index;
+    GLuint color_index;
+
     // Create resources for the display of the widget
     void realize(Widget) {
         makeCurrent();
-        GLuint position_index;
-        GLuint color_index;
-        initShaders(&m_Program, &m_Mvp,
-                &position_index, &color_index);
+        initShaders(&m_Program, &m_Mvp, &position_index, &color_index);
         initBuffers(position_index, color_index);
     }
 
@@ -82,18 +83,29 @@ public:
     void drawTriangle() {
         immutable mvp = mat4.identity;
 
+        // Use shaders
         glUseProgram(m_Program);
 
-        // update the "mvp" matrix we use in the shader
+        // Update the "mvp" matrix we use in the shader
         glUniformMatrix4fv(m_Mvp, 1, GL_FALSE, mvp.value_ptr);
 
         glBindBuffer(GL_ARRAY_BUFFER, m_Vao);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 4,
-                GL_FLOAT, GL_FALSE, 0, null);
+
+        // Set triangle colour
+        // GLint uniColor = glGetUniformLocation(m_Program, "color");
+        // writeln(uniColor);
+        // glUniform3f(uniColor, 1.0f, 0.0f, 0.0f);
+        float[3] color = [1.0, 0.0, 0.0];
+        glEnableVertexAttribArray(color_index);
+        glVertexAttribPointer(color_index, 3, GL_FLOAT, GL_FALSE, 0, cast(void*)color.ptr);
+        // glAttrib3f(color_index, 0.0, 1.0, 0.0);
+
+
+        glEnableVertexAttribArray(position_index);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, null);
 
         // draw the three vertices as a triangle
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glDisableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -106,13 +118,17 @@ public:
             0.0f, 0.5f, 0.0f, 1.0f,
             0.5f, -0.366f, 0.0f, 1.0f,
             -0.5f, -0.366f, 0.0f, 1.0f,
+
+            0.1f, 0.5f, 0.0f, 1.0f,
+            0.5f, -0.366f, 0.0f, 1.0f,
+            -0.5f, -0.366f, 0.0f, 1.0f,
         ];
 
         // Create a VAO to store the other buffers
         glGenVertexArrays(1, &m_Vao);
         glBindVertexArray(m_Vao);
 
-        // VBO that holds the vertex data
+        // VBO that holds the vertex data. Upload data to the GPU.
         GLuint buffer;
         glGenBuffers(1, &buffer);
         glBindBuffer(GL_ARRAY_BUFFER, buffer);

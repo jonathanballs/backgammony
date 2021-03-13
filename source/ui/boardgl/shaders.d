@@ -37,8 +37,7 @@ uint compileShader(int type, string source) {
 }
 
 void initShaders(uint* program_out, uint* mvp_location_out,
-        uint* position_location_out, uint* color_location_out)
-{
+        uint* position_location_out, uint* color_location_out) {
     const vertex = compileShader(GL_VERTEX_SHADER,
             VertShaderCode ~ "\0");
     scope (exit) glDeleteShader(vertex);
