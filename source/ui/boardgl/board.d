@@ -42,7 +42,9 @@ public:
     GLuint m_Mvp;
 
     GLuint position_index;
+    GLuint positionBuffer;
     GLuint color_index;
+    GLuint colorBuffer;
 
     // Create resources for the display of the widget
     void realize(Widget) {
@@ -95,14 +97,14 @@ public:
         // GLint uniColor = glGetUniformLocation(m_Program, "color");
         // writeln(uniColor);
         // glUniform3f(uniColor, 1.0f, 0.0f, 0.0f);
-        float[3] color = [1.0, 0.0, 0.0];
-        glEnableVertexAttribArray(color_index);
-        glVertexAttribPointer(color_index, 3, GL_FLOAT, GL_FALSE, 0, cast(void*)color.ptr);
-        // glAttrib3f(color_index, 0.0, 1.0, 0.0);
-
-
+        // float[3] color = [1.0, 0.0, 0.0];
+        glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
         glEnableVertexAttribArray(position_index);
-        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, null);
+        glVertexAttribPointer(position_index, 4, GL_FLOAT, GL_FALSE, 0, null);
+
+        glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+        glEnableVertexAttribArray(color_index);
+        glVertexAttribPointer(color_index, 3, GL_FLOAT, GL_FALSE, 0, null);
 
         // draw the three vertices as a triangle
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -124,18 +126,28 @@ public:
             -0.5f, -0.366f, 0.0f, 1.0f,
         ];
 
+        static immutable GLfloat[] color_data = [
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+        ];
+
         // Create a VAO to store the other buffers
         glGenVertexArrays(1, &m_Vao);
         glBindVertexArray(m_Vao);
 
         // VBO that holds the vertex data. Upload data to the GPU.
-        GLuint buffer;
-        glGenBuffers(1, &buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glGenBuffers(1, &positionBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
         glBufferData(GL_ARRAY_BUFFER, vertex_data.length * float.sizeof,
                 vertex_data.ptr, GL_STATIC_DRAW);
-
-        // Reset the state; we will re-enable the VAO when needed
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        
+        glGenBuffers(1, &colorBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+        glBufferData(GL_ARRAY_BUFFER, color_data.length * float.sizeof,
+                color_data.ptr, GL_STATIC_DRAW);
     }
 }

@@ -26,8 +26,7 @@ uint compileShader(int type, string source) {
         buffer.length = len + 1;
         glGetShaderInfoLog(shader, len, null, buffer.ptr);
 
-        const sType = type == GL_VERTEX_SHADER ? "vertex"
-            : "fragment";
+        const sType = type == GL_VERTEX_SHADER ? "vertex" : "fragment";
 
         throw new Exception(format("Compilation failure in %s shader: %s",
                 sType, buffer));
@@ -38,12 +37,10 @@ uint compileShader(int type, string source) {
 
 void initShaders(uint* program_out, uint* mvp_location_out,
         uint* position_location_out, uint* color_location_out) {
-    const vertex = compileShader(GL_VERTEX_SHADER,
-            VertShaderCode ~ "\0");
+    const vertex = compileShader(GL_VERTEX_SHADER, VertShaderCode ~ "\0");
     scope (exit) glDeleteShader(vertex);
 
-    const fragment = compileShader(GL_FRAGMENT_SHADER,
-            FragShaderCode ~ "\0");
+    const fragment = compileShader(GL_FRAGMENT_SHADER, FragShaderCode ~ "\0");
     scope (exit) glDeleteShader(fragment);
 
     const program = glCreateProgram();
@@ -74,6 +71,7 @@ void initShaders(uint* program_out, uint* mvp_location_out,
     }
 
     *program_out = program;
+
     *mvp_location_out = glGetUniformLocation(program, "mvp");
     *position_location_out = glGetAttribLocation(program, "position");
     *color_location_out = glGetAttribLocation(program, "color");
