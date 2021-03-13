@@ -41,16 +41,16 @@ public:
     GLuint m_Program;
     GLuint m_Mvp;
 
-    GLuint position_index;
+    GLuint positionIndex;
     GLuint positionBuffer;
-    GLuint color_index;
+    GLuint colorIndex;
     GLuint colorBuffer;
 
     // Create resources for the display of the widget
     void realize(Widget) {
         makeCurrent();
-        initShaders(&m_Program, &m_Mvp, &position_index, &color_index);
-        initBuffers(position_index, color_index);
+        initShaders(&m_Program, &m_Mvp, &positionIndex, &colorIndex);
+        initBuffers(positionIndex, colorIndex);
     }
 
     // Destroy resources for the display of the widget
@@ -99,12 +99,12 @@ public:
         // glUniform3f(uniColor, 1.0f, 0.0f, 0.0f);
         // float[3] color = [1.0, 0.0, 0.0];
         glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
-        glEnableVertexAttribArray(position_index);
-        glVertexAttribPointer(position_index, 4, GL_FLOAT, GL_FALSE, 0, null);
+        glEnableVertexAttribArray(positionIndex);
+        glVertexAttribPointer(positionIndex, 4, GL_FLOAT, GL_FALSE, 0, null);
 
         glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-        glEnableVertexAttribArray(color_index);
-        glVertexAttribPointer(color_index, 3, GL_FLOAT, GL_FALSE, 0, null);
+        glEnableVertexAttribArray(colorIndex);
+        glVertexAttribPointer(colorIndex, 3, GL_FLOAT, GL_FALSE, 0, null);
 
         // draw the three vertices as a triangle
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -114,7 +114,7 @@ public:
         glUseProgram(0);
     }
 
-    void initBuffers(uint position_index, uint color_index) {
+    void initBuffers(uint positionIndex, uint colorIndex) {
         // Vertex data of the triangle.
         static immutable GLfloat[] vertex_data = [
             0.0f, 0.5f, 0.0f, 1.0f,
@@ -130,6 +130,7 @@ public:
             1.0f, 0.0f, 0.0f,
             1.0f, 0.0f, 0.0f,
             1.0f, 0.0f, 0.0f,
+
             0.0f, 1.0f, 0.0f,
             0.0f, 1.0f, 0.0f,
             0.0f, 1.0f, 0.0f,
