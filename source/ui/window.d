@@ -36,7 +36,7 @@ import ui.networkgamedialog;
 import ui.newgamedialog;
 import utils.addtickcallback;
 
-import ui.boardgl.board;
+import ui.boardgl.widget;
 
 /**
  * The MainWindow of the backgammon game. Also acts as a high level controller
@@ -63,7 +63,7 @@ class BackgammonWindow : MainWindow {
     // Fibs sidebar
     FIBSSidebar fibsSidebar;
     public Revealer fibsSidebarRevealer;
-    public BoardGL board;
+    public BoardGLWidget board;
 
     // Match sidebar
     MatchOverviewBox matchOverviewBox;
@@ -137,7 +137,7 @@ class BackgammonWindow : MainWindow {
         header.packEnd(undoMoveBtn);
 
         // Game board
-        board = new BoardGL();
+        board = new BoardGLWidget();
         // backgammonBoard.onChangePotentialMovements.connect(() {
         //     undoMoveBtn.setSensitive(false);
         //     finishTurnBtn.setSensitive(false);

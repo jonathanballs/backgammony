@@ -1,4 +1,4 @@
-module ui.boardgl.board;
+module ui.boardgl.widget;
 
 import std.string;
 import std.datetime;
@@ -17,13 +17,12 @@ import ui.boardgl.shaders : initShaders;
 import ui.boardgl.style : BoardStyle;
 import gl3n.linalg;
 
-class BoardGL : GLArea {
+class BoardGLWidget : GLArea {
 
     // FPS monitoring
     SysTime lastFrameStartRender;
     float smoothedFPS;
 
-public:
     this() {
         setAutoRender(true);
 
@@ -83,31 +82,28 @@ public:
     }
 
     void drawTriangle() {
-        immutable mvp = mat4.identity;
+        immutable mvp = mat4.identity
+            .scale(1.0 / 1200, 1.0 / 800, 1.0)
+            .translate(-0.5, -0.5, 0.0);
 
         // Use shaders
         glUseProgram(m_Program);
 
         // Update the "mvp" matrix we use in the shader
-        glUniformMatrix4fv(m_Mvp, 1, GL_FALSE, mvp.value_ptr);
+        glUniformMatrix4fv(m_Mvp, 1, GL_TRUE, mvp.value_ptr);
 
         glBindBuffer(GL_ARRAY_BUFFER, m_Vao);
 
-        // Set triangle colour
-        // GLint uniColor = glGetUniformLocation(m_Program, "color");
-        // writeln(uniColor);
-        // glUniform3f(uniColor, 1.0f, 0.0f, 0.0f);
-        // float[3] color = [1.0, 0.0, 0.0];
+        // Bind position and color buffers
         glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
         glEnableVertexAttribArray(positionIndex);
-        glVertexAttribPointer(positionIndex, 4, GL_FLOAT, GL_FALSE, 0, null);
-
+        glVertexAttribPointer(positionIndex, 3, GL_FLOAT, GL_FALSE, 0, null);
         glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
         glEnableVertexAttribArray(colorIndex);
         glVertexAttribPointer(colorIndex, 3, GL_FLOAT, GL_FALSE, 0, null);
 
-        // draw the three vertices as a triangle
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        // Draw the triangles
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glDisableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -117,13 +113,13 @@ public:
     void initBuffers(uint positionIndex, uint colorIndex) {
         // Vertex data of the triangle.
         static immutable GLfloat[] vertex_data = [
-            0.0f, 0.5f, 0.0f, 1.0f,
-            0.5f, -0.366f, 0.0f, 1.0f,
-            -0.5f, -0.366f, 0.0f, 1.0f,
+            0.0f, 0.0f, 0.0f,
+            1200.0f, 0.0f, 0.0f,
+            1200.0f, 800.0f, 0.0f,
 
-            0.1f, 0.5f, 0.0f, 1.0f,
-            0.5f, -0.366f, 0.0f, 1.0f,
-            -0.5f, -0.366f, 0.0f, 1.0f,
+            // 0.1f, 0.5f, 0.0f,
+            // 0.5f, -0.366f, 0.0f,
+            // -0.5f, -0.366f, 0.0f,
         ];
 
         static immutable GLfloat[] color_data = [
