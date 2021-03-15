@@ -90,7 +90,7 @@ class BoardGLWidget : GLArea {
 
         gameBoard.draw();
 
-        glDisableVertexAttribArray(0);
+        // glDisableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glUseProgram(0);
 

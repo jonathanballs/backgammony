@@ -68,30 +68,28 @@ class GameBoard {
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
         glBufferData(GL_ARRAY_BUFFER, vertexData.length * float.sizeof,
                 vertexData.ptr, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(vertexAttrib);
+        glVertexAttribPointer(vertexAttrib, 3, GL_FLOAT, GL_FALSE, 0, null);
+
         glGenBuffers(1, &colorBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
         glBufferData(GL_ARRAY_BUFFER, colorData.length * float.sizeof,
                 colorData.ptr, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(colorAttrib);
+        glVertexAttribPointer(colorAttrib, 4, GL_FLOAT, GL_FALSE, 0, null);
+
+        glBindVertexArray(0);
     }
 
     void draw() {
-        glBindBuffer(GL_ARRAY_BUFFER, vao);
-
-        // Bind position and color buffers
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glEnableVertexAttribArray(vertexAttrib);
-        glVertexAttribPointer(vertexAttrib, 3, GL_FLOAT, GL_FALSE, 0, null);
-
-        glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-        glEnableVertexAttribArray(colorAttrib);
-        glVertexAttribPointer(colorAttrib, 4, GL_FLOAT, GL_FALSE, 0, null);
+        glBindVertexArray(vao);
+        glEnableVertexAttribArray(vertexBuffer);
+        glEnableVertexAttribArray(colorBuffer);
 
         // Draw the triangles
         glDrawArrays(GL_TRIANGLES, 0, cast(int) vertexData.length / 3);
 
-        glDisableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glUseProgram(0);
+        glBindVertexArray(0);
     }
 
     private void prepareTriangle(vec3 p1, vec3 p2, vec3 p3, RGBA color) {
