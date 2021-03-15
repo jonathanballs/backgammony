@@ -40,7 +40,24 @@ class GameBoard {
     }
 
     void upload() {
-        prepareRectangle(0, 0, style.boardWidth, style.boardHeight, style.boardColor);
+        // Main board
+        prepareRectangle(0, 0, style.boardWidth, style.boardHeight, style.borderColor);
+
+        // Home board and outer board
+        prepareRectangle(
+            style.borderWidth,
+            style.borderWidth,
+            style.boardWidth / 2 - style.borderWidth - style.barWidth/2,
+            style.boardHeight - style.borderWidth*2,
+            style.boardColor
+            );
+        prepareRectangle(
+            style.boardWidth / 2 + style.barWidth/2,
+            style.borderWidth,
+            style.boardWidth / 2 - style.borderWidth - style.barWidth/2,
+            style.boardHeight - style.borderWidth*2,
+            style.boardColor
+            );
 
         // Create VAO
         glGenVertexArrays(1, &vao);
