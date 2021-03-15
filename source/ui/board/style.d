@@ -3,7 +3,7 @@ module ui.board.style;
 import cairo.Context;
 
 struct RGB {
-    double r, g, b;
+    float r, g, b;
 }
 
 static void setSourceRgbStruct(Context cr, RGB color) {
