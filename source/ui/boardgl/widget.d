@@ -36,6 +36,8 @@ class BoardGLWidget : GLArea {
         showAll();
     }
 
+    private:
+
     GLuint m_Vao;
     GLuint m_Program;
     GLuint m_Mvp;
