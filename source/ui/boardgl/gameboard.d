@@ -1,10 +1,9 @@
-/**
- * Code for rendering the backgammon board (minus pips, dice etc.)
- */
 module ui.boardgl.gameboard;
 
 import glcore;
-
+/**
+ * Code for rendering the backgammon board (minus pips, dice etc.)
+ */
 class GameBoard {
     private:
 
@@ -20,11 +19,19 @@ class GameBoard {
 
     GLuint vao;
 
-    // Create a new instance of the game board
-    public this() {
+    public:
+
+    /// Create a new instance of the game board
+    this(GLuint shaderProgram) {
+        vertexAttrib = glGetAttribLocation(shaderProgram, "position");
+        colorAttrib = glGetAttribLocation(shaderProgram, "color");
     }
 
-    void uploadBuffers() {
+    ~this() {
+        glDeleteBuffers(1, &vao);
+    }
+
+    void upload() {
         vertexData = [
             0.0f, 0.0f, 0.0f,
             1200.0f, 0.0f, 0.0f,
@@ -51,5 +58,25 @@ class GameBoard {
         glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
         glBufferData(GL_ARRAY_BUFFER, colorData.length * float.sizeof,
                 colorData.ptr, GL_STATIC_DRAW);
+    }
+
+    void draw() {
+        glBindBuffer(GL_ARRAY_BUFFER, vao);
+
+        // Bind position and color buffers
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        glEnableVertexAttribArray(vertexAttrib);
+        glVertexAttribPointer(vertexAttrib, 3, GL_FLOAT, GL_FALSE, 0, null);
+
+        glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+        glEnableVertexAttribArray(colorAttrib);
+        glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 0, null);
+
+        // Draw the triangles
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glDisableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glUseProgram(0);
     }
 }

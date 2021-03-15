@@ -17,11 +17,9 @@ import ui.boardgl.shaders : initShaders;
 import ui.boardgl.style : BoardStyle;
 import gl3n.linalg;
 
-class BoardGLWidget : GLArea {
+import ui.boardgl.gameboard;
 
-    // FPS monitoring
-    SysTime lastFrameStartRender;
-    float smoothedFPS;
+class BoardGLWidget : GLArea {
 
     this() {
         setAutoRender(true);
@@ -38,27 +36,31 @@ class BoardGLWidget : GLArea {
 
     private:
 
-    GLuint m_Vao;
-    GLuint m_Program;
+    // FPS monitoring
+    SysTime lastFrameStartRender;
+    float smoothedFPS;
+
+    GameBoard gameBoard;
+
+    GLuint shaderProgram;
     GLuint m_Mvp;
 
     GLuint positionIndex;
-    GLuint positionBuffer;
     GLuint colorIndex;
-    GLuint colorBuffer;
 
     // Create resources for the display of the widget
     void realize(Widget) {
         makeCurrent();
-        initShaders(&m_Program, &m_Mvp, &positionIndex, &colorIndex);
-        initBuffers(positionIndex, colorIndex);
+        initShaders(&shaderProgram, &m_Mvp, &positionIndex, &colorIndex);
+
+        gameBoard = new GameBoard(shaderProgram);
+        gameBoard.upload();
     }
 
     // Destroy resources for the display of the widget
     void unrealize(Widget) {
         makeCurrent();
-        glDeleteBuffers(1, &m_Vao);
-        glDeleteProgram(m_Program);
+        glDeleteProgram(shaderProgram);
     }
 
     bool render(GLContext c, GLArea a) {
@@ -69,84 +71,33 @@ class BoardGLWidget : GLArea {
             // writeln(fps);
         }
         this.lastFrameStartRender = currTime;
+
         makeCurrent();
 
+        // Clear the screen
         glClearColor(0.3, 0.3, 0.3, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        drawTriangle();
+        // Use shaders
+        glUseProgram(shaderProgram);
+
+        immutable mvp = mat4.identity
+            .scale(1.0 / 1200, 1.0 / 800, 1.0)
+            .translate(-0.5, -0.5, 0.0);
+
+        // Update the "mvp" matrix we use in the shader
+        glUniformMatrix4fv(m_Mvp, 1, GL_TRUE, mvp.value_ptr);
+
+        gameBoard.draw();
+
+        glDisableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glUseProgram(0);
 
         glFlush();
 
         this.queueRender();
 
         return true;
-    }
-
-    void drawTriangle() {
-        immutable mvp = mat4.identity
-            .scale(1.0 / 1200, 1.0 / 800, 1.0)
-            .translate(-0.5, -0.5, 0.0);
-
-        // Use shaders
-        glUseProgram(m_Program);
-
-        // Update the "mvp" matrix we use in the shader
-        glUniformMatrix4fv(m_Mvp, 1, GL_TRUE, mvp.value_ptr);
-
-        glBindBuffer(GL_ARRAY_BUFFER, m_Vao);
-
-        // Bind position and color buffers
-        glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
-        glEnableVertexAttribArray(positionIndex);
-        glVertexAttribPointer(positionIndex, 3, GL_FLOAT, GL_FALSE, 0, null);
-        glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-        glEnableVertexAttribArray(colorIndex);
-        glVertexAttribPointer(colorIndex, 3, GL_FLOAT, GL_FALSE, 0, null);
-
-        // Draw the triangles
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        glDisableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glUseProgram(0);
-    }
-
-    void initBuffers(uint positionIndex, uint colorIndex) {
-        // Vertex data of the triangle.
-        static immutable GLfloat[] vertex_data = [
-            0.0f, 0.0f, 0.0f,
-            1200.0f, 0.0f, 0.0f,
-            1200.0f, 800.0f, 0.0f,
-
-            // 0.1f, 0.5f, 0.0f,
-            // 0.5f, -0.366f, 0.0f,
-            // -0.5f, -0.366f, 0.0f,
-        ];
-
-        static immutable GLfloat[] color_data = [
-            1.0f, 0.0f, 0.0f,
-            1.0f, 0.0f, 0.0f,
-            1.0f, 0.0f, 0.0f,
-
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-        ];
-
-        // Create a VAO to store the other buffers
-        glGenVertexArrays(1, &m_Vao);
-        glBindVertexArray(m_Vao);
-
-        // VBO that holds the vertex data. Upload data to the GPU.
-        glGenBuffers(1, &positionBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
-        glBufferData(GL_ARRAY_BUFFER, vertex_data.length * float.sizeof,
-                vertex_data.ptr, GL_STATIC_DRAW);
-        
-        glGenBuffers(1, &colorBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-        glBufferData(GL_ARRAY_BUFFER, color_data.length * float.sizeof,
-                color_data.ptr, GL_STATIC_DRAW);
     }
 }
