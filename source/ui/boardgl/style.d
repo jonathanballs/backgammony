@@ -18,6 +18,7 @@ class BoardStyle {
     float borderWidth = 15.0;           /// Width of the border enclosing the board
     float borderFontHeight = 10.0;      /// Height of the font of the board numbers
     float barWidth = 70.0;              /// Width of bar in the centre of the board
+    float pipHolderWidth = 60.0;
     RGBA borderColor = RGBA(0.14969, 0.15141, 0.15141, 1.0); /// Colour of the border
 
     float pointWidth = 75.0;            /// Width of each point

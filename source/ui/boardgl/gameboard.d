@@ -45,19 +45,49 @@ class GameBoard {
 
         // Home board and outer board
         prepareRectangle(
+            2*style.borderWidth + style.pipHolderWidth,
             style.borderWidth,
-            style.borderWidth,
-            style.boardWidth / 2 - style.borderWidth - style.barWidth/2,
+            style.boardWidth / 2 - 2*style.borderWidth - style.barWidth/2 - style.pipHolderWidth,
             style.boardHeight - style.borderWidth*2,
             style.boardColor
             );
         prepareRectangle(
             style.boardWidth / 2 + style.barWidth/2,
             style.borderWidth,
-            style.boardWidth / 2 - style.borderWidth - style.barWidth/2,
+            style.boardWidth / 2 - 2*style.borderWidth - style.barWidth/2 - style.pipHolderWidth,
             style.boardHeight - style.borderWidth*2,
             style.boardColor
             );
+
+        // Pip holders
+        prepareRectangle( // BL
+            style.borderWidth,
+            style.borderWidth,
+            style.pipHolderWidth,
+            style.boardHeight/2 - style.barWidth/2 - style.borderWidth,
+            style.boardColor
+        );
+        prepareRectangle( // TL
+            style.borderWidth,
+            style.boardHeight / 2 + style.barWidth/2,
+            style.pipHolderWidth,
+            style.boardHeight/2 - style.barWidth/2 - style.borderWidth,
+            style.boardColor
+        );
+        prepareRectangle( // TR
+            style.boardWidth - style.borderWidth - style.pipHolderWidth,
+            style.boardHeight / 2 + style.barWidth/2,
+            style.pipHolderWidth,
+            style.boardHeight/2 - style.barWidth/2 - style.borderWidth,
+            style.boardColor
+        );
+        prepareRectangle( // BR
+            style.boardWidth - style.borderWidth - style.pipHolderWidth,
+            style.borderWidth,
+            style.pipHolderWidth,
+            style.boardHeight/2 - style.barWidth/2 - style.borderWidth,
+            style.boardColor
+        );
 
         // Create VAO
         glGenVertexArrays(1, &vao);
