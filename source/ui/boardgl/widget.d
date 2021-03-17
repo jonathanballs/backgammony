@@ -32,6 +32,8 @@ class BoardGLWidget : GLArea {
         addOnUnrealize(&unrealize);
 
         showAll();
+
+        this.style = new BoardStyle();
     }
 
     private:
@@ -41,6 +43,7 @@ class BoardGLWidget : GLArea {
     float smoothedFPS;
 
     GameBoard gameBoard;
+    BoardStyle style;
 
     GLuint shaderProgram;
     GLuint m_Mvp;
@@ -64,28 +67,28 @@ class BoardGLWidget : GLArea {
     }
 
     bool render(GLContext c, GLArea a) {
-        auto currTime = Clock.currTime();
-        if (this.lastFrameStartRender != SysTime.init) {
-            auto diff = currTime - this.lastFrameStartRender;
-            auto fps = 1.seconds / diff;
-            // writeln(fps);
-        }
-        this.lastFrameStartRender = currTime;
+        this.monitorFPS();
 
         makeCurrent();
-
-        // Clear the screen
         glClearColor(0.3, 0.3, 0.3, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Use shaders
         glUseProgram(shaderProgram);
 
-        immutable mvp = mat4.identity
-            .scale(1.0 / 1200, 1.0 / 800, 1.0)
-            .translate(-0.5, -0.5, 0.0);
 
-        // Update the "mvp" matrix we use in the shader
+        // Update translation matrix
+        const float aspectRatio = cast(float) getAllocatedWidth() / getAllocatedHeight();
+        const float desiredAspectRatio = cast(float) this.style.boardWidth / this.style.boardHeight;
+
+        auto mvp = mat4.identity
+            .scale(2.0 / style.boardWidth, 2.0 / style.boardHeight, 1.0)
+            .translate(-1.0, -1.0, 0.0);
+
+        if (aspectRatio > desiredAspectRatio) {
+            mvp = mvp.scale(desiredAspectRatio / aspectRatio, 1.0, 1.0);
+        } else {
+            mvp = mvp.scale(1.0, aspectRatio / desiredAspectRatio, 1.0);
+        }
         glUniformMatrix4fv(m_Mvp, 1, GL_TRUE, mvp.value_ptr);
 
         gameBoard.draw();
@@ -99,5 +102,15 @@ class BoardGLWidget : GLArea {
         this.queueRender();
 
         return true;
+    }
+
+    void monitorFPS() {
+        auto currTime = Clock.currTime();
+        if (this.lastFrameStartRender != SysTime.init) {
+            auto diff = currTime - this.lastFrameStartRender;
+            auto fps = 1.seconds / diff;
+            // writeln(fps);
+        }
+        this.lastFrameStartRender = currTime;
     }
 }
