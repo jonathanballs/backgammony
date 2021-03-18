@@ -1,7 +1,13 @@
 module ui.boardgl.style;
 
 import glcore;
+import gl3n.linalg;
 
+import std.conv : to;
+
+/**
+ * A struct holding RGBA color data
+ */
 struct RGBA {
     float r, g, b, a;
 }
@@ -35,8 +41,39 @@ class BoardStyle {
     double messagePadding = 30.0;
     double messageFontSize = 30.0;
     long animationSpeed = 750;          /// Msecs to perform animation
+
+    /**
+     * Return the position of a point on the board. The array returned 
+     */
+    vec2[2] pointPosition(int position) {
+        if (position < 1 || position > 24) {
+            throw new Exception("Tried to get position of point number " ~ position.to!string);
+        }
+
+        vec2 base = vec2(0.0, 0.0);
+
+        float halfBoardWidth = this.boardWidth / 2 - 2*this.borderWidth - this.barWidth/2 - this.pipHolderWidth;
+
+        if (position <= 12) {
+            base.x = this.boardWidth - 2*this.borderWidth - this.pipHolderWidth - position*halfBoardWidth/6 + halfBoardWidth/12;
+            base.y = this.borderWidth;
+            if (position > 6) {
+                base.x -= this.barWidth;
+            }
+            vec2 tip = vec2(base.x, base.y + this.pointHeight);
+
+            return [base, tip];
+        } else {
+            position -= 12;
+            base.x = 2*this.borderWidth + this.pipHolderWidth + position*halfBoardWidth/6 - halfBoardWidth/12;
+            base.y = this.boardHeight - this.borderWidth;
+            if (position > 6) {
+                base.x += this.barWidth;
+            }
+            vec2 tip = vec2(base.x, base.y - this.pointHeight);
+
+            return [base, tip];
+        }
+    }
 }
 
-// void glClearColor(RGBA color) {
-//     glClearColor(color.r, color.g, color.b, color.a);
-// }

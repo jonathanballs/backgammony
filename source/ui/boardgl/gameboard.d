@@ -89,6 +89,15 @@ class GameBoard {
             style.boardColor
         );
 
+        // Create points on the board
+        foreach (int i; 1..25) {
+            vec2[2] triangleCoords = this.style.pointPosition(i);
+            vec3 baseL = vec3(triangleCoords[0].x - style.pointWidth/2, triangleCoords[0].y, 0.0);
+            vec3 baseR = vec3(triangleCoords[0].x + style.pointWidth/2, triangleCoords[0].y, 0.0);
+            vec3 tip = vec3(triangleCoords[1], 0.0);
+            prepareTriangle(baseL, baseR, tip, i%2 ? style.darkPointColor : style.lightPointColor);
+        }
+
         // Create VAO
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
