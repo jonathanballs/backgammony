@@ -2,77 +2,103 @@ module ui.boardgl.shaders;
 
 import glcore;
 import std.format;
+import std.stdio;
 
-immutable FragShaderCode = import("fragment.glsl");
-immutable VertShaderCode = import("vertex.glsl");
+/**
+ * An OpenGL shader
+ */
+class Shader {
+    private:
+    string source;
+    bool isCompiled;
 
-uint compileShader(int type, string source) {
-    const shader = glCreateShader(type);
-    scope (failure)
-        glDeleteShader(shader);
-    const(char)* srcPtr = source.ptr;
-    glShaderSource(shader, 1, &srcPtr, null);
-    glCompileShader(shader);
+    GLenum shaderType;
+    GLuint shaderObject;
 
-    int status;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    public this(GLenum shaderType, string source) {
+        this.shaderType = shaderType;
+        this.source = source ~ "\0";
+        this.isCompiled = false;
 
-    if (status == GL_FALSE)
-    {
-        int len;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
+        const shader = glCreateShader(shaderType);
+        // scope (failure) glDeleteShader(shader);
+        const(char)* srcPtr = source.ptr;
+        glShaderSource(shader, 1, &srcPtr, null);
+        glCompileShader(shader);
 
-        char[] buffer;
-        buffer.length = len + 1;
-        glGetShaderInfoLog(shader, len, null, buffer.ptr);
+        int status;
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 
-        const sType = type == GL_VERTEX_SHADER ? "vertex" : "fragment";
+        if (status == GL_FALSE)
+        {
+            int len;
+            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
 
-        throw new Exception(format("Compilation failure in %s shader: %s",
-                sType, buffer));
+            char[] buffer;
+            buffer.length = len + 1;
+            glGetShaderInfoLog(shader, len, null, buffer.ptr);
+
+            const sType = shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment";
+
+            throw new Exception(format("Compilation failure in %s shader: %s", sType, buffer));
+        }
+
+        this.shaderObject = shader;
+        // scope (exit) glDeleteShader(this.shaderObject);
+
+        isCompiled = true;
     }
-
-    return shader;
 }
 
-void initShaders(uint* program_out, uint* mvp_location_out,
-        uint* position_location_out, uint* color_location_out) {
-    const vertex = compileShader(GL_VERTEX_SHADER, VertShaderCode ~ "\0");
-    scope (exit) glDeleteShader(vertex);
+/**
+ * A shader program consisting of multiple shaders
+ */
+class ShaderProgram {
+    Shader[] shaders;
+    GLuint programObject;
 
-    const fragment = compileShader(GL_FRAGMENT_SHADER, FragShaderCode ~ "\0");
-    scope (exit) glDeleteShader(fragment);
+    this(Shader[] shaders) {
+        this.programObject = glCreateProgram();
 
-    const program = glCreateProgram();
+        foreach(shader; shaders) {
+            glAttachShader(this.programObject, shader.shaderObject);
+            // scope (exit) glDetachShader(programObject, shader.shaderObject);
+        }
 
-    glAttachShader(program, vertex);
-    scope (exit) glDetachShader(program, vertex);
+        glLinkProgram(this.programObject);
 
-    glAttachShader(program, fragment);
-    scope (exit) glDetachShader(program, fragment);
+        int status = 0;
+        glGetProgramiv(this.programObject, GL_LINK_STATUS, &status);
 
-    glLinkProgram(program);
+        if (status == GL_FALSE) {
+            int len = 0;
+            glGetProgramiv(this.programObject, GL_INFO_LOG_LENGTH, &len);
 
-    int status = 0;
-    glGetProgramiv(program, GL_LINK_STATUS, &status);
+            char[] buffer;
+            buffer.length = len + 1;
+            glGetProgramInfoLog(this.programObject, len, null, buffer.ptr);
 
-    if (status == GL_FALSE) {
-        int len = 0;
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &len);
+            glDeleteProgram(this.programObject);
 
-        char[] buffer;
-        buffer.length = len + 1;
-        glGetProgramInfoLog(program, len, null, buffer.ptr);
-
-        glDeleteProgram(program);
-
-        throw new Exception(format("Linking failure in program: %s",
-                buffer));
+            throw new Exception(format("Linking failure in program: %s", buffer));
+        }
     }
 
-    *program_out = program;
+    uint getUniformLocation(string uniformName) {
+        const(char)* srcPtr = uniformName.ptr;
+        return glGetUniformLocation(this.programObject, srcPtr);
+    }
 
-    *mvp_location_out = glGetUniformLocation(program, "mvp");
-    *position_location_out = glGetAttribLocation(program, "position");
-    *color_location_out = glGetAttribLocation(program, "color");
+    uint getAttribLocation(string attribName) {
+        const(char)* srcPtr = attribName.ptr;
+        return glGetAttribLocation(this.programObject, srcPtr);
+    }
+
+    void deleteProgram() {
+        glDeleteProgram(this.programObject);
+    }
+
+    void useProgram() {
+        glUseProgram(this.programObject);
+    }
 }

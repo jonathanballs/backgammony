@@ -4,6 +4,7 @@ import glcore;
 import gl3n.linalg;
 
 import ui.boardgl.style;
+import ui.boardgl.shaders : ShaderProgram;
 
 
 /**
@@ -29,9 +30,9 @@ class GameBoard {
     public:
 
     /// Create a new instance of the game board
-    this(GLuint shaderProgram) {
-        vertexAttrib = glGetAttribLocation(shaderProgram, "position");
-        colorAttrib = glGetAttribLocation(shaderProgram, "color");
+    this(ShaderProgram shaderProgram) {
+        vertexAttrib = shaderProgram.getAttribLocation("position");
+        colorAttrib = shaderProgram.getAttribLocation("color");
         style = new BoardStyle();
     }
 
