@@ -88,6 +88,15 @@ class BoardGLWidget : GLArea {
         int glareaFramebuffer;
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &glareaFramebuffer);
 
+        auto SCR_WIDTH = getAllocatedWidth();
+        auto SCR_HEIGHT = getAllocatedHeight();
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureColorBufferMultiSampled);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
+        glBindTexture(GL_TEXTURE_2D, screenTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, null);
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+
         this.monitorFPS();
 
         // Draw scene to the framebuffer
