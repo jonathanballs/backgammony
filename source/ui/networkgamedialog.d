@@ -133,8 +133,7 @@ class NetworkGameDialog : Dialog {
         });
 
         tabs = new Notebook();
-        tabs.appendPage(inetBox, new Label("Internet"));
-        tabs.appendPage(lanBox, new Label("LAN"));
+        tabs.appendPage(inetBox, new Label("Backgammony Online"));
         tabs.appendPage(fibsLoginForm, new Label("FIBS"));
 
         this.getContentArea().add(tabs);
