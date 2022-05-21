@@ -106,11 +106,11 @@ class MatchOverviewBox : Box {
 
     public bool onTick(Widget w, FrameClock f) {
         if (match) {
-            displayStack.setVisibleChild(matchRunningBox);
-            p1Name.setText(match.player1.name);
-            p2Name.setText(match.player2.name);
-            p1Score.setText(match.p1score.to!string);
-            p2Score.setText(match.p1score.to!string);
+            //displayStack.setVisibleChild(matchRunningBox);
+            //p1Name.setText(match.player1.name);
+            //p2Name.setText(match.player2.name);
+            //p1Score.setText(match.p1score.to!string);
+            //p2Score.setText(match.p1score.to!string);
         } else {
             displayStack.setVisibleChild(noMatchBox);
         }
